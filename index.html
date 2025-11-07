@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMIA Lesson Tracer-2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- ✅ CORRECT Firebase SDK for Realtime Database -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
@@ -172,14 +171,11 @@
     </style>
 </head>
 <body class="p-4 md:p-8">
-    <!-- Connection Status Indicator -->
     <div id="connectionStatus" class="connection-status hidden">
         <span id="statusText"></span>
     </div>
 
-    <!-- Main Container -->
     <div class="max-w-7xl mx-auto relative">
-        <!-- Watermark -->
         <div class="watermark">
             <div class="watermark-text">SMIA</div>
         </div>
@@ -191,12 +187,9 @@
 
         <div id="messageBox" class="hidden"></div>
 
-        <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-            <!-- Column 1: Submission Form (Always Visible) -->
             <div class="card p-6 md:p-8 h-fit relative fade-in">
-                <!-- Watermark -->
                 <div class="watermark">
                     <div class="watermark-text">SMIA</div>
                 </div>
@@ -260,6 +253,9 @@
                                 PDF ফাইল নির্বাচন করুন
                             </button>
                             <div id="pdfFileName" class="file-name text-center mt-2"></div>
+                            <div id="pdfUploadProgress" class="progress-bar hidden">
+                                <div id="pdfProgressFill" class="progress-fill" style="width: 0%;"></div>
+                            </div>
                         </div>
                     </div>
                     
@@ -271,14 +267,11 @@
                 </form>
             </div>
 
-            <!-- Column 2: Review Plans (Teacher View or Admin View) -->
             <div id="rightColumnContainer" class="card p-6 md:p-8 relative fade-in">
-                <!-- Watermark -->
                 <div class="watermark">
                     <div class="watermark-text">SMIA</div>
                 </div>
                 
-                <!-- Right Column Header -->
                 <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
                     <h2 class="text-2xl font-semibold text-forest-green">পাঠ পরিকল্পনা পর্যালোচনা</h2>
                     <button id="adminAccessButton" class="px-4 py-2 forest-green-gradient rounded-lg text-white text-sm font-medium flex items-center gap-1 transition-colors">
@@ -289,7 +282,6 @@
                     </button>
                 </div>
 
-                <!-- View 1: My Plans (Default) -->
                 <div id="myPlansView">
                     <h3 class="text-xl font-semibold mb-4 text-forest-green">আমার জমা দেওয়া পাঠ পরিকল্পনা</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -326,7 +318,6 @@
                     </div>
                 </div>
 
-                <!-- View 2: Admin Panel (Hidden) -->
                 <div id="adminView" class="hidden">
                     <div class="flex justify-between items-center mb-4">
                         <h3 id="adminHeader" class="text-xl font-semibold text-green-700">অ্যাডমিন প্যানেল</h3>
@@ -371,16 +362,11 @@
                     </div>
                     <p class="text-sm text-gray-600 mb-2">সমস্ত জমা দেওয়া পরিকল্পনা দেখানো হচ্ছে:</p>
                     <div id="allPlansDisplay" class="space-y-4 max-h-[600px] overflow-y-auto p-2 rounded-xl bg-gray-50">
-                        <!-- Admin plan cards will be injected here -->
-                    </div>
+                        </div>
                 </div>
 
             </div>
-        </div> <!-- End Grid -->
-    </div> <!-- End Max-width Container -->
-
-    <!-- Password Modal -->
-    <div id="passwordModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
+        </div> </div> <div id="passwordModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
         <div class="modal-content p-6 w-full max-w-sm">
             <h3 class="text-lg font-medium mb-4">অ্যাডমিন অ্যাক্সেস</h3>
             <form id="passwordForm" class="space-y-4">
@@ -404,7 +390,6 @@
         </div>
     </div>
     
-    <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
         <div class="modal-content p-6 w-full max-w-md">
             <h3 class="text-lg font-medium text-red-700">মুছে ফেলার নিশ্চিতকরণ</h3>
@@ -416,7 +401,6 @@
         </div>
     </div>
 
-    <!-- Image Preview Modal -->
     <div id="imagePreviewModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
         <div class="relative max-w-4xl max-h-full">
             <button id="closePreviewButton" class="absolute -top-10 right-0 text-white text-2xl hover:text-gray-300 transition-colors">×</button>
@@ -424,7 +408,6 @@
         </div>
     </div>
 
-    <!-- Submission Success Modal -->
     <div id="submissionSuccessModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
         <div class="modal-content p-8 w-full max-w-sm text-center">
             <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 success-check">
@@ -438,7 +421,6 @@
         </div>
     </div>
 
-    <!-- Submission Error Modal -->
     <div id="submissionErrorModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
         <div class="modal-content p-8 w-full max-w-sm text-center">
             <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -474,11 +456,9 @@
         let allPlansCache = [];
         let myPlans = [];
         let teacherNames = [];
-        // Use a persistent ID for the user
         let currentUserId = localStorage.getItem('userId') || "user-" + Math.random().toString(36).substr(2, 9);
         localStorage.setItem('userId', currentUserId);
         
-        // State for files waiting to be uploaded
         let selectedPhotosArray = [];
         let selectedPdfFile = null;
 
@@ -505,15 +485,20 @@
             "দশ": ["বাংলা", "ইংরেজি", "গণিত", "বিজ্ঞান", "সামাজিক বিজ্ঞান"]
         };
 
-        // === DOM ELEMENTS (Simplified list for main logic) ===
+        // === DOM ELEMENTS ===
         // Modals
         const passwordModal = document.getElementById('passwordModal');
         const passwordForm = document.getElementById('passwordForm');
         const passwordError = document.getElementById('passwordError');
-        const deleteConfirmModal = document.getElementById('deleteConfirmModal');
         const submissionSuccessModal = document.getElementById('submissionSuccessModal');
         const submissionErrorModal = document.getElementById('submissionErrorModal');
         const errorMessage = document.getElementById('errorMessage');
+        const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+        const cancelLoginButton = document.getElementById('cancelLoginButton');
+        const cancelDeleteButton = document.getElementById('cancelDeleteButton');
+        const closePreviewButton = document.getElementById('closePreviewButton');
+        const closeSuccessModalButton = document.getElementById('closeSuccessModalButton');
+        const closeErrorModalButton = document.getElementById('closeErrorModalButton');
 
         // Main UI
         const submissionForm = document.getElementById('submissionForm');
@@ -533,10 +518,13 @@
         const pdfInput = document.getElementById('pdfInput');
         const pdfUploadButton = document.getElementById('pdfUploadButton');
         const pdfFileName = document.getElementById('pdfFileName');
+        // New elements for progress
+        const pdfUploadProgress = document.getElementById('pdfUploadProgress');
+        const pdfProgressFill = document.getElementById('pdfProgressFill');
 
         // My Plans View
+        const myPlansView = document.getElementById('myPlansView');
         const myClassFilter = document.getElementById('myClassFilter');
-        const mySubjectFilter = document.getElementById('myLessonFilter');
         const myLessonFilter = document.getElementById('myLessonFilter');
         const myPlanDisplay = document.getElementById('myPlanDisplay');
         const myLoadingIndicator = document.getElementById('myLoadingIndicator');
@@ -546,9 +534,8 @@
         const adminLogoutButton = document.getElementById('adminLogoutButton');
         const allPlansDisplay = document.getElementById('allPlansDisplay');
         const adminClassFilter = document.getElementById('adminClassFilter');
-        const adminSubjectFilter = document.getElementById('adminSubjectFilter');
         const adminLessonFilter = document.getElementById('adminLessonFilter');
-        const adminLoadingIndicator = document.getElementById('adminLoadingIndicator');
+        const bulkDeleteButton = document.getElementById('bulkDeleteButton');
 
 
         // === UTILITY FUNCTIONS ===
@@ -564,6 +551,12 @@
         function updateSubmitButton(text, isDisabled = false) {
             submitButton.innerHTML = text;
             submitButton.disabled = isDisabled;
+            // Add spinner for 'uploading' state
+            if (isDisabled) {
+                submitButton.innerHTML = `<svg class="spinner h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>${text}`;
+            } else {
+                submitButton.innerHTML = text;
+            }
         }
 
         function showMessage(type, message) {
@@ -573,10 +566,6 @@
             } else {
                 showModal(submissionErrorModal);
             }
-        }
-
-        function getTeacherPlanPath(teacherId) {
-            return `lesson_plans/${teacherId}`;
         }
         
         function populateLessons(selectElement) {
@@ -632,9 +621,12 @@
         photoInput.addEventListener('change', (e) => {
             const files = e.target.files;
             if (files.length > 0) {
-                selectedPhotosArray = Array.from(files);
+                // Combine new files with existing ones
+                selectedPhotosArray = selectedPhotosArray.concat(Array.from(files));
                 renderPhotoPreviews();
             }
+            // Reset input value to allow selecting same file again later
+            e.target.value = null; 
         });
 
         // Handle PDF Selection
@@ -643,9 +635,11 @@
             if (file) {
                 selectedPdfFile = file;
                 pdfFileName.textContent = `নির্বাচিত ফাইল: ${file.name}`;
+                pdfUploadProgress.classList.add('hidden'); // Hide progress on selection
             } else {
                 selectedPdfFile = null;
                 pdfFileName.textContent = '';
+                pdfUploadProgress.classList.add('hidden');
             }
         });
 
@@ -668,15 +662,40 @@
             });
         }
 
-        // Global function for removing photos (used in the rendered HTML)
         window.removePhoto = (index) => {
             selectedPhotosArray.splice(index, 1);
             renderPhotoPreviews();
-            // Reset file input to allow re-selection of the same file
             photoInput.value = null; 
         };
 
-        // === CORE SUBMISSION LOGIC (Image/PDF Upload & DB Save) ===
+        // === CORE SUBMISSION LOGIC (File Upload & DB Save) ===
+        
+        // Helper function to handle a single file upload
+        function uploadFile(file, path, isPdf = false) {
+            return new Promise((resolve, reject) => {
+                const fileRef = storage.ref(`${path}/${file.name}`);
+                const uploadTask = fileRef.put(file);
+
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        // Update PDF progress bar if it's a PDF
+                        if (isPdf) {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            pdfUploadProgress.classList.remove('hidden');
+                            pdfProgressFill.style.width = `${progress}%`;
+                        }
+                    },
+                    (error) => {
+                        reject(error);
+                    },
+                    () => {
+                        uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                            resolve(downloadURL);
+                        }).catch(reject);
+                    }
+                );
+            });
+        }
 
         submissionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -688,66 +707,37 @@
             const subject = subjectSelect.value;
             const textPlan = textPlanInput.value.trim();
 
-            if (!teacherName || !lessonNo || !classValue || !subject || (!textPlan && selectedPhotosArray.length === 0 && !selectedPdfFile)) {
-                showMessage('error', 'ফর্মের সব ঘর পূরণ করুন এবং অন্তত টেক্সট প্ল্যান বা একটি ফাইল যোগ করুন।');
+            if (!teacherName || !lessonNo || !classValue || !subject) {
+                showMessage('error', 'শিক্ষকের নাম, পাঠ নং, শ্রেণি এবং বিষয় অবশ্যই নির্বাচন করতে হবে।');
+                return;
+            }
+            if (!textPlan && selectedPhotosArray.length === 0 && !selectedPdfFile) {
+                showMessage('error', 'অনুগ্রহ করে পাঠের বিস্তারিত বিবরণ লিখুন অথবা অন্তত একটি ছবি/পিডিএফ যোগ করুন।');
                 return;
             }
             
-            updateSubmitButton('জমা দেওয়া হচ্ছে... (আপলোড হচ্ছে)', true);
+            updateSubmitButton('জমা দেওয়া হচ্ছে... (আপলোড চলছে)', true);
 
-            const uploadPromises = [];
             const timestamp = Date.now();
             const storagePathBase = `plans/${currentUserId}/${timestamp}`;
-
-            // 2. Upload PDF (if selected)
+            const uploadPromises = [];
             let pdfUrl = '';
-            if (selectedPdfFile) {
-                const pdfRef = storage.ref(`${storagePathBase}/document_${selectedPdfFile.name}`);
-                const uploadTask = pdfRef.put(selectedPdfFile);
-
-                const pdfPromise = new Promise((resolve, reject) => {
-                    uploadTask.on('state_changed', 
-                        (snapshot) => {
-                            // Can add a PDF upload progress bar here if needed
-                        },
-                        (error) => reject(error),
-                        () => {
-                            uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-                                pdfUrl = downloadURL;
-                                resolve();
-                            });
-                        }
-                    );
-                });
-                uploadPromises.push(pdfPromise);
-            }
-
-            // 3. Upload Photos (if selected)
             const photoUrls = [];
-            selectedPhotosArray.forEach((photoFile, index) => {
-                const photoRef = storage.ref(`${storagePathBase}/photo_${index}_${photoFile.name}`);
-                const uploadTask = photoRef.put(photoFile);
-
-                const photoPromise = new Promise((resolve, reject) => {
-                    uploadTask.on('state_changed', 
-                        (snapshot) => {
-                            // Can add a Photo upload progress bar here if needed
-                        },
-                        (error) => reject(error),
-                        () => {
-                            uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-                                photoUrls.push(downloadURL);
-                                resolve();
-                            });
-                        }
-                    );
-                });
-                uploadPromises.push(photoPromise);
-            });
 
             try {
-                // Wait for all uploads to complete
-                await Promise.all(uploadPromises);
+                // 2. Upload PDF (if selected)
+                if (selectedPdfFile) {
+                    pdfUrl = await uploadFile(selectedPdfFile, storagePathBase, true);
+                    pdfUploadProgress.classList.add('hidden'); // Hide on completion
+                }
+
+                // 3. Upload Photos (if selected)
+                for (let i = 0; i < selectedPhotosArray.length; i++) {
+                    const photoFile = selectedPhotosArray[i];
+                    // Create a unique path for each photo
+                    const photoDownloadUrl = await uploadFile(photoFile, `${storagePathBase}/photos`);
+                    photoUrls.push(photoDownloadUrl);
+                }
 
                 // 4. Prepare data for Realtime Database
                 const planData = {
@@ -756,11 +746,11 @@
                     class: classValue,
                     subject: subject,
                     textPlan: textPlan,
-                    photoUrls: photoUrls, // Array of URLs
-                    pdfUrl: pdfUrl, // Single URL (empty string if none)
+                    photoUrls: photoUrls,
+                    pdfUrl: pdfUrl,
                     timestamp: timestamp,
                     userId: currentUserId,
-                    status: 'Pending' // Initial status
+                    status: 'Pending'
                 };
 
                 // 5. Save data to Realtime Database
@@ -769,16 +759,34 @@
 
                 // 6. Success handling
                 showMessage('success', 'আপনার পাঠ পরিকল্পনা সফলভাবে জমা দেওয়া হয়েছে।');
+                
+                // Reset everything
                 submissionForm.reset();
                 selectedPhotosArray = [];
                 selectedPdfFile = null;
                 renderPhotoPreviews();
                 pdfFileName.textContent = '';
+                pdfUploadProgress.classList.add('hidden');
+                
                 updateSubmitButton('পাঠ পরিকল্পনা জমা দিন', false);
+                
+                // Re-fetch my plans to update display
+                fetchMyPlans(); 
 
             } catch (error) {
-                console.error("Submission Error:", error);
-                showMessage('error', `পাঠ পরিকল্পনা জমা দিতে ব্যর্থ। অনুগ্রহ করে ইন্টারনেট সংযোগ পরীক্ষা করুন। Error: ${error.message}`);
+                console.error("Submission/Upload Error:", error);
+                // Clean up any partially set progress/status
+                pdfUploadProgress.classList.add('hidden');
+                
+                // Check for common Firebase Storage errors
+                let userFriendlyError = 'ইন্টারনেট সংযোগ বা সার্ভার ত্রুটির কারণে জমা দেওয়া সম্ভব হয়নি। আবার চেষ্টা করুন।';
+                if (error.code && error.code.includes('storage/unauthorized')) {
+                    userFriendlyError = 'ফাইল আপলোডের অনুমতি নেই। আপনার ফায়ারবেস স্টোরেজ রুলস পরীক্ষা করুন।';
+                } else if (error.code && error.code.includes('storage/cannot-slice-blob')) {
+                    userFriendlyError = 'ফাইলটি আপলোডের জন্য অনুপযোগী। ছোট ফাইল দিয়ে চেষ্টা করুন।';
+                }
+                
+                showMessage('error', `ত্রুটি: ${userFriendlyError}`);
                 updateSubmitButton('পাঠ পরিকল্পনা জমা দিন', false);
             }
         });
@@ -788,8 +796,10 @@
 
         function fetchMyPlans() {
             myLoadingIndicator.classList.remove('hidden');
+            // Fetch plans specific to the current user ID
             const myPlansRef = db.ref('plans').orderByChild('userId').equalTo(currentUserId);
             
+            // Use .on() for real-time updates for my plans view
             myPlansRef.on('value', (snapshot) => {
                 myPlans = [];
                 snapshot.forEach((childSnapshot) => {
@@ -807,13 +817,12 @@
         function renderMyPlans() {
             const classFilter = myClassFilter.value;
             const lessonFilter = myLessonFilter.value;
-            // Simplified subject filtering for this example, focusing on Class/Lesson
             
             const filteredPlans = myPlans.filter(plan => {
                 const matchesClass = classFilter ? plan.class === classFilter : true;
                 const matchesLesson = lessonFilter ? plan.lessonNo === lessonFilter : true;
                 return matchesClass && matchesLesson;
-            }).sort((a, b) => b.timestamp - a.timestamp); // Sort by latest first
+            }).sort((a, b) => b.timestamp - a.timestamp); 
 
             myPlanDisplay.innerHTML = '';
 
@@ -833,7 +842,7 @@
                     <div class="plan-card p-4">
                         <div class="font-bold text-lg text-forest-green">${plan.class} - ${plan.subject} (পাঠ ${plan.lessonNo})</div>
                         <p class="text-sm text-gray-500 mb-2">জমা দেওয়া হয়েছে: ${date} ${time}</p>
-                        ${plan.textPlan ? `<pre class="whitespace-pre-wrap text-sm text-gray-700 mt-2 p-2 bg-gray-50 rounded-lg">${plan.textPlan.substring(0, 100)}...</pre>` : ''}
+                        ${plan.textPlan ? `<pre class="whitespace-pre-wrap text-sm text-gray-700 mt-2 p-2 bg-gray-50 rounded-lg">${plan.textPlan.substring(0, 100)}${plan.textPlan.length > 100 ? '...' : ''}</pre>` : ''}
                         <div class="flex gap-2 mt-3 text-sm text-gray-600">
                             ${plan.photoUrls && plan.photoUrls.length > 0 ? `<span class="flex items-center gap-1"><svg class="h-4 w-4 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg>${plan.photoUrls.length} টি ছবি</span>` : ''}
                             ${plan.pdfUrl ? `<span class="flex items-center gap-1"><svg class="h-4 w-4 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zM10 8a1 1 0 011 1v2h2a1 1 0 110 2h-2v2a1 1 0 11-2 0v-2H7a1 1 0 110-2h2V9a1 1 0 011-1z" clip-rule="evenodd" /></svg>PDF সংযুক্ত</span>` : ''}
@@ -851,18 +860,14 @@
         // Fetch initial data
         fetchMyPlans();
         
-        // === MODAL CLOSING EVENTS ===
+        // === MODAL CLOSING EVENTS & Admin Placeholders ===
+        
         document.getElementById('closeSuccessModalButton').addEventListener('click', () => hideModal(submissionSuccessModal));
         document.getElementById('closeErrorModalButton').addEventListener('click', () => hideModal(submissionErrorModal));
-        // Add other modal close handlers (cancelLoginButton, cancelDeleteButton, closePreviewButton etc.) for completeness
         document.getElementById('cancelLoginButton').addEventListener('click', () => hideModal(passwordModal));
         document.getElementById('cancelDeleteButton').addEventListener('click', () => hideModal(deleteConfirmModal));
         document.getElementById('closePreviewButton').addEventListener('click', () => hideModal(imagePreviewModal));
 
-        // === Placeholder functions for completeness (Admin/Full Plan View) ===
-        // NOTE: Admin/Full Plan view logic is complex and not fully implemented here, 
-        // but the core submission logic is complete.
-        
         document.getElementById('adminAccessButton').addEventListener('click', () => showModal(passwordModal));
         adminLogoutButton.addEventListener('click', () => {
             adminLevel = 0;
@@ -870,12 +875,11 @@
             myPlansView.classList.remove('hidden');
         });
 
-        // Dummy function for full plan view (needs modal creation)
         window.showFullPlan = (planId) => {
-             alert(`Showing full plan for ID: ${planId}. You would need a new modal here to display all text, images, and the PDF link.`);
+             // You need to implement a modal to display the full plan details here.
+             alert(`Showing full plan for ID: ${planId}.`);
         };
         
-        // Admin password validation (Insecure, requires Firebase Auth for real use)
         passwordForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const role = document.getElementById('adminRole').value;
@@ -888,7 +892,6 @@
                 hideModal(passwordModal);
                 myPlansView.classList.add('hidden');
                 adminView.classList.remove('hidden');
-                // Fetch all plans for admin view
             } else if (role === 'admin2' && password === ADMIN_2_PASS) {
                 adminLevel = 2;
                 adminHeader.textContent = "অ্যাডমিন প্যানেল (দেখার ও মোছার অনুমতি)";
@@ -896,7 +899,6 @@
                 myPlansView.classList.add('hidden');
                 adminView.classList.remove('hidden');
                 bulkDeleteButton.classList.remove('hidden');
-                // Fetch all plans for admin view
             } else {
                 passwordError.classList.remove('hidden');
             }
@@ -918,7 +920,7 @@
 
         window.addEventListener('online', updateConnectionStatus);
         window.addEventListener('offline', updateConnectionStatus);
-        updateConnectionStatus(); // Check on load
+        updateConnectionStatus();
         
     </script>
 </body>
