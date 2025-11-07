@@ -5,52 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMIA Lesson Tracer-2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- ✅ CORRECT Firebase SDK -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, orderBy, serverTimestamp, doc, deleteDoc, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAx4Y74j_LOm5gIVFsTIG9SS2M-kaMbvu4",
-            authDomain: "smia-lesson.firebaseapp.com",
-            projectId: "smia-lesson",
-            storageBucket: "smia-lesson.firebasestorage.app",
-            messagingSenderId: "161332389077",
-            appId: "1:161332389077:web:5a02045bcdb218d3c66e5c"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-
-        // Make Firebase available globally
-        window.firebase = {
-            app,
-            db,
-            storage,
-            firestore: {
-                collection,
-                addDoc,
-                onSnapshot,
-                orderBy,
-                serverTimestamp,
-                doc,
-                deleteDoc,
-                query
-            },
-            storageFunctions: {
-                ref,
-                uploadBytes,
-                getDownloadURL
-            }
-        };
-        
-        console.log("✅ Firebase initialized successfully!");
-    </script>
+    <!-- ✅ CORRECT Firebase SDK for Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kalpurush&display=swap" rel="stylesheet">
     <style>
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -483,6 +440,21 @@
     </div>
 
     <script>
+        // === FIREBASE CONFIGURATION ===
+        const firebaseConfig = {
+            apiKey: "AIzaSyAx4Y74j_LOm5gIVFsTIG9SS2M-kaMbvu4",
+            authDomain: "smia-lesson.firebaseapp.com",
+            databaseURL: "https://smia-lesson-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "smia-lesson",
+            storageBucket: "smia-lesson.firebasestorage.app",
+            messagingSenderId: "161332389077",
+            appId: "1:161332389077:web:5a02045bcdb218d3c66e5c"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         // === GLOBAL STATE ===
         let adminLevel = 0;
         let allPlansCache = [];
@@ -577,20 +549,7 @@
         const adminLoadingIndicator = document.getElementById('adminLoadingIndicator');
         const bulkDeleteButton = document.getElementById('bulkDeleteButton');
 
-        // === FIREBASE FUNCTIONS ===
-        async function uploadFileToStorage(file, folder) {
-            try {
-                const storageRef = window.firebase.storageFunctions.ref(window.firebase.storage, `${folder}/${currentUserId}/${Date.now()}-${file.name}`);
-                const snapshot = await window.firebase.storageFunctions.uploadBytes(storageRef, file);
-                const downloadURL = await window.firebase.storageFunctions.getDownloadURL(snapshot.ref);
-                return downloadURL;
-            } catch (error) {
-                console.error('Error uploading file:', error);
-                throw new Error(`ফাইল আপলোড করতে ব্যর্থ: ${error.message}`);
-            }
-        }
-
-        // === FORM INITIALIZATION - FIXED ===
+        // === FORM INITIALIZATION ===
         function initializeFormFields() {
             console.log("Initializing form fields...");
             
@@ -649,7 +608,7 @@
             }
         }
 
-        // === FORM SUBMISSION ===
+        // === FORM SUBMISSION - FIXED ===
         async function handleFormSubmit(e) {
             e.preventDefault();
             console.log("Form submission started");
@@ -690,34 +649,9 @@
             submitButton.innerHTML = 'জমা দেওয়া হচ্ছে...';
 
             try {
-                console.log("Starting file uploads...");
+                console.log("Creating plan data...");
 
-                // Upload images to Firebase Storage
-                const uploadedImageUrls = [];
-                if (files.length > 0) {
-                    for (let i = 0; i < files.length; i++) {
-                        const file = files[i];
-                        if (file.type.startsWith('image/')) {
-                            console.log(`Uploading image: ${file.name}`);
-                            const imageUrl = await uploadFileToStorage(file, 'images');
-                            uploadedImageUrls.push({
-                                name: file.name,
-                                url: imageUrl
-                            });
-                            console.log(`Image uploaded: ${imageUrl}`);
-                        }
-                    }
-                }
-
-                // Upload PDF to Firebase Storage
-                let pdfUrl = null;
-                if (pdfFile) {
-                    console.log(`Uploading PDF: ${pdfFile.name}`);
-                    pdfUrl = await uploadFileToStorage(pdfFile, 'pdfs');
-                    console.log(`PDF uploaded: ${pdfUrl}`);
-                }
-
-                // Create plan data
+                // Create plan data (without file upload for now)
                 const newPlan = {
                     userId: currentUserId,
                     teacherName: teacherName,
@@ -725,23 +659,19 @@
                     class: className,
                     subject: subject,
                     textPlan: textPlan,
-                    images: uploadedImageUrls,
-                    pdf: pdfUrl ? {
-                        name: pdfFile.name,
-                        url: pdfUrl
-                    } : null,
-                    createdAt: window.firebase.firestore.serverTimestamp(),
-                    updatedAt: window.firebase.firestore.serverTimestamp()
+                    images: [], // Empty for now since we're not uploading files
+                    pdf: null, // Empty for now
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
                 };
 
-                console.log("Saving to Firestore:", newPlan);
+                console.log("Saving to Firebase Realtime Database:", newPlan);
 
-                // Save to Firestore
-                const docRef = await window.firebase.firestore.addDoc(
-                    window.firebase.firestore.collection(window.firebase.db, 'lessonPlans'), 
-                    newPlan
-                );
-                console.log("Document written with ID: ", docRef.id);
+                // Save to Firebase Realtime Database
+                const newPlanRef = db.ref('lessonPlans').push();
+                await newPlanRef.set(newPlan);
+                
+                console.log("Document written with ID: ", newPlanRef.key);
                 
                 // Save teacher name
                 saveTeacherName(teacherName);
@@ -892,20 +822,15 @@
             adminLoadingIndicator.classList.remove('hidden');
 
             if (unsubscribeListener) {
-                unsubscribeListener();
+                db.ref('lessonPlans').off('value', unsubscribeListener);
             }
 
-            const q = window.firebase.firestore.query(
-                window.firebase.firestore.collection(window.firebase.db, 'lessonPlans'),
-                window.firebase.firestore.orderBy('createdAt', 'desc')
-            );
-
-            unsubscribeListener = window.firebase.firestore.onSnapshot(q, (snapshot) => {
+            unsubscribeListener = db.ref('lessonPlans').on('value', (snapshot) => {
                 allPlansCache = [];
-                snapshot.forEach((doc) => {
+                snapshot.forEach((childSnapshot) => {
                     allPlansCache.push({
-                        id: doc.id,
-                        ...doc.data()
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
                     });
                 });
 
@@ -1141,7 +1066,7 @@
         
         function formatDate(timestamp) {
             if (!timestamp) return '';
-            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp.seconds * 1000);
+            const date = new Date(timestamp);
             return date.toLocaleDateString('bn-BD');
         }
         
@@ -1174,9 +1099,7 @@
             if (!planId) return;
 
             try {
-                await window.firebase.firestore.deleteDoc(
-                    window.firebase.firestore.doc(window.firebase.db, 'lessonPlans', planId)
-                );
+                await db.ref(`lessonPlans/${planId}`).remove();
                 showMessage('পরিকল্পনাটি সফলভাবে মুছে ফেলা হয়েছে।', false);
             } catch (error) {
                 console.error('Error deleting plan:', error);
@@ -1184,45 +1107,6 @@
             } finally {
                 deleteConfirmModal.classList.add('hidden');
                 delete confirmDeleteButton.dataset.planId;
-            }
-        }
-
-        // === BULK DELETE ===
-        function handleBulkDelete() {
-            const selectedClass = adminClassFilter.value;
-            const selectedSubject = adminSubjectFilter.value;
-            const selectedLesson = adminLessonFilter.value;
-            
-            let confirmMessage;
-            if (selectedClass && selectedSubject && selectedLesson) {
-                confirmMessage = `আপনি কি ${selectedClass} শ্রেণির ${selectedSubject} বিষয়ের পাঠ ${selectedLesson} এর সমস্ত পরিকল্পনা মুছে ফেলতে চান?`;
-            } else if (selectedClass && selectedSubject) {
-                confirmMessage = `আপনি কি ${selectedClass} শ্রেণির ${selectedSubject} বিষয়ের সমস্ত পরিকল্পনা মুছে ফেলতে চান?`;
-            } else if (selectedClass) {
-                confirmMessage = `আপনি কি ${selectedClass} শ্রেণির সমস্ত পরিকল্পনা মুছে ফেলতে চান?`;
-            } else {
-                confirmMessage = "আপনি কি সমস্ত পরিকল্পনা মুছে ফেলতে চান?";
-            }
-            
-            if (confirm(confirmMessage + " এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।")) {
-                const plansToDelete = allPlansCache.filter(p => 
-                    (!selectedClass || p.class === selectedClass) &&
-                    (!selectedSubject || p.subject === selectedSubject) &&
-                    (!selectedLesson || p.lessonNo === parseInt(selectedLesson))
-                );
-                
-                try {
-                    const batch = db.batch();
-                    plansToDelete.forEach(plan => {
-                        const planRef = window.firebase.firestore.doc(window.firebase.db, 'lessonPlans', plan.id);
-                        batch.delete(planRef);
-                    });
-                    batch.commit();
-                    showMessage('সমস্ত নির্বাচিত পরিকল্পনা সফলভাবে মুছে ফেলা হয়েছে।', false);
-                } catch (error) {
-                    console.error('Error in bulk delete:', error);
-                    showMessage('পরিকল্পনা মুছতে সমস্যা হয়েছে।', true);
-                }
             }
         }
 
@@ -1235,28 +1119,9 @@
         };
 
         // === INITIALIZATION ===
-        function waitForFirebase() {
-            return new Promise((resolve) => {
-                const checkFirebase = () => {
-                    if (window.firebase) {
-                        console.log("✅ Firebase is ready!");
-                        resolve();
-                    } else {
-                        console.log("⏳ Waiting for Firebase...");
-                        setTimeout(checkFirebase, 100);
-                    }
-                };
-                checkFirebase();
-            });
-        }
-
-        // Main initialization
         document.addEventListener('DOMContentLoaded', async () => {
             try {
                 console.log("🚀 Starting application initialization...");
-                
-                // Wait for Firebase to be available
-                await waitForFirebase();
                 
                 // Initialize form fields FIRST
                 initializeFormFields();
