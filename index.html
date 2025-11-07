@@ -14,20 +14,21 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner { animation: spin 1s linear infinite; }
         .form-input { 
-            @apply w-full px-4 py-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white transition-all duration-200;
+            @apply w-full px-4 py-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600 bg-white transition-all duration-200;
             font-family: 'Kalpurush', 'Times New Roman', serif;
+            border: 1px solid #d1d5db;
         }
         pre { font-family: 'Kalpurush', 'Times New Roman', serif; }
-        .royal-blue-gradient { 
-            background: linear-gradient(145deg, #1e3a8a, #3730a3);
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+        .forest-green-gradient { 
+            background: linear-gradient(145deg, #166534, #22c55e);
+            box-shadow: 0 4px 6px rgba(34, 197, 94, 0.3);
             color: white;
             border: none;
             transition: all 0.3s ease;
         }
-        .royal-blue-gradient:hover { 
-            background: linear-gradient(145deg, #1e40af, #312e81);
-            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+        .forest-green-gradient:hover { 
+            background: linear-gradient(145deg, #14532d, #16a34a);
+            box-shadow: 0 6px 12px rgba(34, 197, 94, 0.4);
             transform: translateY(-2px);
         }
         .watermark {
@@ -44,7 +45,7 @@
         .watermark-text {
             font-size: 8rem;
             font-weight: bold;
-            color: #1e3a8a;
+            color: #166534;
             transform: rotate(-45deg);
         }
         @media (max-width: 768px) {
@@ -54,7 +55,7 @@
         }
         body {
             font-family: 'Kalpurush', 'Times New Roman', serif;
-            background: linear-gradient(135deg, #f0f4f8 0%, #e0e7ff 100%);
+            background: linear-gradient(135deg, #f0f9ff 0%, #f0fdf4 100%);
         }
         .card {
             background: rgba(255, 255, 255, 0.95);
@@ -79,9 +80,10 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             transition: all 0.2s ease;
             font-family: 'Kalpurush', 'Times New Roman', serif;
+            border: 1px solid #d1d5db;
         }
         .filter-select:focus {
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
         }
         .photo-preview {
             border-radius: 10px;
@@ -116,7 +118,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .gradient-text {
-            background: linear-gradient(135deg, #1e3a8a, #3730a3);
+            background: linear-gradient(135deg, #166534, #22c55e);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -132,22 +134,18 @@
         .online { background: #10b981; color: white; }
         .offline { background: #ef4444; color: white; }
         .form-label {
-            background: linear-gradient(135deg, #1e3a8a, #3730a3);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
+            color: #166534;
             margin-bottom: 8px;
-            display: inline-block;
+            display: block;
             font-weight: 600;
-            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
             font-size: 14px;
         }
         .placeholder-box {
             background: white;
             border-radius: 12px;
             padding: 12px 16px;
-            border: 2px dashed #d1d5db;
-            color: #6b7280;
+            border: 1px solid #d1d5db;
+            color: #374151;
             font-family: 'Kalpurush', 'Times New Roman', serif;
         }
         .file-name {
@@ -155,6 +153,9 @@
             color: #374151;
             margin-top: 4px;
             word-break: break-all;
+        }
+        .text-forest-green {
+            color: #166534;
         }
     </style>
 </head>
@@ -188,12 +189,12 @@
                     <div class="watermark-text">SMIA</div>
                 </div>
                 
-                <h2 class="text-2xl font-semibold mb-6 pb-4 border-b border-gray-100">নতুন পাঠ পরিকল্পনা জমা দিন</h2>
+                <h2 class="text-2xl font-semibold mb-6 pb-4 border-b border-gray-100 text-forest-green">নতুন পাঠ পরিকল্পনা জমা দিন</h2>
                 <form id="submissionForm" class="space-y-5">
                     <div class="relative">
                         <label class="form-label">শিক্ষকের নাম</label>
                         <input type="text" id="teacherNameInput" class="form-input placeholder-box" placeholder="আপনার নাম লিখুন" required>
-                        <div id="teacherNameList" class="hidden absolute z-10 bg-white rounded-xl shadow-lg mt-1 max-h-40 overflow-y-auto w-full"></div>
+                        <div id="teacherNameList" class="hidden absolute z-10 bg-white rounded-xl shadow-lg mt-1 max-h-40 overflow-y-auto w-full border border-gray-200"></div>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -226,7 +227,7 @@
                     <div>
                         <label class="form-label">ছবি যোগ করুন</label>
                         <input type="file" id="photoInput" multiple accept="image/*" class="hidden">
-                        <button type="button" id="addMorePhotosButton" class="w-full px-4 py-3 royal-blue-gradient rounded-xl shadow-sm text-base font-medium flex items-center justify-center gap-2">
+                        <button type="button" id="addMorePhotosButton" class="w-full px-4 py-3 forest-green-gradient rounded-xl shadow-sm text-base font-medium flex items-center justify-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                             </svg>
@@ -240,8 +241,8 @@
                         <label class="form-label">PDF যোগ করুন</label>
                         <div class="relative">
                             <input type="file" id="pdfInput" accept=".pdf" class="hidden">
-                            <button type="button" id="pdfUploadButton" class="w-full px-4 py-3 bg-white text-gray-700 rounded-xl shadow-sm text-base font-medium flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 hover:bg-gray-50 transition-colors placeholder-box">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                            <button type="button" id="pdfUploadButton" class="w-full px-4 py-3 bg-white text-gray-700 rounded-xl shadow-sm text-base font-medium flex items-center justify-center gap-2 border border-gray-300 hover:bg-gray-50 transition-colors placeholder-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd" />
                                 </svg>
                                 PDF ফাইল নির্বাচন করুন
@@ -251,7 +252,7 @@
                     </div>
                     
                     <div>
-                        <button type="submit" id="submitButton" class="w-full flex justify-center items-center px-4 py-3 royal-blue-gradient rounded-xl shadow-sm text-base font-medium disabled:opacity-50">
+                        <button type="submit" id="submitButton" class="w-full flex justify-center items-center px-4 py-3 forest-green-gradient rounded-xl shadow-sm text-base font-medium disabled:opacity-50">
                             পাঠ পরিকল্পনা জমা দিন
                         </button>
                     </div>
@@ -267,8 +268,8 @@
                 
                 <!-- Right Column Header -->
                 <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-                    <h2 class="text-2xl font-semibold">পাঠ পরিকল্পনা পর্যালোচনা</h2>
-                    <button id="adminAccessButton" class="px-4 py-2 royal-blue-gradient rounded-lg text-white text-sm font-medium flex items-center gap-1 transition-colors">
+                    <h2 class="text-2xl font-semibold text-forest-green">পাঠ পরিকল্পনা পর্যালোচনা</h2>
+                    <button id="adminAccessButton" class="px-4 py-2 forest-green-gradient rounded-lg text-white text-sm font-medium flex items-center gap-1 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                         </svg>
@@ -278,7 +279,7 @@
 
                 <!-- View 1: My Plans (Default) -->
                 <div id="myPlansView">
-                    <h3 class="text-xl font-semibold mb-4 text-gray-800">আমার জমা দেওয়া পাঠ পরিকল্পনা</h3>
+                    <h3 class="text-xl font-semibold mb-4 text-forest-green">আমার জমা দেওয়া পাঠ পরিকল্পনা</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div>
                             <label class="form-label text-sm">শ্রেণি দ্বারা ফিল্টার করুন</label>
@@ -294,7 +295,7 @@
                         </div>
                     </div>
                     <div id="myLoadingIndicator" class="flex items-center py-6 hidden">
-                        <svg class="spinner h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <svg class="spinner h-8 w-8 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                         <span class="ml-3 text-gray-600">আমার পরিকল্পনা লোড হচ্ছে...</span>
                     </div>
                     <div id="myPlanDisplay" class="space-y-4">
@@ -310,7 +311,7 @@
                 <!-- View 2: Admin Panel (Hidden) -->
                 <div id="adminView" class="hidden">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 id="adminHeader" class="text-xl font-semibold text-blue-700">অ্যাডমিন প্যানেল</h3>
+                        <h3 id="adminHeader" class="text-xl font-semibold text-green-700">অ্যাডমিন প্যানেল</h3>
                         <button id="adminLogoutButton" class="text-sm font-medium text-red-600 hover:text-red-800 flex items-center gap-1 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
@@ -341,7 +342,7 @@
                         </button>
                     </div>
                     <div id="adminLoadingIndicator" class="flex items-center py-6 hidden">
-                        <svg class="spinner h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <svg class="spinner h-8 w-8 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                         <span class="ml-3 text-gray-600">সমস্ত পরিকল্পনা লোড হচ্ছে...</span>
                     </div>
                     <p class="text-sm text-gray-600 mb-2">সমস্ত জমা দেওয়া পরিকল্পনা দেখানো হচ্ছে:</p>
@@ -373,7 +374,7 @@
                 <p id="passwordError" class="text-sm text-red-600 hidden">ভুল পাসওয়ার্ড। আবার চেষ্টা করুন।</p>
                 <div class="flex justify-end gap-3 mt-6">
                     <button type="button" id="cancelLoginButton" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">বাতিল</button>
-                    <button type="submit" class="px-4 py-2 royal-blue-gradient rounded-lg">লগইন</button>
+                    <button type="submit" class="px-4 py-2 forest-green-gradient rounded-lg">লগইন</button>
                 </div>
             </form>
         </div>
@@ -409,7 +410,7 @@
             </div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">সফল!</h3>
             <p class="text-sm text-gray-500 mb-6">আপনার পাঠ পরিকল্পনা সফলভাবে জমা দেওয়া হয়েছে।</p>
-            <button id="closeSuccessModalButton" class="w-full px-4 py-2 royal-blue-gradient rounded-lg">ঠিক আছে</button>
+            <button id="closeSuccessModalButton" class="w-full px-4 py-2 forest-green-gradient rounded-lg">ঠিক আছে</button>
         </div>
     </div>
 
@@ -508,7 +509,6 @@
         // Main UI
         const submissionForm = document.getElementById('submissionForm');
         const submitButton = document.getElementById('submitButton');
-        const submitSpinner = document.getElementById('submitSpinner');
         const messageBox = document.getElementById('messageBox');
         const adminAccessButton = document.getElementById('adminAccessButton');
         
@@ -588,6 +588,8 @@
 
                 // Confirm delete button listener
                 confirmDeleteButton.addEventListener('click', handleConfirmDelete);
+
+                console.log("Application initialized successfully");
 
             } catch (error) {
                 console.error('Initialization failed:', error);
@@ -679,7 +681,7 @@
                 
                 matches.forEach(name => {
                     const option = document.createElement('div');
-                    option.className = 'p-2 hover:bg-gray-100 cursor-pointer rounded-lg';
+                    option.className = 'p-2 hover:bg-gray-100 cursor-pointer rounded-lg border-b border-gray-100';
                     option.textContent = name;
                     option.addEventListener('click', () => {
                         teacherNameInput.value = name;
@@ -800,9 +802,10 @@
                 });
         }
 
-        // === FORM SUBMISSION ===
+        // === FORM SUBMISSION - FIXED ===
         async function handleFormSubmit(e) {
             e.preventDefault();
+            console.log("Form submission started");
 
             const teacherName = teacherNameInput.value.trim();
             const lessonNo = lessonNoSelect.value;
@@ -812,8 +815,27 @@
             const files = photoInput.files;
             const pdfFile = pdfInput.files[0];
 
-            if (!teacherName || !lessonNo || !className || !subject || (!textPlan && files.length === 0 && !pdfFile)) {
-                showMessage('শিক্ষকের নাম, পাঠ নং, শ্রেণি, বিষয় এবং পাঠ পরিকল্পনা (লেখা বা ছবি বা PDF) প্রয়োজন।', true);
+            console.log("Form data:", { teacherName, lessonNo, className, subject, textPlan, files: files.length, pdfFile: !!pdfFile });
+
+            // Validation
+            if (!teacherName) {
+                showMessage('শিক্ষকের নাম প্রয়োজন।', true);
+                return;
+            }
+            if (!lessonNo) {
+                showMessage('পাঠ নং প্রয়োজন।', true);
+                return;
+            }
+            if (!className) {
+                showMessage('শ্রেণি প্রয়োজন।', true);
+                return;
+            }
+            if (!subject) {
+                showMessage('বিষয় প্রয়োজন।', true);
+                return;
+            }
+            if (!textPlan && files.length === 0 && !pdfFile) {
+                showMessage('পাঠ পরিকল্পনা (লেখা বা ছবি বা PDF) প্রয়োজন।', true);
                 return;
             }
 
@@ -821,17 +843,21 @@
             submitButton.innerHTML = 'জমা দেওয়া হচ্ছে...';
 
             try {
+                console.log("Starting file uploads...");
+
                 // Upload images to Firebase Storage
                 const uploadedImageUrls = [];
                 if (files.length > 0) {
                     for (let i = 0; i < files.length; i++) {
                         const file = files[i];
                         if (file.type.startsWith('image/')) {
+                            console.log(`Uploading image: ${file.name}`);
                             const imageUrl = await uploadFileToStorage(file, 'images');
                             uploadedImageUrls.push({
                                 name: file.name,
                                 url: imageUrl
                             });
+                            console.log(`Image uploaded: ${imageUrl}`);
                         }
                     }
                 }
@@ -839,7 +865,9 @@
                 // Upload PDF to Firebase Storage
                 let pdfUrl = null;
                 if (pdfFile) {
+                    console.log(`Uploading PDF: ${pdfFile.name}`);
                     pdfUrl = await uploadFileToStorage(pdfFile, 'pdfs');
+                    console.log(`PDF uploaded: ${pdfUrl}`);
                 }
 
                 // Create plan data
@@ -859,14 +887,18 @@
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
+                console.log("Saving to Firestore:", newPlan);
+
                 // Save to Firestore
-                await db.collection('lessonPlans').add(newPlan);
+                const docRef = await db.collection('lessonPlans').add(newPlan);
+                console.log("Document written with ID: ", docRef.id);
                 
                 // Save teacher name
                 saveTeacherName(teacherName);
                 
                 // Show success modal
                 submissionSuccessModal.classList.remove('hidden');
+                console.log("Form submitted successfully");
                 
                 // Reset form
                 resetForm();
@@ -891,14 +923,20 @@
             photoPreviewContainer.innerHTML = "";
             selectedPhotos.classList.add('hidden');
             pdfFileName.textContent = '';
+            teacherNameList.classList.add('hidden');
         }
 
         async function uploadFileToStorage(file, folder) {
-            const storageRef = storage.ref();
-            const fileRef = storageRef.child(`${folder}/${currentUserId}/${Date.now()}-${file.name}`);
-            const snapshot = await fileRef.put(file);
-            const downloadURL = await snapshot.ref.getDownloadURL();
-            return downloadURL;
+            try {
+                const storageRef = storage.ref();
+                const fileRef = storageRef.child(`${folder}/${currentUserId}/${Date.now()}-${file.name}`);
+                const snapshot = await fileRef.put(file);
+                const downloadURL = await snapshot.ref.getDownloadURL();
+                return downloadURL;
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                throw new Error(`ফাইল আপলোড করতে ব্যর্থ: ${error.message}`);
+            }
         }
 
         // === "MY PLANS" VIEW LOGIC ===
@@ -1135,7 +1173,7 @@
             const pdfHtml = plan.pdf
                 ? `<h4 class="font-semibold text-lg mt-4">সংযুক্ত PDF:</h4>
                    <a href="${plan.pdf.url || '#'}" target="_blank" 
-                      class="text-blue-600 underline cursor-pointer hover:text-blue-800 transition-colors ${!plan.pdf.url ? 'pointer-events-none opacity-50' : ''}">
+                      class="text-green-600 underline cursor-pointer hover:text-green-800 transition-colors ${!plan.pdf.url ? 'pointer-events-none opacity-50' : ''}">
                       ${plan.pdf.name}
                    </a>`
                 : '';
