@@ -390,7 +390,7 @@
         // In a real app, passwords must NOT be stored in client-side code.
         // This is only for demonstration purposes.
         const ADMIN_1_PASS = "admin123";
-        const ADMIN_2_PASS = "superadmin456";
+        const ADMIN_2_PASS = "superadmin45";
         // --- !!! END WARNING !!! ---
 
         // --- Global State ---
