@@ -8,6 +8,7 @@
     <!-- ✅ CORRECT Firebase SDK for Realtime Database -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kalpurush&display=swap" rel="stylesheet">
     <style>
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -155,6 +156,18 @@
         }
         .text-forest-green {
             color: #166534;
+        }
+        .progress-bar {
+            height: 6px;
+            background-color: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #10b981;
+            transition: width 0.3s ease;
         }
     </style>
 </head>
@@ -326,19 +339,19 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div>
-                            <label class="form-label text-sm">সব শ্রেণি দ্বারা ফিল্টার করুন</label>
+                            <label class="form-label text-sm">শ্রেণি দ্বারা ফিল্টার করুন</label>
                             <select id="adminClassFilter" class="filter-select w-full px-3 py-2">
                                 <option value="">-- সব শ্রেণি --</option>
                             </select>
                         </div>
                         <div>
-                            <label class="form-label text-sm">সব বিষয় দ্বারা ফিল্টার করুন</label>
+                            <label class="form-label text-sm">বিষয় দ্বারা ফিল্টার করুন</label>
                             <select id="adminSubjectFilter" class="filter-select w-full px-3 py-2" disabled>
                                 <option value="">-- সব বিষয় --</option>
                             </select>
                         </div>
                         <div>
-                            <label class="form-label text-sm">সব পাঠ দ্বারা ফিল্টার করুন</label>
+                            <label class="form-label text-sm">পাঠ দ্বারা ফিল্টার করুন</label>
                             <select id="adminLessonFilter" class="filter-select w-full px-3 py-2" disabled>
                                 <option value="">-- সব পাঠ --</option>
                             </select>
@@ -454,6 +467,7 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const storage = firebase.storage();
 
         // === GLOBAL STATE ===
         let adminLevel = 0;
@@ -608,7 +622,7 @@
             }
         }
 
-        // === FORM SUBMISSION - FIXED ===
+        // === FORM SUBMISSION - WITH FILE UPLOAD ===
         async function handleFormSubmit(e) {
             e.preventDefault();
             console.log("Form submission started");
@@ -618,10 +632,10 @@
             const className = classSelect.value;
             const subject = subjectSelect.value;
             const textPlan = textPlanInput.value.trim();
-            const files = photoInput.files;
+            const imageFiles = photoInput.files;
             const pdfFile = pdfInput.files[0];
 
-            console.log("Form data:", { teacherName, lessonNo, className, subject, textPlan, files: files.length, pdfFile: !!pdfFile });
+            console.log("Form data:", { teacherName, lessonNo, className, subject, textPlan, files: imageFiles.length, pdfFile: !!pdfFile });
 
             // Validation
             if (!teacherName) {
@@ -640,7 +654,7 @@
                 showMessage('বিষয় প্রয়োজন।', true);
                 return;
             }
-            if (!textPlan && files.length === 0 && !pdfFile) {
+            if (!textPlan && imageFiles.length === 0 && !pdfFile) {
                 showMessage('পাঠ পরিকল্পনা (লেখা বা ছবি বা PDF) প্রয়োজন।', true);
                 return;
             }
@@ -651,7 +665,87 @@
             try {
                 console.log("Creating plan data...");
 
-                // Create plan data (without file upload for now)
+                // Upload images to Firebase Storage
+                const imageUrls = [];
+                if (imageFiles.length > 0) {
+                    for (let i = 0; i < imageFiles.length; i++) {
+                        const file = imageFiles[i];
+                        const fileName = `images/${Date.now()}_${file.name}`;
+                        const storageRef = storage.ref(fileName);
+                        
+                        // Show upload progress
+                        const progressBar = document.createElement('div');
+                        progressBar.className = 'progress-bar';
+                        const progressFill = document.createElement('div');
+                        progressFill.className = 'progress-fill';
+                        progressFill.style.width = '0%';
+                        progressBar.appendChild(progressFill);
+                        photoPreviewContainer.appendChild(progressBar);
+                        
+                        const uploadTask = storageRef.put(file);
+                        
+                        await new Promise((resolve, reject) => {
+                            uploadTask.on('state_changed',
+                                (snapshot) => {
+                                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                    progressFill.style.width = progress + '%';
+                                },
+                                (error) => {
+                                    reject(error);
+                                },
+                                async () => {
+                                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                                    imageUrls.push({
+                                        name: file.name,
+                                        url: downloadURL
+                                    });
+                                    progressBar.remove();
+                                    resolve();
+                                }
+                            );
+                        });
+                    }
+                }
+
+                // Upload PDF to Firebase Storage
+                let pdfData = null;
+                if (pdfFile) {
+                    const pdfFileName = `pdfs/${Date.now()}_${pdfFile.name}`;
+                    const storageRef = storage.ref(pdfFileName);
+                    
+                    const progressBar = document.createElement('div');
+                    progressBar.className = 'progress-bar';
+                    const progressFill = document.createElement('div');
+                    progressFill.className = 'progress-fill';
+                    progressFill.style.width = '0%';
+                    progressBar.appendChild(progressFill);
+                    photoPreviewContainer.appendChild(progressBar);
+                    
+                    const uploadTask = storageRef.put(pdfFile);
+                    
+                    await new Promise((resolve, reject) => {
+                        uploadTask.on('state_changed',
+                            (snapshot) => {
+                                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                progressFill.style.width = progress + '%';
+                            },
+                            (error) => {
+                                reject(error);
+                            },
+                            async () => {
+                                const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                                pdfData = {
+                                    name: pdfFile.name,
+                                    url: downloadURL
+                                };
+                                progressBar.remove();
+                                resolve();
+                            }
+                        );
+                    });
+                }
+
+                // Create plan data
                 const newPlan = {
                     userId: currentUserId,
                     teacherName: teacherName,
@@ -659,8 +753,8 @@
                     class: className,
                     subject: subject,
                     textPlan: textPlan,
-                    images: [], // Empty for now since we're not uploading files
-                    pdf: null, // Empty for now
+                    images: imageUrls,
+                    pdf: pdfData,
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
@@ -853,20 +947,24 @@
 
         // === "MY PLANS" VIEW LOGIC ===
         function renderMyPlansView() {
-            populateFilter(myClassFilter, myPlans, 'class', 'সব শ্রেণি');
+            // Only show plans for the selected class, subject and lesson
             const selectedClass = myClassFilter.value;
+            const selectedSubject = mySubjectFilter.value;
+            const selectedLesson = myLessonFilter.value;
+
+            // Populate filters with available options from user's plans
+            populateFilter(myClassFilter, myPlans, 'class', 'সব শ্রেণি');
             
             const subjectsForMyClass = myPlans.filter(p => !selectedClass || p.class === selectedClass);
             populateFilter(mySubjectFilter, subjectsForMyClass, 'subject', 'সব বিষয়');
-            const selectedSubject = mySubjectFilter.value;
             
             const lessonsForMyClassSubject = myPlans.filter(p => 
                 (!selectedClass || p.class === selectedClass) && 
                 (!selectedSubject || p.subject === selectedSubject)
             );
             populateFilter(myLessonFilter, lessonsForMyClassSubject, 'lessonNo', 'সব পাঠ');
-            const selectedLesson = myLessonFilter.value;
 
+            // Find the plan that matches all selected filters
             const planToDisplay = myPlans.find(p => 
                 (!selectedClass || p.class === selectedClass) && 
                 (!selectedSubject || p.subject === selectedSubject) &&
@@ -934,20 +1032,24 @@
         function renderAdminView() {
             if (adminLevel === 0) return;
 
-            populateFilter(adminClassFilter, allPlansCache, 'class', 'সব শ্রেণি');
+            // Admin can filter by class, subject and lesson
             const selectedClass = adminClassFilter.value;
+            const selectedSubject = adminSubjectFilter.value;
+            const selectedLesson = adminLessonFilter.value;
+
+            // Populate filters with available options from all plans
+            populateFilter(adminClassFilter, allPlansCache, 'class', 'সব শ্রেণি');
             
             const subjectsForClass = allPlansCache.filter(p => !selectedClass || p.class === selectedClass);
             populateFilter(adminSubjectFilter, subjectsForClass, 'subject', 'সব বিষয়');
-            const selectedSubject = adminSubjectFilter.value;
             
             const lessonsForClassSubject = allPlansCache.filter(p => 
                 (!selectedClass || p.class === selectedClass) && 
                 (!selectedSubject || p.subject === selectedSubject)
             );
             populateFilter(adminLessonFilter, lessonsForClassSubject, 'lessonNo', 'সব পাঠ');
-            const selectedLesson = adminLessonFilter.value;
 
+            // Filter plans based on selections
             const plansToDisplay = allPlansCache.filter(p => 
                 (!selectedClass || p.class === selectedClass) &&
                 (!selectedSubject || p.subject === selectedSubject) &&
@@ -1108,6 +1210,41 @@
                 deleteConfirmModal.classList.add('hidden');
                 delete confirmDeleteButton.dataset.planId;
             }
+        }
+
+        // === BULK DELETE FUNCTIONALITY ===
+        function handleBulkDelete() {
+            const selectedClass = adminClassFilter.value;
+            const selectedSubject = adminSubjectFilter.value;
+            const selectedLesson = adminLessonFilter.value;
+
+            const plansToDelete = allPlansCache.filter(p => 
+                (!selectedClass || p.class === selectedClass) &&
+                (!selectedSubject || p.subject === selectedSubject) &&
+                (!selectedLesson || p.lessonNo === parseInt(selectedLesson))
+            );
+
+            if (plansToDelete.length === 0) {
+                showMessage('কোনো পরিকল্পনা মুছার জন্য নির্বাচন করা হয়নি।', true);
+                return;
+            }
+
+            if (!confirm(`আপনি কি ${plansToDelete.length}টি পরিকল্পনা মুছে ফেলতে চান? এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।`)) {
+                return;
+            }
+
+            const deletePromises = plansToDelete.map(plan => 
+                db.ref(`lessonPlans/${plan.id}`).remove()
+            );
+
+            Promise.all(deletePromises)
+                .then(() => {
+                    showMessage(`${plansToDelete.length}টি পরিকল্পনা সফলভাবে মুছে ফেলা হয়েছে।`, false);
+                })
+                .catch(error => {
+                    console.error('Error deleting plans:', error);
+                    showMessage('পরিকল্পনা মুছতে ব্যর্থ হয়েছে।', true);
+                });
         }
 
         // Make functions globally accessible
