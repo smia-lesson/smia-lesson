@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMIA Lesson Tracer-2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ✅ CORRECT Firebase SDK for Realtime Database -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kalpurush&display=swap" rel="stylesheet">
     <style>
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -156,26 +156,17 @@
         .text-forest-green {
             color: #166534;
         }
-        .progress-bar {
-            height: 6px;
-            background-color: #e5e7eb;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-        .progress-fill {
-            height: 100%;
-            background-color: #10b981;
-            transition: width 0.3s ease;
-        }
     </style>
 </head>
 <body class="p-4 md:p-8">
+    <!-- Connection Status Indicator -->
     <div id="connectionStatus" class="connection-status hidden">
         <span id="statusText"></span>
     </div>
 
+    <!-- Main Container -->
     <div class="max-w-7xl mx-auto relative">
+        <!-- Watermark -->
         <div class="watermark">
             <div class="watermark-text">SMIA</div>
         </div>
@@ -187,9 +178,12 @@
 
         <div id="messageBox" class="hidden"></div>
 
+        <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
+            <!-- Column 1: Submission Form (Always Visible) -->
             <div class="card p-6 md:p-8 h-fit relative fade-in">
+                <!-- Watermark -->
                 <div class="watermark">
                     <div class="watermark-text">SMIA</div>
                 </div>
@@ -243,23 +237,6 @@
                     </div>
                     
                     <div>
-                        <label class="form-label">PDF যোগ করুন</label>
-                        <div class="relative">
-                            <input type="file" id="pdfInput" accept=".pdf" class="hidden">
-                            <button type="button" id="pdfUploadButton" class="w-full px-4 py-3 bg-white text-gray-700 rounded-xl shadow-sm text-base font-medium flex items-center justify-center gap-2 border border-gray-300 hover:bg-gray-50 transition-colors placeholder-box">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd" />
-                                </svg>
-                                PDF ফাইল নির্বাচন করুন
-                            </button>
-                            <div id="pdfFileName" class="file-name text-center mt-2"></div>
-                            <div id="pdfUploadProgress" class="progress-bar hidden">
-                                <div id="pdfProgressFill" class="progress-fill" style="width: 0%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
                         <button type="submit" id="submitButton" class="w-full flex justify-center items-center px-4 py-3 forest-green-gradient rounded-xl shadow-sm text-base font-medium disabled:opacity-50">
                             পাঠ পরিকল্পনা জমা দিন
                         </button>
@@ -267,11 +244,14 @@
                 </form>
             </div>
 
+            <!-- Column 2: Review Plans (Teacher View or Admin View) -->
             <div id="rightColumnContainer" class="card p-6 md:p-8 relative fade-in">
+                <!-- Watermark -->
                 <div class="watermark">
                     <div class="watermark-text">SMIA</div>
                 </div>
                 
+                <!-- Right Column Header -->
                 <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
                     <h2 class="text-2xl font-semibold text-forest-green">পাঠ পরিকল্পনা পর্যালোচনা</h2>
                     <button id="adminAccessButton" class="px-4 py-2 forest-green-gradient rounded-lg text-white text-sm font-medium flex items-center gap-1 transition-colors">
@@ -282,25 +262,26 @@
                     </button>
                 </div>
 
+                <!-- View 1: My Plans (Default) -->
                 <div id="myPlansView">
                     <h3 class="text-xl font-semibold mb-4 text-forest-green">আমার জমা দেওয়া পাঠ পরিকল্পনা</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div>
-                            <label class="form-label text-sm">শ্রেণি দ্বারা ফিল্টার করুন</label>
-                            <select id="myClassFilter" class="filter-select w-full px-3 py-2">
-                                <option value="">-- সব শ্রেণি --</option>
+                            <label class="form-label text-sm">শ্রেণি</label>
+                            <select id="myClassFilter" class="filter-select w-full px-3 py-2" required>
+                                <option value="">-- শ্রেণি নির্বাচন করুন --</option>
                             </select>
                         </div>
                         <div>
-                            <label class="form-label text-sm">বিষয় দ্বারা ফিল্টার করুন</label>
-                            <select id="mySubjectFilter" class="filter-select w-full px-3 py-2" disabled>
-                                <option value="">-- সব বিষয় --</option>
+                            <label class="form-label text-sm">বিষয়</label>
+                            <select id="mySubjectFilter" class="filter-select w-full px-3 py-2" required disabled>
+                                <option value="">-- বিষয় নির্বাচন করুন --</option>
                             </select>
                         </div>
                         <div>
-                            <label class="form-label text-sm">পাঠ দ্বারা ফিল্টার করুন</label>
-                            <select id="myLessonFilter" class="filter-select w-full px-3 py-2" disabled>
-                                <option value="">-- সব পাঠ --</option>
+                            <label class="form-label text-sm">পাঠ</label>
+                            <select id="myLessonFilter" class="filter-select w-full px-3 py-2" required disabled>
+                                <option value="">-- পাঠ নির্বাচন করুন --</option>
                             </select>
                         </div>
                     </div>
@@ -318,6 +299,7 @@
                     </div>
                 </div>
 
+                <!-- View 2: Admin Panel (Hidden) -->
                 <div id="adminView" class="hidden">
                     <div class="flex justify-between items-center mb-4">
                         <h3 id="adminHeader" class="text-xl font-semibold text-green-700">অ্যাডমিন প্যানেল</h3>
@@ -330,21 +312,21 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div>
-                            <label class="form-label text-sm">শ্রেণি দ্বারা ফিল্টার করুন</label>
-                            <select id="adminClassFilter" class="filter-select w-full px-3 py-2">
-                                <option value="">-- সব শ্রেণি --</option>
+                            <label class="form-label text-sm">শ্রেণি</label>
+                            <select id="adminClassFilter" class="filter-select w-full px-3 py-2" required>
+                                <option value="">-- শ্রেণি নির্বাচন করুন --</option>
                             </select>
                         </div>
                         <div>
-                            <label class="form-label text-sm">বিষয় দ্বারা ফিল্টার করুন</label>
-                            <select id="adminSubjectFilter" class="filter-select w-full px-3 py-2" disabled>
-                                <option value="">-- সব বিষয় --</option>
+                            <label class="form-label text-sm">বিষয়</label>
+                            <select id="adminSubjectFilter" class="filter-select w-full px-3 py-2" required disabled>
+                                <option value="">-- বিষয় নির্বাচন করুন --</option>
                             </select>
                         </div>
                         <div>
-                            <label class="form-label text-sm">পাঠ দ্বারা ফিল্টার করুন</label>
-                            <select id="adminLessonFilter" class="filter-select w-full px-3 py-2" disabled>
-                                <option value="">-- সব পাঠ --</option>
+                            <label class="form-label text-sm">পাঠ</label>
+                            <select id="adminLessonFilter" class="filter-select w-full px-3 py-2" required disabled>
+                                <option value="">-- পাঠ নির্বাচন করুন --</option>
                             </select>
                         </div>
                     </div>
@@ -353,20 +335,25 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                             </svg>
-                            নির্বাচিত সমস্ত পরিকল্পনা মুছুন
+                            নির্বাচিত পরিকল্পনা মুছুন
                         </button>
                     </div>
                     <div id="adminLoadingIndicator" class="flex items-center py-6 hidden">
                         <svg class="spinner h-8 w-8 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                         <span class="ml-3 text-gray-600">সমস্ত পরিকল্পনা লোড হচ্ছে...</span>
                     </div>
-                    <p class="text-sm text-gray-600 mb-2">সমস্ত জমা দেওয়া পরিকল্পনা দেখানো হচ্ছে:</p>
+                    <p class="text-sm text-gray-600 mb-2">জমা দেওয়া পরিকল্পনা দেখানো হচ্ছে:</p>
                     <div id="allPlansDisplay" class="space-y-4 max-h-[600px] overflow-y-auto p-2 rounded-xl bg-gray-50">
-                        </div>
+                        <!-- Admin plan cards will be injected here -->
+                    </div>
                 </div>
 
             </div>
-        </div> </div> <div id="passwordModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
+        </div> <!-- End Grid -->
+    </div> <!-- End Max-width Container -->
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
         <div class="modal-content p-6 w-full max-w-sm">
             <h3 class="text-lg font-medium mb-4">অ্যাডমিন অ্যাক্সেস</h3>
             <form id="passwordForm" class="space-y-4">
@@ -390,6 +377,7 @@
         </div>
     </div>
     
+    <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
         <div class="modal-content p-6 w-full max-w-md">
             <h3 class="text-lg font-medium text-red-700">মুছে ফেলার নিশ্চিতকরণ</h3>
@@ -401,6 +389,7 @@
         </div>
     </div>
 
+    <!-- Image Preview Modal -->
     <div id="imagePreviewModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
         <div class="relative max-w-4xl max-h-full">
             <button id="closePreviewButton" class="absolute -top-10 right-0 text-white text-2xl hover:text-gray-300 transition-colors">×</button>
@@ -408,6 +397,7 @@
         </div>
     </div>
 
+    <!-- Submission Success Modal -->
     <div id="submissionSuccessModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
         <div class="modal-content p-8 w-full max-w-sm text-center">
             <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 success-check">
@@ -421,6 +411,7 @@
         </div>
     </div>
 
+    <!-- Submission Error Modal -->
     <div id="submissionErrorModal" class="hidden fixed inset-0 modal flex items-center justify-center z-50 p-4">
         <div class="modal-content p-8 w-full max-w-sm text-center">
             <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -449,7 +440,6 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        const storage = firebase.storage();
 
         // === GLOBAL STATE ===
         let adminLevel = 0;
@@ -457,15 +447,16 @@
         let myPlans = [];
         let teacherNames = [];
         let currentUserId = localStorage.getItem('userId') || "user-" + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('userId', currentUserId);
-        
-        let selectedPhotosArray = [];
-        let selectedPdfFile = null;
+        let unsubscribeListener = null;
 
-        // === SECURITY WARNING & CONSTANTS ===
+        // Save userId to localStorage
+        localStorage.setItem('userId', currentUserId);
+
+        // === SECURITY WARNING ===
         const ADMIN_1_PASS = "admin123";
         const ADMIN_2_PASS = "superadmin456";
 
+        // === CLASS AND SUBJECT CONFIGURATION ===
         const CLASSES = [
             "প্লে", "নার্সারি", "এক", "দুই", "তিন", "চার", "পাঁচ", "ছয়", "সাত", "আট", "নয়", "দশ"
         ];
@@ -490,24 +481,29 @@
         const passwordModal = document.getElementById('passwordModal');
         const passwordForm = document.getElementById('passwordForm');
         const passwordError = document.getElementById('passwordError');
+        const cancelLoginButton = document.getElementById('cancelLoginButton');
+        const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+        const deletePlanInfo = document.getElementById('deletePlanInfo');
+        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        const cancelDeleteButton = document.getElementById('cancelDeleteButton');
+        const imagePreviewModal = document.getElementById('imagePreviewModal');
+        const previewImage = document.getElementById('previewImage');
+        const closePreviewButton = document.getElementById('closePreviewButton');
         const submissionSuccessModal = document.getElementById('submissionSuccessModal');
         const submissionErrorModal = document.getElementById('submissionErrorModal');
-        const errorMessage = document.getElementById('errorMessage');
-        const deleteConfirmModal = document.getElementById('deleteConfirmModal');
-        const cancelLoginButton = document.getElementById('cancelLoginButton');
-        const cancelDeleteButton = document.getElementById('cancelDeleteButton');
-        const closePreviewButton = document.getElementById('closePreviewButton');
         const closeSuccessModalButton = document.getElementById('closeSuccessModalButton');
         const closeErrorModalButton = document.getElementById('closeErrorModalButton');
+        const errorMessage = document.getElementById('errorMessage');
 
         // Main UI
         const submissionForm = document.getElementById('submissionForm');
         const submitButton = document.getElementById('submitButton');
-        const connectionStatus = document.getElementById('connectionStatus');
-        const statusText = document.getElementById('statusText');
+        const messageBox = document.getElementById('messageBox');
+        const adminAccessButton = document.getElementById('adminAccessButton');
         
         // Form Fields
         const teacherNameInput = document.getElementById('teacherNameInput');
+        const teacherNameList = document.getElementById('teacherNameList');
         const lessonNoSelect = document.getElementById('lessonNoSelect');
         const classSelect = document.getElementById('classSelect');
         const subjectSelect = document.getElementById('subjectSelect');
@@ -515,413 +511,690 @@
         const photoInput = document.getElementById('photoInput');
         const addMorePhotosButton = document.getElementById('addMorePhotosButton');
         const photoPreviewContainer = document.getElementById('photoPreviewContainer');
-        const pdfInput = document.getElementById('pdfInput');
-        const pdfUploadButton = document.getElementById('pdfUploadButton');
-        const pdfFileName = document.getElementById('pdfFileName');
-        // New elements for progress
-        const pdfUploadProgress = document.getElementById('pdfUploadProgress');
-        const pdfProgressFill = document.getElementById('pdfProgressFill');
+        const selectedPhotos = document.getElementById('selectedPhotos');
 
         // My Plans View
         const myPlansView = document.getElementById('myPlansView');
         const myClassFilter = document.getElementById('myClassFilter');
+        const mySubjectFilter = document.getElementById('mySubjectFilter');
         const myLessonFilter = document.getElementById('myLessonFilter');
         const myPlanDisplay = document.getElementById('myPlanDisplay');
         const myLoadingIndicator = document.getElementById('myLoadingIndicator');
-        
+
         // Admin View
         const adminView = document.getElementById('adminView');
+        const adminHeader = document.getElementById('adminHeader');
         const adminLogoutButton = document.getElementById('adminLogoutButton');
-        const allPlansDisplay = document.getElementById('allPlansDisplay');
         const adminClassFilter = document.getElementById('adminClassFilter');
+        const adminSubjectFilter = document.getElementById('adminSubjectFilter');
         const adminLessonFilter = document.getElementById('adminLessonFilter');
+        const allPlansDisplay = document.getElementById('allPlansDisplay');
+        const adminLoadingIndicator = document.getElementById('adminLoadingIndicator');
         const bulkDeleteButton = document.getElementById('bulkDeleteButton');
 
-
-        // === UTILITY FUNCTIONS ===
-
-        function showModal(modalElement) {
-            modalElement.classList.remove('hidden');
-        }
-
-        function hideModal(modalElement) {
-            modalElement.classList.add('hidden');
-        }
-        
-        function updateSubmitButton(text, isDisabled = false) {
-            submitButton.innerHTML = text;
-            submitButton.disabled = isDisabled;
-            // Add spinner for 'uploading' state
-            if (isDisabled) {
-                submitButton.innerHTML = `<svg class="spinner h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>${text}`;
-            } else {
-                submitButton.innerHTML = text;
-            }
-        }
-
-        function showMessage(type, message) {
-            errorMessage.textContent = message;
-            if (type === 'success') {
-                showModal(submissionSuccessModal);
-            } else {
-                showModal(submissionErrorModal);
-            }
-        }
-        
-        function populateLessons(selectElement) {
-            selectElement.innerHTML = '<option value="">-- পাঠ নং নির্বাচন করুন --</option>';
-            for (let i = 1; i <= 50; i++) {
-                const option = document.createElement('option');
-                option.value = String(i);
-                option.textContent = `পাঠ ${i}`;
-                selectElement.appendChild(option);
-            }
-        }
-
-        function updateSubjects(classValue, selectElement) {
-            selectElement.innerHTML = '<option value="">-- বিষয় নির্বাচন করুন --</option>';
-            if (classValue && SUBJECTS_BY_CLASS[classValue]) {
-                SUBJECTS_BY_CLASS[classValue].forEach(subject => {
-                    const option = document.createElement('option');
-                    option.value = subject;
-                    option.textContent = subject;
-                    selectElement.appendChild(option);
-                });
-            }
-        }
-
-
-        // === FORM INITIALIZATION & EVENTS ===
-
+        // === FORM INITIALIZATION ===
         function initializeFormFields() {
-            populateLessons(lessonNoSelect);
+            console.log("Initializing form fields...");
+            
+            // Clear existing options
+            lessonNoSelect.innerHTML = '<option value="">-- পাঠ নং নির্বাচন করুন --</option>';
+            classSelect.innerHTML = '<option value="">-- শ্রেণি নির্বাচন করুন --</option>';
+            subjectSelect.innerHTML = '<option value="">-- বিষয় নির্বাচন করুন --</option>';
+            myClassFilter.innerHTML = '<option value="">-- শ্রেণি নির্বাচন করুন --</option>';
+            adminClassFilter.innerHTML = '<option value="">-- শ্রেণি নির্বাচন করুন --</option>';
 
+            // Populate class dropdown
             CLASSES.forEach(className => {
                 const option = document.createElement('option');
                 option.value = className;
                 option.textContent = className;
-                classSelect.appendChild(option.cloneNode(true));
-                myClassFilter.appendChild(option.cloneNode(true));
-                adminClassFilter.appendChild(option.cloneNode(true));
+                classSelect.appendChild(option);
+                
+                const myOption = document.createElement('option');
+                myOption.value = className;
+                myOption.textContent = className;
+                myClassFilter.appendChild(myOption);
+                
+                const adminOption = document.createElement('option');
+                adminOption.value = className;
+                adminOption.textContent = className;
+                adminClassFilter.appendChild(adminOption);
             });
+            
+            // Populate lesson number dropdown
+            for (let i = 1; i <= 12; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                lessonNoSelect.appendChild(option);
+            }
+
+            // Set default values
+            classSelect.value = "";
+            subjectSelect.value = "";
+            lessonNoSelect.value = "";
+
+            console.log("Form fields initialized successfully");
         }
         
-        classSelect.addEventListener('change', (e) => {
-            updateSubjects(e.target.value, subjectSelect);
-        });
-
-        // Initialize on load
-        initializeFormFields();
-
-        // Attach file input to the buttons
-        addMorePhotosButton.addEventListener('click', () => photoInput.click());
-        pdfUploadButton.addEventListener('click', () => pdfInput.click());
-
-        // Handle Photo Selection
-        photoInput.addEventListener('change', (e) => {
-            const files = e.target.files;
-            if (files.length > 0) {
-                // Combine new files with existing ones
-                selectedPhotosArray = selectedPhotosArray.concat(Array.from(files));
-                renderPhotoPreviews();
+        function updateSubjectOptions() {
+            const selectedClass = classSelect.value;
+            subjectSelect.innerHTML = '<option value="">-- বিষয় নির্বাচন করুন --</option>';
+            
+            if (selectedClass && SUBJECTS_BY_CLASS[selectedClass]) {
+                SUBJECTS_BY_CLASS[selectedClass].forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject;
+                    option.textContent = subject;
+                    subjectSelect.appendChild(option);
+                });
             }
-            // Reset input value to allow selecting same file again later
-            e.target.value = null; 
-        });
-
-        // Handle PDF Selection
-        pdfInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                selectedPdfFile = file;
-                pdfFileName.textContent = `নির্বাচিত ফাইল: ${file.name}`;
-                pdfUploadProgress.classList.add('hidden'); // Hide progress on selection
-            } else {
-                selectedPdfFile = null;
-                pdfFileName.textContent = '';
-                pdfUploadProgress.classList.add('hidden');
-            }
-        });
-
-        function renderPhotoPreviews() {
-            photoPreviewContainer.innerHTML = '';
-            selectedPhotosArray.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const div = document.createElement('div');
-                    div.className = 'relative w-20 h-20 photo-preview';
-                    div.innerHTML = `
-                        <img src="${e.target.result}" alt="Photo ${index + 1}" class="w-full h-full object-cover rounded-lg shadow-md">
-                        <button type="button" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 h-6 w-6 text-xs flex items-center justify-center hover:bg-red-700 transition-colors" onclick="removePhoto(${index})">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                    `;
-                    photoPreviewContainer.appendChild(div);
-                };
-                reader.readAsDataURL(file);
-            });
         }
 
-        window.removePhoto = (index) => {
-            selectedPhotosArray.splice(index, 1);
-            renderPhotoPreviews();
-            photoInput.value = null; 
-        };
-
-        // === CORE SUBMISSION LOGIC (File Upload & DB Save) ===
-        
-        // Helper function to handle a single file upload
-        function uploadFile(file, path, isPdf = false) {
-            return new Promise((resolve, reject) => {
-                const fileRef = storage.ref(`${path}/${file.name}`);
-                const uploadTask = fileRef.put(file);
-
-                uploadTask.on('state_changed', 
-                    (snapshot) => {
-                        // Update PDF progress bar if it's a PDF
-                        if (isPdf) {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            pdfUploadProgress.classList.remove('hidden');
-                            pdfProgressFill.style.width = `${progress}%`;
-                        }
-                    },
-                    (error) => {
-                        reject(error);
-                    },
-                    () => {
-                        uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-                            resolve(downloadURL);
-                        }).catch(reject);
-                    }
-                );
-            });
-        }
-
-        submissionForm.addEventListener('submit', async (e) => {
+        // === FORM SUBMISSION - FIXED ===
+        async function handleFormSubmit(e) {
             e.preventDefault();
+            console.log("Form submission started");
 
-            // 1. Validate mandatory fields
             const teacherName = teacherNameInput.value.trim();
             const lessonNo = lessonNoSelect.value;
-            const classValue = classSelect.value;
+            const className = classSelect.value;
             const subject = subjectSelect.value;
             const textPlan = textPlanInput.value.trim();
+            const files = photoInput.files;
 
-            if (!teacherName || !lessonNo || !classValue || !subject) {
-                showMessage('error', 'শিক্ষকের নাম, পাঠ নং, শ্রেণি এবং বিষয় অবশ্যই নির্বাচন করতে হবে।');
+            console.log("Form data:", { teacherName, lessonNo, className, subject, textPlan, files: files.length });
+
+            // Validation
+            if (!teacherName) {
+                showMessage('শিক্ষকের নাম প্রয়োজন।', true);
                 return;
             }
-            if (!textPlan && selectedPhotosArray.length === 0 && !selectedPdfFile) {
-                showMessage('error', 'অনুগ্রহ করে পাঠের বিস্তারিত বিবরণ লিখুন অথবা অন্তত একটি ছবি/পিডিএফ যোগ করুন।');
+            if (!lessonNo) {
+                showMessage('পাঠ নং প্রয়োজন।', true);
                 return;
             }
-            
-            updateSubmitButton('জমা দেওয়া হচ্ছে... (আপলোড চলছে)', true);
+            if (!className) {
+                showMessage('শ্রেণি প্রয়োজন।', true);
+                return;
+            }
+            if (!subject) {
+                showMessage('বিষয় প্রয়োজন।', true);
+                return;
+            }
+            if (!textPlan && files.length === 0) {
+                showMessage('পাঠ পরিকল্পনা (লেখা বা ছবি) প্রয়োজন।', true);
+                return;
+            }
 
-            const timestamp = Date.now();
-            const storagePathBase = `plans/${currentUserId}/${timestamp}`;
-            const uploadPromises = [];
-            let pdfUrl = '';
-            const photoUrls = [];
+            submitButton.disabled = true;
+            submitButton.innerHTML = 'জমা দেওয়া হচ্ছে...';
 
             try {
-                // 2. Upload PDF (if selected)
-                if (selectedPdfFile) {
-                    pdfUrl = await uploadFile(selectedPdfFile, storagePathBase, true);
-                    pdfUploadProgress.classList.add('hidden'); // Hide on completion
-                }
+                console.log("Creating plan data...");
 
-                // 3. Upload Photos (if selected)
-                for (let i = 0; i < selectedPhotosArray.length; i++) {
-                    const photoFile = selectedPhotosArray[i];
-                    // Create a unique path for each photo
-                    const photoDownloadUrl = await uploadFile(photoFile, `${storagePathBase}/photos`);
-                    photoUrls.push(photoDownloadUrl);
-                }
-
-                // 4. Prepare data for Realtime Database
-                const planData = {
+                // Create plan data (without file upload for now)
+                const newPlan = {
+                    userId: currentUserId,
                     teacherName: teacherName,
-                    lessonNo: lessonNo,
-                    class: classValue,
+                    lessonNo: parseInt(lessonNo),
+                    class: className,
                     subject: subject,
                     textPlan: textPlan,
-                    photoUrls: photoUrls,
-                    pdfUrl: pdfUrl,
-                    timestamp: timestamp,
-                    userId: currentUserId,
-                    status: 'Pending'
+                    images: [], // Empty for now since we're not uploading files
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
                 };
 
-                // 5. Save data to Realtime Database
-                const newPlanRef = db.ref('plans').push();
-                await newPlanRef.set(planData);
+                console.log("Saving to Firebase Realtime Database:", newPlan);
 
-                // 6. Success handling
-                showMessage('success', 'আপনার পাঠ পরিকল্পনা সফলভাবে জমা দেওয়া হয়েছে।');
+                // Save to Firebase Realtime Database
+                const newPlanRef = db.ref('lessonPlans').push();
+                await newPlanRef.set(newPlan);
                 
-                // Reset everything
-                submissionForm.reset();
-                selectedPhotosArray = [];
-                selectedPdfFile = null;
-                renderPhotoPreviews();
-                pdfFileName.textContent = '';
-                pdfUploadProgress.classList.add('hidden');
+                console.log("Document written with ID: ", newPlanRef.key);
                 
-                updateSubmitButton('পাঠ পরিকল্পনা জমা দিন', false);
+                // Save teacher name
+                saveTeacherName(teacherName);
                 
-                // Re-fetch my plans to update display
-                fetchMyPlans(); 
+                // Show success modal
+                submissionSuccessModal.classList.remove('hidden');
+                console.log("Form submitted successfully");
+                
+                // Reset form
+                resetForm();
 
             } catch (error) {
-                console.error("Submission/Upload Error:", error);
-                // Clean up any partially set progress/status
-                pdfUploadProgress.classList.add('hidden');
-                
-                // Check for common Firebase Storage errors
-                let userFriendlyError = 'ইন্টারনেট সংযোগ বা সার্ভার ত্রুটির কারণে জমা দেওয়া সম্ভব হয়নি। আবার চেষ্টা করুন।';
-                if (error.code && error.code.includes('storage/unauthorized')) {
-                    userFriendlyError = 'ফাইল আপলোডের অনুমতি নেই। আপনার ফায়ারবেস স্টোরেজ রুলস পরীক্ষা করুন।';
-                } else if (error.code && error.code.includes('storage/cannot-slice-blob')) {
-                    userFriendlyError = 'ফাইলটি আপলোডের জন্য অনুপযোগী। ছোট ফাইল দিয়ে চেষ্টা করুন।';
-                }
-                
-                showMessage('error', `ত্রুটি: ${userFriendlyError}`);
-                updateSubmitButton('পাঠ পরিকল্পনা জমা দিন', false);
+                console.error('Error submitting plan:', error);
+                errorMessage.textContent = `ত্রুটি: ${error.message}`;
+                submissionErrorModal.classList.remove('hidden');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'পাঠ পরিকল্পনা জমা দিন';
             }
-        });
+        }
 
+        function resetForm() {
+            classSelect.value = "";
+            subjectSelect.innerHTML = '<option value="">-- বিষয় নির্বাচন করুন --</option>';
+            lessonNoSelect.value = "";
+            textPlanInput.value = "";
+            photoInput.value = "";
+            photoPreviewContainer.innerHTML = "";
+            selectedPhotos.classList.add('hidden');
+            teacherNameList.classList.add('hidden');
+        }
 
-        // === DATABASE DATA RETRIEVAL & DISPLAY (For My Plans) ===
-
-        function fetchMyPlans() {
-            myLoadingIndicator.classList.remove('hidden');
-            // Fetch plans specific to the current user ID
-            const myPlansRef = db.ref('plans').orderByChild('userId').equalTo(currentUserId);
-            
-            // Use .on() for real-time updates for my plans view
-            myPlansRef.on('value', (snapshot) => {
-                myPlans = [];
-                snapshot.forEach((childSnapshot) => {
-                    myPlans.push({ id: childSnapshot.key, ...childSnapshot.val() });
-                });
-                renderMyPlans();
-                myLoadingIndicator.classList.add('hidden');
-            }, (error) => {
-                console.error("Error fetching my plans:", error);
-                myLoadingIndicator.classList.add('hidden');
-                myPlanDisplay.innerHTML = '<p class="text-center text-red-500">পরিকল্পনা লোড করতে ব্যর্থ।</p>';
-            });
+        // === TEACHER NAME MANAGEMENT ===
+        function loadTeacherNames() {
+            const savedNames = localStorage.getItem('teacherNames');
+            if (savedNames) {
+                teacherNames = JSON.parse(savedNames);
+            }
         }
         
-        function renderMyPlans() {
-            const classFilter = myClassFilter.value;
-            const lessonFilter = myLessonFilter.value;
+        function saveTeacherName(name) {
+            if (!teacherNames.includes(name)) {
+                teacherNames.push(name);
+                localStorage.setItem('teacherNames', JSON.stringify(teacherNames));
+            }
+        }
+        
+        function handleTeacherNameInput() {
+            const input = teacherNameInput.value.toLowerCase();
+            teacherNameList.innerHTML = '';
             
-            const filteredPlans = myPlans.filter(plan => {
-                const matchesClass = classFilter ? plan.class === classFilter : true;
-                const matchesLesson = lessonFilter ? plan.lessonNo === lessonFilter : true;
-                return matchesClass && matchesLesson;
-            }).sort((a, b) => b.timestamp - a.timestamp); 
+            if (input.length > 0) {
+                const matches = teacherNames.filter(name => 
+                    name.toLowerCase().includes(input)
+                );
+                
+                matches.forEach(name => {
+                    const option = document.createElement('div');
+                    option.className = 'p-2 hover:bg-gray-100 cursor-pointer rounded-lg border-b border-gray-100';
+                    option.textContent = name;
+                    option.addEventListener('click', () => {
+                        teacherNameInput.value = name;
+                        teacherNameList.innerHTML = '';
+                        teacherNameList.classList.add('hidden');
+                    });
+                    teacherNameList.appendChild(option);
+                });
+                
+                if (matches.length > 0) {
+                    teacherNameList.classList.remove('hidden');
+                } else {
+                    teacherNameList.classList.add('hidden');
+                }
+            } else {
+                teacherNameList.classList.add('hidden');
+            }
+        }
 
-            myPlanDisplay.innerHTML = '';
+        // === PHOTO MANAGEMENT ===
+        function handlePhotoSelection() {
+            const files = photoInput.files;
+            if (files.length > 0) {
+                selectedPhotos.classList.remove('hidden');
+                selectedPhotos.innerHTML = `<strong>নির্বাচিত ছবি:</strong> ${files.length}টি`;
+                
+                photoPreviewContainer.innerHTML = '';
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            addPhotoPreview(file.name, e.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            } else {
+                selectedPhotos.classList.add('hidden');
+                photoPreviewContainer.innerHTML = '';
+            }
+        }
+        
+        function addPhotoPreview(filename, dataUrl) {
+            const previewItem = document.createElement('div');
+            previewItem.className = 'photo-preview relative inline-block';
+            
+            previewItem.innerHTML = `
+                <img src="${dataUrl}" alt="${filename}" class="w-16 h-16 object-cover rounded-lg cursor-pointer">
+                <button type="button" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs hover:bg-red-600 transition-colors" onclick="removePhotoPreview(this)">×</button>
+            `;
+            
+            const img = previewItem.querySelector('img');
+            img.addEventListener('click', () => {
+                previewImage.src = dataUrl;
+                imagePreviewModal.classList.remove('hidden');
+            });
+            
+            photoPreviewContainer.appendChild(previewItem);
+        }
+        
+        function removePhotoPreview(button) {
+            button.parentElement.remove();
+            // Update file input
+            const files = photoInput.files;
+            if (files.length === 0) {
+                selectedPhotos.classList.add('hidden');
+            } else {
+                selectedPhotos.innerHTML = `<strong>নির্বাচিত ছবি:</strong> ${files.length}টি`;
+            }
+        }
 
-            if (filteredPlans.length === 0) {
+        // === FIREBASE DATA MANAGEMENT ===
+        function setupPlanListener() {
+            myLoadingIndicator.classList.remove('hidden');
+            adminLoadingIndicator.classList.remove('hidden');
+
+            if (unsubscribeListener) {
+                db.ref('lessonPlans').off('value', unsubscribeListener);
+            }
+
+            unsubscribeListener = db.ref('lessonPlans').on('value', (snapshot) => {
+                allPlansCache = [];
+                snapshot.forEach((childSnapshot) => {
+                    allPlansCache.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+
+                myPlans = allPlansCache.filter(plan => plan.userId === currentUserId);
+                
+                console.log(`Real-time update: ${allPlansCache.length} total plans, ${myPlans.length} are mine.`);
+
+                renderMyPlansView();
+                renderAdminView();
+                
+                myLoadingIndicator.classList.add('hidden');
+                adminLoadingIndicator.classList.add('hidden');
+            }, (error) => {
+                console.error("Error in real-time listener:", error);
+                showMessage('রিয়েল-টাইম ডেটা লোড করতে সমস্যা হয়েছে।', true);
+                myLoadingIndicator.classList.add('hidden');
+                adminLoadingIndicator.classList.add('hidden');
+            });
+        }
+
+        // === "MY PLANS" VIEW LOGIC ===
+        function renderMyPlansView() {
+            const selectedClass = myClassFilter.value;
+            const selectedSubject = mySubjectFilter.value;
+            const selectedLesson = myLessonFilter.value;
+
+            // Enable/disable filters based on selection
+            mySubjectFilter.disabled = !selectedClass;
+            myLessonFilter.disabled = !selectedClass || !selectedSubject;
+
+            // Update subject options based on selected class
+            if (selectedClass) {
+                const subjectsForMyClass = [...new Set(myPlans
+                    .filter(p => p.class === selectedClass)
+                    .map(p => p.subject)
+                )].sort();
+                
+                mySubjectFilter.innerHTML = '<option value="">-- বিষয় নির্বাচন করুন --</option>';
+                subjectsForMyClass.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject;
+                    option.textContent = subject;
+                    if (subject === selectedSubject) {
+                        option.selected = true;
+                    }
+                    mySubjectFilter.appendChild(option);
+                });
+            } else {
+                mySubjectFilter.innerHTML = '<option value="">-- বিষয় নির্বাচন করুন --</option>';
+            }
+
+            // Update lesson options based on selected class and subject
+            if (selectedClass && selectedSubject) {
+                const lessonsForMyClassSubject = [...new Set(myPlans
+                    .filter(p => p.class === selectedClass && p.subject === selectedSubject)
+                    .map(p => p.lessonNo)
+                )].sort((a, b) => a - b);
+                
+                myLessonFilter.innerHTML = '<option value="">-- পাঠ নির্বাচন করুন --</option>';
+                lessonsForMyClassSubject.forEach(lesson => {
+                    const option = document.createElement('option');
+                    option.value = lesson;
+                    option.textContent = lesson;
+                    if (lesson === parseInt(selectedLesson)) {
+                        option.selected = true;
+                    }
+                    myLessonFilter.appendChild(option);
+                });
+            } else {
+                myLessonFilter.innerHTML = '<option value="">-- পাঠ নির্বাচন করুন --</option>';
+            }
+
+            // Find and display the plan
+            const planToDisplay = myPlans.find(p => 
+                p.class === selectedClass && 
+                p.subject === selectedSubject &&
+                p.lessonNo === parseInt(selectedLesson)
+            );
+            
+            if (planToDisplay) {
+                myPlanDisplay.innerHTML = renderPlanCard(planToDisplay, false);
+            } else if (myPlans.length === 0) {
+                 myPlanDisplay.innerHTML = `
+                    <div class="text-center py-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-gray-500">আপনি এখনো কোনো পাঠ পরিকল্পনা জমা দেননি।</p>
+                    </div>
+                 `;
+            } else if (!selectedClass || !selectedSubject || !selectedLesson) {
                 myPlanDisplay.innerHTML = `
                     <div class="text-center py-8">
-                        <p class="text-gray-500">আপনার ${classFilter ? classFilter + ' শ্রেণির' : ''} জন্য কোনো পরিকল্পনা পাওয়া যায়নি।</p>
-                    </div>`;
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-gray-500">একটি শ্রেণি, বিষয় এবং পাঠ নির্বাচন করুন।</p>
+                    </div>
+                `;
+            } else {
+                myPlanDisplay.innerHTML = `
+                    <div class="text-center py-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-gray-500">এই শ্রেণি, বিষয় এবং পাঠের জন্য কোনো পরিকল্পনা পাওয়া যায়নি।</p>
+                    </div>
+                `;
+            }
+        }
+
+        // === ADMIN VIEW LOGIC ===
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const role = document.getElementById('adminRole').value;
+            const pass = document.getElementById('adminPassword').value;
+
+            if (role === 'admin1' && pass === ADMIN_1_PASS) {
+                adminLevel = 1;
+                adminHeader.textContent = "অ্যাডমিন প্যানেল (শুধুমাত্র দেখুন)";
+            } else if (role === 'admin2' && pass === ADMIN_2_PASS) {
+                adminLevel = 2;
+                adminHeader.textContent = "অ্যাডমিন প্যানেল (দেখুন ও মুছুন)";
+            } else {
+                passwordError.classList.remove('hidden');
                 return;
             }
 
-            filteredPlans.forEach(plan => {
-                const date = new Date(plan.timestamp).toLocaleDateString('bn-BD');
-                const time = new Date(plan.timestamp).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
-                
-                myPlanDisplay.innerHTML += `
-                    <div class="plan-card p-4">
-                        <div class="font-bold text-lg text-forest-green">${plan.class} - ${plan.subject} (পাঠ ${plan.lessonNo})</div>
-                        <p class="text-sm text-gray-500 mb-2">জমা দেওয়া হয়েছে: ${date} ${time}</p>
-                        ${plan.textPlan ? `<pre class="whitespace-pre-wrap text-sm text-gray-700 mt-2 p-2 bg-gray-50 rounded-lg">${plan.textPlan.substring(0, 100)}${plan.textPlan.length > 100 ? '...' : ''}</pre>` : ''}
-                        <div class="flex gap-2 mt-3 text-sm text-gray-600">
-                            ${plan.photoUrls && plan.photoUrls.length > 0 ? `<span class="flex items-center gap-1"><svg class="h-4 w-4 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg>${plan.photoUrls.length} টি ছবি</span>` : ''}
-                            ${plan.pdfUrl ? `<span class="flex items-center gap-1"><svg class="h-4 w-4 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zM10 8a1 1 0 011 1v2h2a1 1 0 110 2h-2v2a1 1 0 11-2 0v-2H7a1 1 0 110-2h2V9a1 1 0 011-1z" clip-rule="evenodd" /></svg>PDF সংযুক্ত</span>` : ''}
-                        </div>
-                        <button class="mt-3 text-sm font-medium text-green-600 hover:text-green-800" onclick="showFullPlan('${plan.id}')">সম্পূর্ণ দেখুন</button>
-                    </div>
-                `;
-            });
+            passwordError.classList.add('hidden');
+            passwordModal.classList.add('hidden');
+            passwordForm.reset();
+            
+            myPlansView.classList.add('hidden');
+            adminView.classList.remove('hidden');
+            adminAccessButton.classList.add('hidden');
+
+            renderAdminView();
         }
 
-        // Add event listeners for filters
-        myClassFilter.addEventListener('change', renderMyPlans);
-        myLessonFilter.addEventListener('change', renderMyPlans);
-
-        // Fetch initial data
-        fetchMyPlans();
-        
-        // === MODAL CLOSING EVENTS & Admin Placeholders ===
-        
-        document.getElementById('closeSuccessModalButton').addEventListener('click', () => hideModal(submissionSuccessModal));
-        document.getElementById('closeErrorModalButton').addEventListener('click', () => hideModal(submissionErrorModal));
-        document.getElementById('cancelLoginButton').addEventListener('click', () => hideModal(passwordModal));
-        document.getElementById('cancelDeleteButton').addEventListener('click', () => hideModal(deleteConfirmModal));
-        document.getElementById('closePreviewButton').addEventListener('click', () => hideModal(imagePreviewModal));
-
-        document.getElementById('adminAccessButton').addEventListener('click', () => showModal(passwordModal));
-        adminLogoutButton.addEventListener('click', () => {
+        function handleAdminLogout() {
             adminLevel = 0;
             adminView.classList.add('hidden');
             myPlansView.classList.remove('hidden');
-        });
+            adminAccessButton.classList.remove('hidden');
+        }
 
-        window.showFullPlan = (planId) => {
-             // You need to implement a modal to display the full plan details here.
-             alert(`Showing full plan for ID: ${planId}.`);
-        };
-        
-        passwordForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const role = document.getElementById('adminRole').value;
-            const password = document.getElementById('adminPassword').value;
-            
-            passwordError.classList.add('hidden');
-            if (role === 'admin1' && password === ADMIN_1_PASS) {
-                adminLevel = 1;
-                adminHeader.textContent = "অ্যাডমিন প্যানেল (দেখার অনুমতি)";
-                hideModal(passwordModal);
-                myPlansView.classList.add('hidden');
-                adminView.classList.remove('hidden');
-            } else if (role === 'admin2' && password === ADMIN_2_PASS) {
-                adminLevel = 2;
-                adminHeader.textContent = "অ্যাডমিন প্যানেল (দেখার ও মোছার অনুমতি)";
-                hideModal(passwordModal);
-                myPlansView.classList.add('hidden');
-                adminView.classList.remove('hidden');
-                bulkDeleteButton.classList.remove('hidden');
+        function renderAdminView() {
+            if (adminLevel === 0) return;
+
+            const selectedClass = adminClassFilter.value;
+            const selectedSubject = adminSubjectFilter.value;
+            const selectedLesson = adminLessonFilter.value;
+
+            // Enable/disable filters based on selection
+            adminSubjectFilter.disabled = !selectedClass;
+            adminLessonFilter.disabled = !selectedClass || !selectedSubject;
+
+            // Update subject options based on selected class
+            if (selectedClass) {
+                const subjectsForClass = [...new Set(allPlansCache
+                    .filter(p => p.class === selectedClass)
+                    .map(p => p.subject)
+                )].sort();
+                
+                adminSubjectFilter.innerHTML = '<option value="">-- বিষয় নির্বাচন করুন --</option>';
+                subjectsForClass.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject;
+                    option.textContent = subject;
+                    if (subject === selectedSubject) {
+                        option.selected = true;
+                    }
+                    adminSubjectFilter.appendChild(option);
+                });
             } else {
-                passwordError.classList.remove('hidden');
+                adminSubjectFilter.innerHTML = '<option value="">-- বিষয় নির্বাচন করুন --</option>';
             }
-        });
 
-        // Online/Offline Status Indicator
-        function updateConnectionStatus() {
-            if (navigator.onLine) {
-                connectionStatus.classList.remove('hidden', 'offline');
-                connectionStatus.classList.add('online');
-                statusText.textContent = 'অনলাইন';
-                setTimeout(() => connectionStatus.classList.add('hidden'), 3000);
+            // Update lesson options based on selected class and subject
+            if (selectedClass && selectedSubject) {
+                const lessonsForClassSubject = [...new Set(allPlansCache
+                    .filter(p => p.class === selectedClass && p.subject === selectedSubject)
+                    .map(p => p.lessonNo)
+                )].sort((a, b) => a - b);
+                
+                adminLessonFilter.innerHTML = '<option value="">-- পাঠ নির্বাচন করুন --</option>';
+                lessonsForClassSubject.forEach(lesson => {
+                    const option = document.createElement('option');
+                    option.value = lesson;
+                    option.textContent = lesson;
+                    if (lesson === parseInt(selectedLesson)) {
+                        option.selected = true;
+                    }
+                    adminLessonFilter.appendChild(option);
+                });
             } else {
-                connectionStatus.classList.remove('hidden', 'online');
-                connectionStatus.classList.add('offline');
-                statusText.textContent = 'অফলাইন';
+                adminLessonFilter.innerHTML = '<option value="">-- পাঠ নির্বাচন করুন --</option>';
+            }
+
+            // Find and display the plan
+            const plansToDisplay = allPlansCache.filter(p => 
+                p.class === selectedClass && 
+                p.subject === selectedSubject &&
+                p.lessonNo === parseInt(selectedLesson)
+            );
+
+            bulkDeleteButton.classList.toggle('hidden', adminLevel !== 2 || plansToDisplay.length === 0);
+
+            if (plansToDisplay.length > 0) {
+                allPlansDisplay.innerHTML = plansToDisplay.map(plan => 
+                    renderPlanCard(plan, adminLevel === 2, true)
+                ).join('');
+            } else if (allPlansCache.length === 0) {
+                allPlansDisplay.innerHTML = `
+                    <div class="text-center py-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-gray-500">কেউ এখনো পাঠ পরিকল্পনা জমা দেননি।</p>
+                    </div>
+                `;
+            } else if (!selectedClass || !selectedSubject || !selectedLesson) {
+                allPlansDisplay.innerHTML = `
+                    <div class="text-center py-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-gray-500">একটি শ্রেণি, বিষয় এবং পাঠ নির্বাচন করুন।</p>
+                    </div>
+                `;
+            } else {
+                allPlansDisplay.innerHTML = `
+                    <div class="text-center py-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-gray-500">এই শ্রেণি, বিষয় এবং পাঠের জন্য কোনো পরিকল্পনা পাওয়া যায়নি।</p>
+                    </div>
+                `;
             }
         }
 
-        window.addEventListener('online', updateConnectionStatus);
-        window.addEventListener('offline', updateConnectionStatus);
-        updateConnectionStatus();
+        // === UTILITY FUNCTIONS ===
+        function renderPlanCard(plan, showDeleteButton = false, showSubmitter = false) {
+            const photoHtml = (plan.images && plan.images.length > 0)
+                ? `<h4 class="font-semibold text-lg mt-4">সংযুক্ত ছবি:</h4>
+                   <div class="flex flex-wrap gap-2 mt-2">
+                       ${plan.images.map(image => 
+                           `<div class="relative">
+                               <img src="${image.url || '#'}" alt="${image.name}" 
+                                    class="w-16 h-16 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                                    onclick="showImageModal('${image.url}')"
+                                    onerror="this.style.display='none'">
+                               <span class="text-xs text-gray-500 block mt-1 truncate w-16">${image.name}</span>
+                           </div>`
+                       ).join('')}
+                   </div>`
+                : '<p class="text-gray-500 mt-4">কোনো ছবি সংযুক্ত নেই।</p>';
+
+            const textHtml = plan.textPlan
+                ? `<h4 class="font-semibold text-lg">পাঠ পরিকল্পনা:</h4>
+                   <pre class="whitespace-pre-wrap font-sans bg-gray-50 p-3 rounded-lg text-sm md:text-base">${plan.textPlan}</pre>`
+                : '<p class="text-gray-500">কোনো পাঠ পরিকল্পনা লেখা নেই।</p>';
+
+            const deleteButtonHtml = showDeleteButton
+                ? `<button onclick="handleDeleteClick('${plan.id}', '${plan.class}', '${plan.subject}')" class="mt-4 w-full text-sm px-3 py-2 bg-red-100 text-red-700 rounded-lg border border-red-300 hover:bg-red-200 transition-colors flex items-center justify-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    পরিকল্পনা মুছুন
+                   </button>`
+                : '';
+
+            const submitterHtml = showSubmitter
+                ? `<p class="text-xs text-gray-500">জমা দিয়েছেন: ${plan.teacherName || plan.userId}</p>`
+                : '';
+            
+            return `
+                <div class="plan-card p-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-lg">${plan.class} - ${plan.subject}</h3>
+                            <p class="text-gray-600">পাঠ নং: ${plan.lessonNo}</p>
+                        </div>
+                        <p class="text-xs text-gray-500">${formatDate(plan.createdAt)}</p>
+                    </div>
+                    ${submitterHtml}
+                    ${textHtml}
+                    ${photoHtml}
+                    ${deleteButtonHtml}
+                </div>
+            `;
+        }
         
+        function formatDate(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('bn-BD');
+        }
+        
+        function showImageModal(imageUrl) {
+            if (!imageUrl || imageUrl === '#') {
+                alert('ছবিটি লোড করা যায়নি।');
+                return;
+            }
+            previewImage.src = imageUrl;
+            imagePreviewModal.classList.remove('hidden');
+        }
+
+        function showMessage(message, isError = false) {
+            messageBox.textContent = message;
+            messageBox.className = 'p-3 rounded-lg text-sm mb-4 fade-in';
+            messageBox.classList.add(isError ? 'bg-red-100' : 'bg-green-100', isError ? 'text-red-700' : 'text-green-700');
+            messageBox.classList.remove('hidden');
+            setTimeout(() => messageBox.classList.add('hidden'), 5000);
+        }
+
+        // === PLAN DELETION ===
+        function handleDeleteClick(planId, planClass, planSubject) {
+            confirmDeleteButton.dataset.planId = planId; 
+            deletePlanInfo.textContent = `আপনি কি ${planClass} - ${planSubject} এর পাঠ পরিকল্পনাটি মুছে ফেলতে চান? এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।`;
+            deleteConfirmModal.classList.remove('hidden');
+        }
+        
+        async function handleConfirmDelete() {
+            const planId = confirmDeleteButton.dataset.planId;
+            if (!planId) return;
+
+            try {
+                await db.ref(`lessonPlans/${planId}`).remove();
+                showMessage('পরিকল্পনাটি সফলভাবে মুছে ফেলা হয়েছে।', false);
+            } catch (error) {
+                console.error('Error deleting plan:', error);
+                showMessage('পরিকল্পনা মুছতে ব্যর্থ হয়েছে।', true);
+            } finally {
+                deleteConfirmModal.classList.add('hidden');
+                delete confirmDeleteButton.dataset.planId;
+            }
+        }
+
+        // Make functions globally accessible
+        window.handleDeleteClick = handleDeleteClick;
+        window.removePhotoPreview = removePhotoPreview;
+        window.showImageModal = showImageModal;
+
+        // === INITIALIZATION ===
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                console.log("🚀 Starting application initialization...");
+                
+                // Initialize form fields FIRST
+                initializeFormFields();
+                
+                // Load teacher names
+                loadTeacherNames();
+                
+                // Setup real-time listener
+                setupPlanListener();
+
+                // Event Listeners
+                submissionForm.addEventListener('submit', handleFormSubmit);
+                adminAccessButton.addEventListener('click', () => passwordModal.classList.remove('hidden'));
+                cancelLoginButton.addEventListener('click', () => passwordModal.classList.add('hidden'));
+                passwordForm.addEventListener('submit', handleAdminLogin);
+                adminLogoutButton.addEventListener('click', handleAdminLogout);
+                cancelDeleteButton.addEventListener('click', () => deleteConfirmModal.classList.add('hidden'));
+                closePreviewButton.addEventListener('click', () => imagePreviewModal.classList.add('hidden'));
+                closeSuccessModalButton.addEventListener('click', () => submissionSuccessModal.classList.add('hidden'));
+                closeErrorModalButton.addEventListener('click', () => submissionErrorModal.classList.add('hidden'));
+
+                // Form field listeners
+                teacherNameInput.addEventListener('input', handleTeacherNameInput);
+                classSelect.addEventListener('change', updateSubjectOptions);
+                addMorePhotosButton.addEventListener('click', () => photoInput.click());
+                photoInput.addEventListener('change', handlePhotoSelection);
+                
+                // Filters
+                myClassFilter.addEventListener('change', renderMyPlansView);
+                mySubjectFilter.addEventListener('change', renderMyPlansView);
+                myLessonFilter.addEventListener('change', renderMyPlansView);
+                adminClassFilter.addEventListener('change', renderAdminView);
+                adminSubjectFilter.addEventListener('change', renderAdminView);
+                adminLessonFilter.addEventListener('change', renderAdminView);
+
+                // Confirm delete button listener
+                confirmDeleteButton.addEventListener('click', handleConfirmDelete);
+
+                console.log("✅ Application initialized successfully!");
+                console.log("📝 Dropdowns should now show options!");
+
+            } catch (error) {
+                console.error('❌ Initialization failed:', error);
+                showMessage('অ্যাপ লোড করতে ব্যর্থ হয়েছে। কনসোল চেক করুন।', true);
+            }
+        });
+
     </script>
 </body>
 </html>
