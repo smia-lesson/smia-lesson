@@ -47,37 +47,54 @@
         }
 
         header {
-            background: var(--royal-blue);
+            background: var(--white);
             box-shadow: var(--shadow);
-            padding: 20px 0;
-            margin-bottom: 30px;
+            padding: 5px 0;
+            margin-bottom: 15px;
             border-radius: 0 0 var(--border-radius) var(--border-radius);
         }
 
         .header-content {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            text-align: center;
+            gap: 10px;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
 
         .logo {
-            width: 80px;
-            height: 80px;
+            width: 200%;
+            height: 200%;
+            max-width: 180px;
+            max-height: 180px;
             background: var(--white);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            border: 3px solid #1e3c72;
+            overflow: hidden;
         }
 
-        .logo-text {
-            font-size: 14px;
-            font-weight: bold;
-            color: #1e3c72;
-            text-align: center;
-            padding: 5px;
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        
+        .admin-access {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 10px;
         }
 
         .btn {
@@ -162,9 +179,12 @@
             box-shadow: 0 0 0 3px rgba(34, 139, 34, 0.1);
         }
 
+        /* FIXED: Auto-expanding textarea */
         textarea {
             min-height: 150px;
-            resize: vertical;
+            resize: none;
+            overflow: hidden;
+            transition: height 0.2s ease;
         }
 
         .upload-area {
@@ -228,6 +248,27 @@
             animation: popIn 0.5s ease-out;
         }
 
+        .error-message-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 1001;
+            border: 3px solid #ffc107;
+            animation: popIn 0.5s ease-out;
+        }
+
+        .error-message-popup .warning-icon {
+            font-size: 60px;
+            color: #ffc107;
+            margin-bottom: 20px;
+        }
+
         .warning-message .warning-icon {
             font-size: 60px;
             color: #dc3545;
@@ -261,6 +302,12 @@
         .warning-message h3 {
             margin-bottom: 20px;
             color: #dc3545;
+            font-size: 24px;
+        }
+
+        .error-message-popup h3 {
+            margin-bottom: 20px;
+            color: #856404;
             font-size: 24px;
         }
 
@@ -344,9 +391,16 @@
             border-bottom: 1px solid #eee;
         }
 
+        /* FIXED: Text wrapping for displayed lesson content */
         .lesson-content {
             margin-bottom: 20px;
             line-height: 1.8;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-width: 100%;
+            overflow: hidden;
         }
 
         .lesson-image-preview {
@@ -410,16 +464,6 @@
             padding: 40px;
             color: var(--forest-green);
             font-size: 18px;
-        }
-
-        .error-message {
-            background: linear-gradient(to right, #ffe6e6, #ffcccc);
-            color: #721c24;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            border: 1px solid #f5c6cb;
-            font-weight: 600;
         }
 
         .no-lesson-message {
@@ -493,6 +537,10 @@
             .card {
                 padding: 20px;
             }
+            
+            .academy-name {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
@@ -500,10 +548,15 @@
     <header>
         <div class="container">
             <div class="header-content">
-                <div class="logo">
-                    <div class="logo-text">আমার<br>লোগো</div>
+                <div class="logo-container">
+                    <div class="logo">
+                        <img src="logo.png" alt="Logo">
+                    </div>
+                    
                 </div>
-                <button id="adminBtn" class="btn">অ্যাডমিন এক্সেস</button>
+                <div class="admin-access">
+                    <button id="adminBtn" class="btn">অ্যাডমিন এক্সেস</button>
+                </div>
             </div>
         </div>
     </header>
@@ -588,9 +641,6 @@
             <p>লেসন প্ল্যান লোড হচ্ছে...</p>
         </div>
 
-        <!-- Error Message -->
-        <div id="errorMessage" class="error-message hidden"></div>
-
         <!-- Lesson Plans List -->
         <div id="lessonsList" class="lesson-list">
             <div class="no-lesson-message">
@@ -613,6 +663,14 @@
         <h3 id="warningTitle">কোনো লেসন পাওয়া যায়নি</h3>
         <p id="warningText">উক্ত শ্রেণির লেসন এখনো সাবমিট করা হয়নি।</p>
         <button id="warningOkBtn" class="btn">ঠিক আছে</button>
+    </div>
+
+    <!-- Error Message Popup -->
+    <div id="errorMessagePopup" class="error-message-popup hidden">
+        <div class="warning-icon">⚠️</div>
+        <h3 id="errorPopupTitle">ত্রুটি</h3>
+        <p id="errorPopupText"></p>
+        <button id="errorPopupOkBtn" class="btn">ঠিক আছে</button>
     </div>
 
     <!-- Admin Login Form -->
@@ -706,11 +764,11 @@
                 { id: "class2", name: "নার্সারি", subjects: ["কুরআন মাজীদ", "বাংলা-সীরাত-সাধারণ জ্ঞান", "English", "গণিত", "স্পোকেন এরাবিক-ইসলামিক স্টাডিজ"] },
                 { id: "class3", name: "প্রথম", subjects: ["কুরআন মাজীদ", "বাংলা-সীরাত", "English", "গণিত", "স্পোকেন এরাবিক-সাধারণ জ্ঞান", "ইসলামিক স্টাডিজ"] },
                 { id: "class4", name: "দ্বিতীয়", subjects: ["বাংলা-সীরাত", "English", "গণিত", "সাধারণ জ্ঞান-কম্পিউটার", "কায়দা (ক)", "কায়দা (খ)", "আমপারা", "স্পোকেন এরাবিক", "ইসলামিক স্টাডিজ"] },
-                { id: "class5", name: "তৃতীয়", subjects: ["বাংলা-বাংলা ব্যাকরণ-সীরাত", "English", "গণিত", "বিজ্ঞান-বাওবি-কম্পিউটার", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
+                { id: "class5", name: "তৃতীয়", subjects: ["বাংলা-বাংলা ব্যাকরণ-সীরাত", "English", "গণিত", "বিজ্ঞান-বাওবি-কম্পিউটার", "ইসলামিক স্টাডিজ", "কায়দa", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
                 { id: "class6", name: "চতুর্থ", subjects: ["বাংলা-বাংলা ব্যাকরণ-সীরাত", "English", "গণিত", "বিজ্ঞান-বাওবি-কম্পিউটার", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
                 { id: "class7", name: "পঞ্চম", subjects: ["বাংলা-বাংলা ব্যাকরণ-সীরাত", "English", "গণিত", "বিজ্ঞান-বাওবি-কম্পিউটার", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
                 { id: "class8", name: "ষষ্ঠ", subjects: ["বাংলা-বাংলা ব্যাকরণ", "English", "English Grammar-Spoken English", "গণিত", "বিজ্ঞান", "বাওবি-ICT-সীরাত", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
-                { id: "class9", name: "সপ্তম", subjects: ["বাংলা-বাংলা ব্যাকরণ", "English", "English Grammar-Spoken English", "গণিত", "বিজ্ঞান", "বাওবি-ICT-সীরাত", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
+                { id: "class9", name: "সপ্তম", subjects: ["বাংলা-বাংলা ব্যাকরণ", "English", "English Grammar-Spoken English", "গণিত", "বিজ্ঞান", "বাওবি-ICT-সীরাত", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনار্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
                 { id: "class10", name: "অষ্টম", subjects: ["বাংলা-বাংলা ব্যাকরণ", "English", "English Grammar-Spoken English", "গণিত", "বিজ্ঞান", "বাওবি-ICT-সীরাত", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] }
             ],
             lessonNumbers: 12 // Number of lessons (1 to 12)
@@ -733,7 +791,6 @@
         const applyFilterBtn = document.getElementById('applyFilterBtn');
         const lessonsList = document.getElementById('lessonsList');
         const loadingState = document.getElementById('loadingState');
-        const errorMessage = document.getElementById('errorMessage');
         const adminBtn = document.getElementById('adminBtn');
         const adminLoginForm = document.getElementById('adminLoginForm');
         const adminPassword = document.getElementById('adminPassword');
@@ -747,6 +804,10 @@
         const warningTitle = document.getElementById('warningTitle');
         const warningText = document.getElementById('warningText');
         const warningOkBtn = document.getElementById('warningOkBtn');
+        const errorMessagePopup = document.getElementById('errorMessagePopup');
+        const errorPopupTitle = document.getElementById('errorPopupTitle');
+        const errorPopupText = document.getElementById('errorPopupText');
+        const errorPopupOkBtn = document.getElementById('errorPopupOkBtn');
         const overlay = document.getElementById('overlay');
 
         // State variables
@@ -816,6 +877,14 @@
             }
         }
 
+        // Auto-resize textarea function
+        function autoResizeTextarea(textarea) {
+            // Reset height to auto to get the correct scrollHeight
+            textarea.style.height = 'auto';
+            // Set the height to scrollHeight to fit all content
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
         // Setup event listeners
         function setupEventListeners() {
             // Class selection change
@@ -838,7 +907,7 @@
                 if (file) {
                     // Check file size (15MB limit)
                     if (file.size > 15 * 1024 * 1024) {
-                        showError('ফাইলের আকার ১৫MB এর কম হতে হবে');
+                        showErrorPopup('ফাইলের আকার ১৫MB এর কম হতে হবে');
                         return;
                     }
                     
@@ -851,6 +920,14 @@
                     reader.readAsDataURL(file);
                 }
             });
+            
+            // Auto-resize textarea on input
+            lessonText.addEventListener('input', function() {
+                autoResizeTextarea(this);
+            });
+            
+            // Initialize textarea height
+            autoResizeTextarea(lessonText);
             
             // Submit lesson
             submitLessonBtn.addEventListener('click', submitLesson);
@@ -870,6 +947,9 @@
             
             // Warning
             warningOkBtn.addEventListener('click', hideWarning);
+            
+            // Error popup
+            errorPopupOkBtn.addEventListener('click', hideErrorPopup);
         }
 
         // Load lessons from Firebase
@@ -879,7 +959,7 @@
                 lessons = await Database.getLessons();
                 hideLoading();
             } catch (error) {
-                showError('লেসন প্ল্যান লোড করতে সমস্যা হয়েছে। আপনার ইন্টারনেট সংযোগ চেক করুন।');
+                showErrorPopup('লেসন প্ল্যান লোড করতে সমস্যা হয়েছে। আপনার ইন্টারনেট সংযোগ চেক করুন।');
                 hideLoading();
             }
         }
@@ -893,7 +973,7 @@
             const text = lessonText.value.trim();
             
             if (!name || !lessonNumber || !classId || !subject || (!text && !currentImageData)) {
-                showError('দয়া করে সব প্রয়োজনীয় ফিল্ড পূরণ করুন এবং হয় টেক্সট অথবা একটি ইমেজ প্রদান করুন।');
+                showErrorPopup('দয়া করে সব প্রয়োজনীয় ফিল্ড পূরণ করুন এবং হয় টেক্সট অথবা একটি ইমেজ প্রদান করুন।');
                 return;
             }
             
@@ -926,6 +1006,9 @@
                 imagePreview.classList.add('hidden');
                 currentImageData = null;
                 
+                // Reset textarea height
+                autoResizeTextarea(lessonText);
+                
                 // Update subjects dropdown
                 updateSubjects('', subjectSelect);
                 
@@ -933,7 +1016,7 @@
                 showConfirmation('লেসন সাবমিট হয়েছে', 'জাঝাকাল্লাহু খাইরন');
                 
             } catch (error) {
-                showError('লেসন প্ল্যান জমা দিতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
+                showErrorPopup('লেসন প্ল্যান জমা দিতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
             } finally {
                 submitLessonBtn.disabled = false;
                 submitLessonBtn.textContent = 'সাবমিট করুন';
@@ -948,7 +1031,7 @@
             
             // Check if at least class is selected
             if (!filterClassId) {
-                showError('লেসন দেখতে কমপক্ষে কোনো একটি শ্রেণি নির্বাচন করুন।');
+                showErrorPopup('লেসন দেখতে কমপক্ষে কোনো একটি শ্রেণি নির্বাচন করুন।');
                 return;
             }
             
@@ -1059,7 +1142,7 @@
                     // Refresh the current filter view
                     applyFilters();
                 } catch (error) {
-                    showError('লেসন ডিলিট করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
+                    showErrorPopup('লেসন ডিলিট করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
                 }
             }
         }
@@ -1073,7 +1156,7 @@
                     // Refresh the current filter view
                     applyFilters();
                 } catch (error) {
-                    showError('লেসন ডিলিট করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
+                    showErrorPopup('ক্লাস লেসন মুছতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
                 }
             }
         }
@@ -1096,7 +1179,7 @@
                 hideAdminLogin();
                 showConfirmation('অ্যাডমিন এক্সেস প্রদান করা হয়েছে', 'আপনার এখন প্রশাসনিক সুবিধা রয়েছে।');
             } else {
-                alert('ভুল পাসওয়ার্ড। দয়া করে আবার চেষ্টা করুন।');
+                showErrorPopup('ভুল পাসওয়ার্ড। দয়া করে আবার চেষ্টা করুন।');
             }
         }
 
@@ -1126,6 +1209,19 @@
             overlay.classList.add('hidden');
         }
 
+        // Error popup message
+        function showErrorPopup(message) {
+            errorPopupTitle.textContent = 'ত্রুটি';
+            errorPopupText.textContent = message;
+            errorMessagePopup.classList.remove('hidden');
+            overlay.classList.remove('hidden');
+        }
+
+        function hideErrorPopup() {
+            errorMessagePopup.classList.add('hidden');
+            overlay.classList.add('hidden');
+        }
+
         // Loading state
         function showLoading() {
             loadingState.classList.remove('hidden');
@@ -1135,17 +1231,6 @@
         function hideLoading() {
             loadingState.classList.add('hidden');
             lessonsList.classList.remove('hidden');
-        }
-
-        // Error handling
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.remove('hidden');
-            
-            // Auto-hide error after 5 seconds
-            setTimeout(() => {
-                errorMessage.classList.add('hidden');
-            }, 5000);
         }
 
         // Clean up when leaving the page
