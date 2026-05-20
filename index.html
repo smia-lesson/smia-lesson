@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Smart Lesson Flow | Institute Edition | Firebase Sync</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Smart Lesson Flow | Institute Edition | Responsive</title>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -12,29 +12,32 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
+            font-family: system-ui, 'Segoe UI', 'Poppins', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 12px;
         }
 
+        /* Responsive container */
         .glass-container {
-            max-width: 1400px;
-            margin: auto;
+            max-width: 1600px;
+            margin: 0 auto;
             background: rgba(255, 255, 255, 0.97);
             backdrop-filter: blur(10px);
-            border-radius: 32px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 28px;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.2s;
         }
 
         .header {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            padding: 20px 28px;
+            padding: 20px 20px;
             text-align: center;
             color: white;
         }
@@ -43,56 +46,68 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 10px;
+            gap: 15px;
             flex-wrap: wrap;
         }
         
         .logo-placeholder {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            overflow: hidden;
+            font-size: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
         
         .logo-placeholder img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border-radius: 50%;
         }
         
         .institute-name {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: bold;
-            letter-spacing: 1px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: 0px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            word-break: break-word;
         }
         
         .header-sub {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             opacity: 0.95;
-            margin-top: 5px;
+            margin-top: 6px;
         }
 
-        .content { padding: 30px; }
+        .content { 
+            padding: 20px; 
+        }
 
+        /* buttons */
         .btn {
-            padding: 10px 24px;
+            padding: 10px 18px;
             border: none;
             border-radius: 40px;
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+            white-space: nowrap;
         }
-        .btn:hover { transform: translateY(-2px); filter: brightness(1.02); }
+        .btn:active { transform: scale(0.97); }
+        @media (hover: hover) {
+            .btn:hover { transform: translateY(-2px); filter: brightness(1.02); }
+        }
         .btn-primary { background: linear-gradient(135deg, #11998e, #0e6b5e); color: white; }
         .btn-success { background: linear-gradient(135deg, #28a745, #1e7e34); color: white; }
         .btn-warning { background: linear-gradient(135deg, #ffc107, #e0a800); color: #2d2d2d; }
@@ -101,15 +116,18 @@
         .btn-secondary { background: #6c757d; color: white; }
         .btn-purple { background: linear-gradient(135deg, #6f42c1, #5538a8); color: white; }
 
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 6px; font-weight: bold; color: #1a472a; font-size: 13px; letter-spacing: 0.5px; }
+        /* form elements */
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #1a472a; font-size: 0.8rem; letter-spacing: 0.3px; }
         select, input, textarea {
             width: 100%;
             padding: 12px 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            font-size: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-family: inherit;
             transition: 0.2s;
+            background: white;
         }
         select:focus, input:focus, textarea:focus {
             border-color: #38ef7d;
@@ -117,104 +135,239 @@
             box-shadow: 0 0 0 3px rgba(56,239,125,0.2);
         }
 
+        /* AUTO-EXPAND TEXTAREA - CORE FIX */
+        .auto-expand-textarea {
+            width: 100%;
+            min-height: 85px;
+            max-height: 280px;
+            overflow-y: auto;
+            resize: vertical;
+            line-height: 1.5;
+            padding: 12px;
+            font-size: 0.9rem;
+            border-radius: 18px;
+            transition: all 0.1s ease;
+        }
+        /* for better touch */
+        textarea:focus {
+            outline: none;
+        }
+
         .lesson-panel {
             border-radius: 28px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.05);
         }
         
-        .class-theme-preplay { background: linear-gradient(135deg, #fff0f5, #ffe0f0); border: 1px solid #ffccdd; }
-        .class-theme-play { background: linear-gradient(135deg, #fff9e6, #fff3cc); border: 1px solid #ffe5b4; }
-        .class-theme-nursery { background: linear-gradient(135deg, #e6f3ff, #cce5ff); border: 1px solid #b8d9ff; }
-        .class-theme-one { background: linear-gradient(135deg, #f0e6ff, #e0ccff); border: 1px solid #d4b8ff; }
-        .class-theme-two { background: linear-gradient(135deg, #ffe6f0, #ffcce0); border: 1px solid #ffb3cc; }
-        .class-theme-three { background: linear-gradient(135deg, #e6ffe6, #ccffcc); border: 1px solid #b3ffb3; }
-        .class-theme-four { background: linear-gradient(135deg, #fff0e6, #ffe0cc); border: 1px solid #ffd1b3; }
-        .class-theme-five { background: linear-gradient(135deg, #e6ffff, #ccffff); border: 1px solid #b3ffff; }
-        .class-theme-six { background: linear-gradient(135deg, #ffe6e6, #ffcccc); border: 1px solid #ffb3b3; }
-        .class-theme-seven { background: linear-gradient(135deg, #e6e6ff, #ccccff); border: 1px solid #b3b3ff; }
-        .class-theme-eight { background: linear-gradient(135deg, #f0fff0, #e0ffe0); border: 1px solid #ccffcc; }
-        .class-theme-nine { background: linear-gradient(135deg, #ffe6cc, #ffd9b3); border: 1px solid #ffcc99; }
-        .class-theme-ten { background: linear-gradient(135deg, #e6ccff, #d9b3ff); border: 1px solid #cc99ff; }
-        .class-default { background: #fef9e3; border: 1px solid #e9e9c5; }
-        .history-view { background: #f0f4f8; border: 2px solid #6f42c1; }
+        /* class themes (kept original but responsive) */
+        .class-theme-preplay { background: linear-gradient(135deg, #fff0f5, #ffe0f0); }
+        .class-theme-play { background: linear-gradient(135deg, #fff9e6, #fff3cc); }
+        .class-theme-nursery { background: linear-gradient(135deg, #e6f3ff, #cce5ff); }
+        .class-theme-one { background: linear-gradient(135deg, #f0e6ff, #e0ccff); }
+        .class-theme-two { background: linear-gradient(135deg, #ffe6f0, #ffcce0); }
+        .class-theme-three { background: linear-gradient(135deg, #e6ffe6, #ccffcc); }
+        .class-theme-four { background: linear-gradient(135deg, #fff0e6, #ffe0cc); }
+        .class-theme-five { background: linear-gradient(135deg, #e6ffff, #ccffff); }
+        .class-theme-six { background: linear-gradient(135deg, #ffe6e6, #ffcccc); }
+        .class-theme-seven { background: linear-gradient(135deg, #e6e6ff, #ccccff); }
+        .class-theme-eight { background: linear-gradient(135deg, #f0fff0, #e0ffe0); }
+        .class-theme-nine { background: linear-gradient(135deg, #ffe6cc, #ffd9b3); }
+        .class-theme-ten { background: linear-gradient(135deg, #e6ccff, #d9b3ff); }
+        .class-default { background: #fef9e3; }
 
+        /* Responsive days grid - mobile first */
         .days-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 18px;
+            grid-template-columns: 1fr;
+            gap: 20px;
             margin: 20px 0;
         }
+        @media (min-width: 640px) {
+            .days-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 1024px) {
+            .days-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (min-width: 1400px) {
+            .days-grid { grid-template-columns: repeat(6, 1fr); }
+        }
+        
         .day-card {
             background: white;
-            border-radius: 20px;
-            padding: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 24px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             border-left: 6px solid #11998e;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
         }
         .day-title {
-            font-weight: bold;
+            font-weight: 700;
             color: #1a472a;
             margin-bottom: 12px;
             font-size: 1.1rem;
-            border-bottom: 1px dashed #ccc;
-            padding-bottom: 5px;
-        }
-        .day-textarea {
-            width: 100%;
-            border-radius: 14px;
-            border: 1px solid #ddd;
-            padding: 10px;
-            font-size: 13px;
-            resize: vertical;
+            border-bottom: 2px solid #eef2e0;
+            padding-bottom: 6px;
         }
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
             border-radius: 50px;
-            font-size: 11px;
+            font-size: 0.7rem;
             font-weight: bold;
-            margin-top: 8px;
+            margin-top: 10px;
+            align-self: flex-start;
         }
         .status-pending { background: #fee2e2; color: #b91c1c; }
         .status-approved { background: #dcfce7; color: #15803d; }
+        
+        /* Jump bar responsive */
         .jump-bar {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             flex-wrap: wrap;
             align-items: flex-end;
             margin-bottom: 25px;
             background: #eef2f0;
-            padding: 15px 20px;
-            border-radius: 28px;
+            padding: 18px;
+            border-radius: 32px;
         }
-        .jump-bar .form-group { margin-bottom: 0; flex: 1; min-width: 150px; }
-        .all-subjects-table { overflow-x: auto; margin-top: 20px; border-radius: 24px; background: white; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background: #1a472a; color: white; padding: 12px; text-align: center; }
-        td { border-bottom: 1px solid #e2e8f0; padding: 12px; vertical-align: middle; text-align: center; }
-        .status-cell { border-radius: 20px; background: #f1f5f9; display: inline-block; padding: 4px 12px; }
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 2000; }
-        .modal-content { background: white; border-radius: 32px; max-width: 700px; width: 90%; padding: 30px; max-height: 85vh; overflow-y: auto; }
-        .toast { position: fixed; bottom: 30px; right: 30px; padding: 14px 24px; border-radius: 50px; color: white; font-weight: bold; z-index: 3000; animation: slideIn 0.2s ease; }
-        .toast-success { background: #11998e; }
+        .jump-bar .form-group { 
+            margin-bottom: 0; 
+            flex: 1 1 180px;
+            min-width: 140px;
+        }
+        
+        /* user info bar */
+        .user-info {
+            background: #e6f7ec;
+            padding: 12px 18px;
+            border-radius: 40px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .user-info-text {
+            font-size: 0.85rem;
+            word-break: break-word;
+        }
+        
+        /* admin table scroll */
+        .all-subjects-table {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 24px;
+            background: white;
+            -webkit-overflow-scrolling: touch;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 0.75rem;
+            min-width: 500px;
+        }
+        th { background: #1a472a; color: white; padding: 12px 8px; text-align: center; font-size: 0.75rem; }
+        td { border-bottom: 1px solid #e2e8f0; padding: 10px 8px; vertical-align: middle; text-align: center; }
+        
+        .modal {
+            position: fixed;
+            top:0; left:0;
+            width:100%; height:100%;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 16px;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            max-width: 650px;
+            width: 100%;
+            padding: 24px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: 60px;
+            color: white;
+            font-weight: bold;
+            z-index: 3000;
+            animation: slideUp 0.25s ease;
+            text-align: center;
+            white-space: nowrap;
+            background: #11998e;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+        @media (max-width: 500px) {
+            .toast { white-space: normal; width: 90%; font-size: 0.75rem; }
+        }
         .toast-error { background: #dc3545; }
         .toast-info { background: #2c3e66; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); } }
+        @keyframes slideUp {
+            from { opacity: 0; bottom: 0; }
+            to { opacity: 1; bottom: 20px; }
+        }
+        
         @media print {
             body { background: white; padding: 0; }
-            .glass-container { box-shadow: none; border-radius: 0; }
             .btn, .jump-bar, .user-info, .toolbar, .modal, .toast { display: none; }
         }
-        .user-info { background: #e6f7ec; padding: 12px 20px; border-radius: 40px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .submission-meta { font-size: 10px; color: #666; margin-top: 5px; padding-top: 5px; border-top: 1px solid #eee; }
-        .accountability-badge { background: #f0e6ff; padding: 2px 8px; border-radius: 12px; font-size: 10px; display: inline-block; margin-top: 5px; }
-        .history-note { background: #e9ecef; padding: 10px 15px; border-radius: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .lesson-badge { background: white; padding: 5px 15px; border-radius: 30px; display: inline-block; margin-bottom: 15px; font-weight: bold; color: #1a472a; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .admin-filter-bar { background: #fff; padding: 15px; border-radius: 20px; margin-bottom: 20px; display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
-        .firebase-status { background: #2c3e66; color: white; padding: 5px 12px; border-radius: 30px; font-size: 12px; display: inline-block; margin-left: 15px; }
+        
+        .admin-filter-bar {
+            background: #fff;
+            padding: 15px;
+            border-radius: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        .submission-meta {
+            font-size: 0.7rem;
+            color: #555;
+            margin-top: 10px;
+            border-top: 1px solid #e9e9e9;
+            padding-top: 6px;
+        }
+        .accountability-badge {
+            background: #f0e6ff;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .flex-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        button:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
+        .lesson-badge {
+            background: white;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.75rem;
+        }
     </style>
 </head>
 <body>
@@ -233,31 +386,20 @@
     };
     // =================================================================
 
-    // Initialize Firebase
     let db;
     try {
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         db = firebase.database();
-        console.log("Firebase Realtime DB initialized");
-    } catch (e) {
-        console.error("Firebase init error:", e);
-        alert("Firebase configuration error. Please check your credentials in the code.");
-    }
+    } catch (e) { console.error(e); alert("Firebase config error"); }
 
-    // ============ INSTITUTE CONFIGURATION ============
     const INSTITUTE = {
         name: "AL-FALAH ACADEMY",
         logoText: "📚",
         logoImageUrl: "logo.png",
         tagline: "Excellence in Education & Character Building"
     };
-    // =================================================
     
-    // Master Data
     const classes = ["Pre-Play", "Play", "Nursery", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
-    
     const subjectsByClass = {
         "Pre-Play": ["Arbi", "Bangla", "English-Mathematics"],
         "Play": ["Quran Majeed", "Bengali & General Knowledge", "English", "Mathematics"],
@@ -277,359 +419,186 @@
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const dayKeys = ["mon", "tue", "wed", "thu", "fri", "sat"];
     const lessonNumbers = Array.from({length: 13}, (_, i) => i + 1);
-    
-    const teacherList = [
-        "A M K Nomany Pervez",
-        "Ramjann Ali",
-        "Md. Mohiuddin Molla",
-        "Sraboni Ahmmed",
-        "Akhi Alom",
-        "Naznin Sultana",
-        "Fahmida Akter",
-        "Rikta Khanom"
-    ];
+    const teacherList = ["A M K Nomany Pervez", "Ramjann Ali", "Md. Mohiuddin Molla", "Sraboni Ahmmed", "Akhi Alom", "Naznin Sultana", "Fahmida Akter", "Rikta Khanom"];
 
     let lessonData = {};
     let currentUser = null;
     let historyMode = false;
     let previousContext = null;
 
-    // Helper function to clean undefined values
-    function cleanObject(obj) {
-        if (obj === undefined) return null;
-        if (obj === null) return null;
-        if (typeof obj === 'object') {
-            const cleaned = {};
-            for (let key in obj) {
-                if (obj[key] !== undefined) {
-                    cleaned[key] = cleanObject(obj[key]);
-                }
-            }
-            return cleaned;
-        }
-        return obj;
-    }
-
-    // Firebase sync
+    // ========== Firebase helpers ==========
+    function cleanObject(obj) { if (!obj) return null; const cleaned = {}; for(let k in obj) if(obj[k] !== undefined) cleaned[k] = cleanObject(obj[k]); return cleaned; }
     function loadDataFromFirebase() {
         if (!db) return Promise.resolve();
         return db.ref("lessonPlans").get().then(snapshot => {
-            if (snapshot.exists()) {
-                lessonData = snapshot.val() || {};
-            } else {
-                lessonData = {};
-            }
-            saveDataToLocal();
-            console.log("Data synced from Firebase");
+            lessonData = snapshot.exists() ? snapshot.val() : {};
+            localStorage.setItem("lessonPlan_FirebaseBackup", JSON.stringify(lessonData));
             return lessonData;
         }).catch(err => {
-            console.error("Firebase read error:", err);
             const local = localStorage.getItem("lessonPlan_FirebaseBackup");
-            if(local) lessonData = JSON.parse(local);
-            else lessonData = {};
+            lessonData = local ? JSON.parse(local) : {};
             return lessonData;
         });
     }
-
-    function saveDataToFirebase() {
-        if (!db) return;
-        // Clean undefined values before saving
-        const cleanedData = JSON.parse(JSON.stringify(lessonData));
-        db.ref("lessonPlans").set(cleanedData).catch(err => console.error("Firebase write error:", err));
-        saveDataToLocal();
-    }
+    function saveDataToFirebase() { if(db) db.ref("lessonPlans").set(JSON.parse(JSON.stringify(lessonData))).catch(e=>console.warn); localStorage.setItem("lessonPlan_FirebaseBackup", JSON.stringify(lessonData)); }
+    function saveData() { saveDataToFirebase(); }
     
-    function saveDataToLocal() {
-        localStorage.setItem("lessonPlan_FirebaseBackup", JSON.stringify(lessonData));
-    }
-
-    function saveData() {
-        saveDataToFirebase();
-    }
-
-    function getLesson(cls, subj, lessonNo, dayKey) {
-        return lessonData[cls]?.[subj]?.[lessonNo]?.[dayKey] || { text: "", status: "pending", submittedBy: null, approvedBy: null };
-    }
-    
+    function getLesson(cls, subj, lessonNo, dayKey) { return lessonData[cls]?.[subj]?.[lessonNo]?.[dayKey] || { text: "", status: "pending", submittedBy: null, approvedBy: null }; }
     function setLesson(cls, subj, lessonNo, dayKey, text, status = "pending", submittedBy = null, approvedBy = null) {
         if(!lessonData[cls]) lessonData[cls] = {};
         if(!lessonData[cls][subj]) lessonData[cls][subj] = {};
         if(!lessonData[cls][subj][lessonNo]) lessonData[cls][subj][lessonNo] = {};
-        
         const existing = lessonData[cls][subj][lessonNo][dayKey] || {};
-        
-        // Ensure we never set undefined values
-        const newData = { 
-            text: text || "", 
-            status: status || "pending", 
-            updatedAt: Date.now(),
-            submittedBy: (submittedBy !== null && submittedBy !== undefined) ? submittedBy : (existing.submittedBy || null),
-            approvedBy: (approvedBy !== null && approvedBy !== undefined) ? approvedBy : (existing.approvedBy || null)
-        };
-        
-        lessonData[cls][subj][lessonNo][dayKey] = newData;
+        lessonData[cls][subj][lessonNo][dayKey] = { text: text || "", status, updatedAt: Date.now(), submittedBy: (submittedBy !== undefined) ? submittedBy : existing.submittedBy, approvedBy: (approvedBy !== undefined) ? approvedBy : existing.approvedBy };
         saveData();
     }
+    function setAllDays(cls, subj, lessonNo, textsArray, status = "pending", submittedBy = null) { dayKeys.forEach((dk,i)=> setLesson(cls, subj, lessonNo, dk, textsArray[i] || "", status, submittedBy, null)); }
+    function approveAllDays(cls, subj, lessonNo, textsArray, approverName) { dayKeys.forEach((dk,i)=> { const ex = getLesson(cls, subj, lessonNo, dk); setLesson(cls, subj, lessonNo, dk, textsArray[i] || "", "approved", ex.submittedBy, approverName); }); }
+    function getCurrentLessonTexts(cls, subj, lessonNo) { return dayKeys.map(dk => getLesson(cls, subj, lessonNo, dk).text); }
+    function showToast(msg, type="success") { const toast = document.createElement("div"); toast.className = `toast toast-${type}`; toast.innerText = msg; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2600); }
+    function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
     
-    function setAllDays(cls, subj, lessonNo, textsArray, status = "pending", submittedBy = null) {
-        for(let i=0; i<dayKeys.length; i++) {
-            setLesson(cls, subj, lessonNo, dayKeys[i], textsArray[i] || "", status, submittedBy, null);
-        }
-    }
-    
-    function approveAllDays(cls, subj, lessonNo, textsArray, approverName) {
-        for(let i=0; i<dayKeys.length; i++) {
-            const existing = getLesson(cls, subj, lessonNo, dayKeys[i]);
-            setLesson(cls, subj, lessonNo, dayKeys[i], textsArray[i] || "", "approved", existing.submittedBy, approverName);
-        }
-    }
-    
-    function getCurrentLessonTexts(cls, subj, lessonNo) {
-        return dayKeys.map(dk => getLesson(cls, subj, lessonNo, dk).text);
-    }
-
-    function showToast(msg, type="success") {
-        const toast = document.createElement("div");
-        toast.className = `toast toast-${type}`;
-        toast.innerText = msg;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2700);
-    }
-
-    function escapeHtml(str) { 
-        if (!str) return '';
-        return String(str).replace(/[&<>]/g, function(m){ 
-            if(m==='&') return '&amp;'; 
-            if(m==='<') return '&lt;'; 
-            if(m==='>') return '&gt;'; 
-            return m;
-        }); 
-    }
-
     function exportDocxLegal(className, lessonNo) {
         const subjects = subjectsByClass[className] || [];
-        let htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>LessonPlan_${className}_Lesson${lessonNo}</title><style>
-            @page { size: Legal landscape; margin: 0.2in; }
-            body { font-family: 'Segoe UI', Arial, sans-serif; margin:0; padding:0; background: white; }
-            h1 { color: #1a472a; text-align: center; font-size: 18pt; }
-            .subtitle { text-align: center; color: #555; margin-bottom: 20px; }
-            table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-            th, td { border: 1px solid #aaa; padding: 8px; vertical-align: top; width: 2in; }
-            th { background: #1a472a; color: white; }
-            td { word-wrap: break-word; }
-            .footer { text-align: center; font-size: 9pt; margin-top: 15px; }
-        </style></head><body><h1>${escapeHtml(INSTITUTE.name)}</h1>
-        <div class="subtitle">Lesson Plan - ${className} (Lesson ${lessonNo})</div>
-        <table><thead><tr><th style="width:1.8in;">Subject</th>${days.map(d=>`<th>${d}</th>`).join('')}</tr></thead><tbody>`;
+        let htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>LessonPlan_${className}_Lesson${lessonNo}</title><style>@page { size: Legal landscape; margin: 0.2in; } body { font-family: 'Segoe UI', Arial, sans-serif; } table { width:100%; border-collapse:collapse; } th,td { border:1px solid #aaa; padding:8px; } th { background:#1a472a; color:white; }</style></head><body><h1>${escapeHtml(INSTITUTE.name)}</h1><h3>${className} - Lesson ${lessonNo}</h3><table><thead><tr><th>Subject</th>${days.map(d=>`<th>${d}</th>`).join('')}</tr></thead><tbody>`;
         for(let sub of subjects) {
             htmlContent += `<tr><td><strong>${escapeHtml(sub)}</strong></td>`;
-            for(let dk of dayKeys) {
-                const lesson = getLesson(className, sub, lessonNo, dk);
-                htmlContent += `<td>${(lesson.text || "").replace(/\n/g, '<br>')}`;
-                if(!lesson.text || lesson.text.trim() === "") htmlContent += `<span style="color:#ccc; font-style:italic;">—</span>`;
-                htmlContent += `</td>`;
-            }
+            for(let dk of dayKeys) { const txt = getLesson(className, sub, lessonNo, dk).text || ""; htmlContent += `<td>${escapeHtml(txt).replace(/\n/g,'<br>') || '—'}</td>`; }
             htmlContent += `</tr>`;
         }
-        htmlContent += `</tbody></table><div class="footer">Generated by Smart Lesson Flow System</div></body></html>`;
+        htmlContent += `</tbody></table></body></html>`;
         const blob = new Blob([htmlContent], { type: "application/msword" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `LessonPlan_${className}_Lesson${lessonNo}.doc`;
-        link.click();
-        URL.revokeObjectURL(link.href);
-        showToast(`DOCX exported: ${className} Lesson ${lessonNo}`, "success");
+        const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `LessonPlan_${className}_Lesson${lessonNo}.doc`; link.click(); URL.revokeObjectURL(link.href);
+        showToast(`DOCX exported: ${className} L${lessonNo}`);
     }
-
-    function exitHistoryMode() { historyMode = false; if(previousContext) { currentUser = previousContext; previousContext = null; } renderDashboard(); showToast("Returned to main dashboard", "info"); }
     
-    function viewPreviousLesson(className, subject, currentLessonNo) {
-        if(!historyMode) { previousContext = JSON.parse(JSON.stringify(currentUser)); historyMode = true; }
-        showModal(`
-            <div class="modal-content">
-                <h3>📖 View Previous Lesson</h3>
-                <p><strong>Class:</strong> ${escapeHtml(className)}</p>
-                <p><strong>Subject:</strong> ${escapeHtml(subject)}</p>
-                <div class="form-group" style="margin-top:15px;">
-                    <label>Select Lesson Number (1-13)</label>
-                    <select id="prevLessonSelect">${lessonNumbers.map(n => `<option value="${n}" ${n == currentLessonNo ? 'selected' : ''}>Lesson ${n}</option>`).join('')}</select>
-                </div>
-                <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
-                    <button class="btn btn-primary" id="viewPrevBtn">🔍 View Lesson</button>
-                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                </div>
-            </div>
-        `);
-        document.getElementById("viewPrevBtn").onclick = () => {
-            const selectedLesson = parseInt(document.getElementById("prevLessonSelect").value);
-            closeModal();
-            showHistoryLesson(className, subject, selectedLesson);
+    // Textarea auto-expand helper (attach event to dynamically created elements)
+    function attachAutoExpand(textarea) {
+        if(!textarea) return;
+        const adjustHeight = () => {
+            textarea.style.height = 'auto';
+            let newHeight = Math.min(textarea.scrollHeight, 280);
+            textarea.style.height = newHeight + 'px';
         };
+        textarea.addEventListener('input', adjustHeight);
+        adjustHeight();
     }
+    
+    // Helper to bind all textareas in current container
+    function bindAutoExpandToAll() {
+        document.querySelectorAll('.auto-expand-textarea').forEach(ta => attachAutoExpand(ta));
+    }
+    
+    // modal handling
+    function showModal(content) { let modal = document.getElementById("globalModal"); if (!modal) { modal = document.createElement("div"); modal.id = "globalModal"; modal.className = "modal"; document.body.appendChild(modal); } modal.innerHTML = content; modal.style.display = "flex"; }
+    window.closeModal = function() { const modal = document.getElementById("globalModal"); if(modal) modal.style.display = "none"; };
+    window.exitHistoryMode = function() { historyMode=false; previousContext=null; renderDashboard(); showToast("Back to dashboard","info"); };
+    function viewPreviousLesson(className, subject, currentLessonNo) { if(!historyMode) { previousContext = JSON.parse(JSON.stringify(currentUser)); historyMode = true; } showModal(`<div class="modal-content"><h3>📖 View Previous Lesson</h3><p><strong>Class:</strong> ${escapeHtml(className)}</p><p><strong>Subject:</strong> ${escapeHtml(subject)}</p><div class="form-group"><label>Select Lesson</label><select id="prevLessonSelect">${lessonNumbers.map(n=>`<option value="${n}" ${n==currentLessonNo?'selected':''}>Lesson ${n}</option>`).join('')}</select></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;"><button class="btn btn-primary" id="viewPrevBtn">🔍 View</button><button class="btn btn-secondary" onclick="closeModal()">Cancel</button></div></div>`);
+        document.getElementById("viewPrevBtn").onclick = () => { const selected = parseInt(document.getElementById("prevLessonSelect").value); closeModal(); showHistoryLesson(className, subject, selected); }; }
     
     function showHistoryLesson(className, subject, lessonNo) {
         const texts = getCurrentLessonTexts(className, subject, lessonNo);
-        let html = `<div class="glass-container"><div class="header"><div class="institute-brand"><div class="logo-placeholder">${INSTITUTE.logoImageUrl ? `<img src="${INSTITUTE.logoImageUrl}" alt="Logo">` : `<span style="font-size:40px;">${INSTITUTE.logoText}</span>`}</div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">📖 Lesson Plan Viewer</div></div><div class="content"><div class="history-note"><span>🔍 Viewing: <strong>${escapeHtml(className)} | ${escapeHtml(subject)} | Lesson ${lessonNo}</strong> (Read Only)</span><button class="btn btn-purple" onclick="exitHistoryMode()">← Go Back to Dashboard</button></div><div class="lesson-panel class-default"><h3>📜 Previous Lesson - ${escapeHtml(subject)} (Lesson ${lessonNo})</h3><div class="days-grid">`;
-        for(let idx=0; idx<dayKeys.length; idx++) {
-            const dayName = days[idx];
-            const textVal = texts[idx];
-            const lessonObj = getLesson(className, subject, lessonNo, dayKeys[idx]);
-            const status = lessonObj.status;
-            html += `<div class="day-card" style="background:#f8f9fa;"><div class="day-title">📅 ${dayName}</div><div class="day-textarea" style="background:#f1f3f5; cursor:default; min-height:100px;">${escapeHtml(textVal) || '<span style="color:#999;">No content</span>'}</div><div class="status-badge ${status === 'pending' ? 'status-pending' : 'status-approved'}">${status === 'pending' ? '🔴 Pending (at that time)' : '✅ Approved'}</div></div>`;
+        let html = `<div class="glass-container"><div class="header"><div class="institute-brand"><div class="logo-placeholder">${INSTITUTE.logoText}</div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">📖 History View</div></div><div class="content"><div class="history-note" style="background:#e9ecef; padding:12px; border-radius:20px; display:flex; justify-content:space-between; flex-wrap:wrap;"><span>🔍 Viewing: ${escapeHtml(className)} | ${escapeHtml(subject)} | Lesson ${lessonNo}</span><button class="btn btn-purple" onclick="exitHistoryMode()">← Back</button></div><div class="lesson-panel class-default"><h3>📜 ${escapeHtml(subject)} (Lesson ${lessonNo})</h3><div class="days-grid">`;
+        for(let i=0;i<dayKeys.length;i++) {
+            const obj = getLesson(className, subject, lessonNo, dayKeys[i]);
+            html += `<div class="day-card"><div class="day-title">${days[i]}</div><div style="background:#f1f3f5; border-radius:16px; padding:12px; min-height:90px; font-size:0.9rem;">${escapeHtml(obj.text) || '<span style="color:#aaa;">— No content —</span>'}</div><div class="status-badge ${obj.status==='pending'?'status-pending':'status-approved'}">${obj.status==='pending'?'Pending':'Approved'}</div></div>`;
         }
         html += `</div></div></div></div>`;
         document.getElementById("app").innerHTML = html;
     }
-
-    function showModal(content) {
-        let modal = document.getElementById("globalModal");
-        if (!modal) { modal = document.createElement("div"); modal.id = "globalModal"; modal.className = "modal"; document.body.appendChild(modal); }
-        modal.innerHTML = content;
-        modal.style.display = "flex";
-    }
-    window.closeModal = function() { const modal = document.getElementById("globalModal"); if(modal) modal.style.display = "none"; };
-    window.exitHistoryMode = exitHistoryMode;
-    window.viewPreviousLesson = viewPreviousLesson;
     
     function generateAdminMonitorTable(className, targetLessonNo) {
-        const allSubs = subjectsByClass[className] || [];
-        let tableHtml = `<div class="all-subjects-table"><table><thead><tr><th>Subject</th><th>Status for Lesson ${targetLessonNo}</th><th>Submitted By</th><th>Approved By</th></tr></thead><tbody>`;
-        for(let sub of allSubs) {
-            let allApproved = true;
-            let hasAny = false;
-            let submittedByVal = null, approvedByVal = null;
+        const subs = subjectsByClass[className] || [];
+        let table = `<div class="all-subjects-table"><table><thead><tr><th>Subject</th><th>Status L${targetLessonNo}</th><th>Submitted By</th><th>Approved By</th></tr></thead><tbody>`;
+        for(let sub of subs) {
+            let allApproved=true, hasAny=false, subBy=null, appBy=null;
             for(let dk of dayKeys) {
                 const l = getLesson(className, sub, targetLessonNo, dk);
-                if(l.text && l.text.trim() !== "") hasAny = true;
-                if(l.status !== "approved") allApproved = false;
-                if(l.submittedBy) submittedByVal = l.submittedBy;
-                if(l.approvedBy) approvedByVal = l.approvedBy;
+                if(l.text && l.text.trim()) hasAny=true;
+                if(l.status !== "approved") allApproved=false;
+                if(l.submittedBy) subBy = l.submittedBy;
+                if(l.approvedBy) appBy = l.approvedBy;
             }
             const statusText = hasAny ? (allApproved ? '✅ Approved' : '⏳ Pending') : '⚠️ No data';
-            const statusBg = hasAny ? (allApproved ? '#dcfce7' : '#fee2e2') : '#f1f5f9';
-            tableHtml += `<tr><td style="text-align:left;">${escapeHtml(sub)}</td><td><span style="background:${statusBg}; padding:4px 12px; border-radius:20px; display:inline-block;">${statusText}</span></td><td>${submittedByVal ? escapeHtml(submittedByVal) : '—'}</td><td>${approvedByVal ? escapeHtml(approvedByVal) : '—'}</td></tr>`;
+            const bg = hasAny ? (allApproved ? '#dcfce7' : '#fee2e2') : '#f1f5f9';
+            table += `<tr><td style="text-align:left;">${escapeHtml(sub)}</td><td><span style="background:${bg}; padding:4px 12px; border-radius:20px;">${statusText}</span></td><td>${subBy || '—'}</td><td>${appBy || '—'}</td></tr>`;
         }
-        tableHtml += `</tbody></table></div>`;
-        return tableHtml;
+        table += `</tbody></table></div>`;
+        return table;
     }
-
-    async function renderDashboard() {
+    
+    function renderDashboard() {
         if(!currentUser || historyMode) return;
         const { role, assignedClass, assignedSubject, teacherName, currentLessonNo } = currentUser;
-        const isAdmin = (role === "admin"), isProvider = (role === "provider"), isApprover = (role === "approver");
+        const isAdmin = role === "admin", isProvider = role === "provider", isApprover = role === "approver";
         if(!currentUser.editClass) currentUser.editClass = assignedClass;
         if(!currentUser.editSubject) currentUser.editSubject = assignedSubject;
         const editClass = currentUser.editClass || classes[0];
         const editSubject = currentUser.editSubject || (subjectsByClass[editClass]?.[0] || "");
         const lessonNo = currentLessonNo || 1;
         const availableSubjects = subjectsByClass[editClass] || [];
-        const themeClass = getClassTheme(editClass);
         const currentTexts = getCurrentLessonTexts(editClass, editSubject, lessonNo);
+        const theme = `class-${editClass.toLowerCase().replace(/[^a-z]/g,'')}`;
         
-        let html = `<div class="glass-container"><div class="header"><div class="institute-brand"><div class="logo-placeholder">${INSTITUTE.logoImageUrl ? `<img src="${INSTITUTE.logoImageUrl}">` : `<span>${INSTITUTE.logoText}</span>`}</div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)} | 🔥 Firebase Realtime Sync</div></div><div class="content"><div class="user-info"><div>👋 Welcome <strong>${escapeHtml(teacherName)}</strong> (${role}) | ${editClass} | ${editSubject} | <span class="lesson-badge" style="background:#11998e; color:white;">Lesson ${lessonNo}</span></div><button class="btn btn-danger" onclick="logout()">Logout</button></div><div class="jump-bar"><div class="form-group"><label>📌 Jump to Class</label><select id="jumpClassSelect">${classes.map(c => `<option value="${c}" ${c===editClass ? 'selected' : ''}>${c}</option>`).join('')}</select></div><div class="form-group"><label>📖 Jump to Subject</label><select id="jumpSubjectSelect">${availableSubjects.map(s => `<option value="${s}" ${s===editSubject ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('')}</select></div><div><button class="btn btn-primary" id="jumpBtn">🚀 Load</button></div><div><button class="btn btn-purple" id="viewPrevLessonBtn">🔍 View Previous Lesson</button></div></div><div class="lesson-panel ${themeClass}"><h3>✏️ Lesson ${lessonNo} — ${escapeHtml(editSubject)} (${editClass})</h3><div class="days-grid">`;
-        for(let idx=0; idx<dayKeys.length; idx++) {
-            const dayName = days[idx];
-            const lessonObj = getLesson(editClass, editSubject, lessonNo, dayKeys[idx]);
-            const textVal = lessonObj.text;
-            const status = lessonObj.status;
-            const cardStyle = (status === "pending") ? "border-left-color:#dc2626; background:#fff5f5;" : "border-left-color:#2b9348; background:#f0faf0;";
-            html += `<div class="day-card" style="${cardStyle}"><div class="day-title">📅 ${dayName}</div><textarea class="day-textarea" id="day_${dayKeys[idx]}" rows="3" placeholder="Write lesson plan...">${escapeHtml(textVal)}</textarea><div class="status-badge ${status === 'pending' ? 'status-pending' : 'status-approved'}">${status === 'pending' ? '🔴 Pending' : '✅ Approved'}</div>`;
-            if(isAdmin || isApprover) { if(lessonObj.submittedBy) html += `<div class="submission-meta"><span class="accountability-badge">📝 by: ${escapeHtml(lessonObj.submittedBy)}</span>${lessonObj.approvedBy ? ` <span class="accountability-badge">✓ by: ${escapeHtml(lessonObj.approvedBy)}</span>` : ''}</div>`; }
+        let html = `<div class="glass-container"><div class="header"><div class="institute-brand"><div class="logo-placeholder">${INSTITUTE.logoText}</div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)} | 📡 Live Sync</div></div><div class="content"><div class="user-info"><div class="user-info-text">👋 <strong>${escapeHtml(teacherName)}</strong> (${role}) | ${editClass} | ${editSubject} | <span class="lesson-badge" style="background:#11998e; color:white;">Lesson ${lessonNo}</span></div><button class="btn btn-danger" onclick="logout()">Logout</button></div><div class="jump-bar"><div class="form-group"><label>📌 Class</label><select id="jumpClassSelect">${classes.map(c=>`<option value="${c}" ${c===editClass?'selected':''}>${c}</option>`).join('')}</select></div><div class="form-group"><label>📖 Subject</label><select id="jumpSubjectSelect">${availableSubjects.map(s=>`<option value="${s}" ${s===editSubject?'selected':''}>${escapeHtml(s)}</option>`).join('')}</select></div><button class="btn btn-primary" id="jumpBtn">Load</button><button class="btn btn-purple" id="viewPrevLessonBtn">🔍 History</button></div><div class="lesson-panel ${theme}"><h3>✏️ Lesson ${lessonNo} — ${escapeHtml(editSubject)}</h3><div class="days-grid" id="daysGridContainer">`;
+        
+        for(let i=0;i<dayKeys.length;i++) {
+            const obj = getLesson(editClass, editSubject, lessonNo, dayKeys[i]);
+            const cardStyle = obj.status === "pending" ? "border-left-color:#dc2626; background:#fff9f9;" : "border-left-color:#2b9348; background:#f6fff6;";
+            html += `<div class="day-card" style="${cardStyle}"><div class="day-title">📅 ${days[i]}</div><textarea class="auto-expand-textarea" id="day_${dayKeys[i]}" rows="2" placeholder="Write detailed lesson plan ...">${escapeHtml(obj.text)}</textarea><div class="status-badge ${obj.status === 'pending' ? 'status-pending' : 'status-approved'}">${obj.status === 'pending' ? '🔴 Pending' : '✅ Approved'}</div>`;
+            if((isAdmin || isApprover) && (obj.submittedBy || obj.approvedBy)) html += `<div class="submission-meta">${obj.submittedBy?`<span class="accountability-badge">📝 ${escapeHtml(obj.submittedBy)}</span>`:''}${obj.approvedBy?`<span class="accountability-badge">✓ ${escapeHtml(obj.approvedBy)}</span>`:''}</div>`;
             html += `</div>`;
         }
-        html += `</div>`;
-        if(isProvider) html += `<div style="display:flex; gap:15px; margin-top:20px;"><button class="btn btn-success" id="submitAllBtn">💾 Submit Lesson ${lessonNo}</button><button class="btn btn-info" id="editBtn">✏️ Edit / Update</button></div>`;
-        else if(isApprover) html += `<div style="display:flex; gap:15px; margin-top:20px;"><button class="btn btn-warning" id="approveAllBtn">✅ Approve Lesson ${lessonNo}</button><button class="btn btn-primary" id="saveDraftBtn">📝 Save Draft</button></div>`;
-        else if(isAdmin) html += `<div style="display:flex; gap:15px; margin-top:20px;"><button class="btn btn-success" id="adminSaveBtn">💾 Admin Save (Auto-approved)</button><button class="btn btn-danger" id="eraseClassBtn">🗑️ Erase Class Data</button><button class="btn btn-info" id="exportDocBtn">📄 Export DOCX</button></div>`;
-        html += `</div>`;
-        if(isAdmin) {
-            html += `<div style="margin-top:35px;"><h4>📋 Admin Monitor — ${editClass}</h4><div class="admin-filter-bar"><div class="form-group" style="margin-bottom:0;"><label>Filter by Lesson:</label><select id="monitorLessonFilter" style="width:150px;">${lessonNumbers.map(n => `<option value="${n}" ${n == lessonNo ? 'selected' : ''}>Lesson ${n}</option>`).join('')}</select></div><button class="btn btn-primary" id="applyMonitorFilter">Apply Filter</button><span style="font-size:12px; color:#666; margin-left:auto;">✅ Live from Firebase</span></div><div id="monitorTableContainer">${generateAdminMonitorTable(editClass, lessonNo)}</div></div>`;
-        }
+        html += `</div><div class="flex-buttons">`;
+        if(isProvider) html += `<button class="btn btn-success" id="submitAllBtn">💾 Submit Lesson ${lessonNo}</button><button class="btn btn-info" id="editBtn">✏️ Edit Update</button>`;
+        else if(isApprover) html += `<button class="btn btn-warning" id="approveAllBtn">✅ Approve Lesson</button><button class="btn btn-primary" id="saveDraftBtn">📝 Save Draft</button>`;
+        else if(isAdmin) html += `<button class="btn btn-success" id="adminSaveBtn">💾 Admin Auto-Approve</button><button class="btn btn-danger" id="eraseClassBtn">🗑️ Erase Class</button><button class="btn btn-info" id="exportDocBtn">📄 Export DOCX</button>`;
+        html += `</div></div>`;
+        if(isAdmin) html += `<div style="margin-top:35px;"><h4>📊 Admin Monitor — ${editClass}</h4><div class="admin-filter-bar"><div class="form-group"><label>Filter Lesson</label><select id="monitorLessonFilter">${lessonNumbers.map(n=>`<option value="${n}" ${n==lessonNo?'selected':''}>Lesson ${n}</option>`).join('')}</select></div><button class="btn btn-primary" id="applyMonitorFilter">Apply</button></div><div id="monitorTableContainer">${generateAdminMonitorTable(editClass, lessonNo)}</div></div>`;
         html += `</div></div>`;
         document.getElementById("app").innerHTML = html;
         
-        document.getElementById("jumpClassSelect")?.addEventListener("change", () => { const newClass = document.getElementById("jumpClassSelect").value; const subs = subjectsByClass[newClass] || []; const subSelect = document.getElementById("jumpSubjectSelect"); subSelect.innerHTML = subs.map(s => `<option value="${s}">${escapeHtml(s)}</option>`).join(''); });
-        document.getElementById("jumpBtn")?.addEventListener("click", () => { currentUser.editClass = document.getElementById("jumpClassSelect").value; currentUser.editSubject = document.getElementById("jumpSubjectSelect").value; renderDashboard(); showToast(`Switched to ${currentUser.editClass} - ${currentUser.editSubject}`, "success"); });
-        document.getElementById("viewPrevLessonBtn")?.addEventListener("click", () => viewPreviousLesson(editClass, editSubject, lessonNo));
-        if(isProvider) { 
-            document.getElementById("submitAllBtn")?.addEventListener("click", () => { 
-                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); 
-                setAllDays(editClass, editSubject, lessonNo, texts, "pending", teacherName); 
-                showToast(`Lesson ${lessonNo} submitted (pending)`, "success"); 
-                renderDashboard(); 
-            }); 
-            document.getElementById("editBtn")?.addEventListener("click", () => document.getElementById("submitAllBtn")?.click()); 
+        // Auto-expand all textareas after render
+        bindAutoExpandToAll();
+        
+        // event handlers
+        document.getElementById("jumpClassSelect")?.addEventListener("change", (e) => { const newC = e.target.value; const subs = subjectsByClass[newC]||[]; const subSel = document.getElementById("jumpSubjectSelect"); subSel.innerHTML = subs.map(s=>`<option value="${s}">${escapeHtml(s)}</option>`).join(''); });
+        document.getElementById("jumpBtn")?.addEventListener("click", ()=>{ currentUser.editClass = document.getElementById("jumpClassSelect").value; currentUser.editSubject = document.getElementById("jumpSubjectSelect").value; renderDashboard(); showToast(`Switched to ${currentUser.editClass}`); });
+        document.getElementById("viewPrevLessonBtn")?.addEventListener("click",()=>viewPreviousLesson(editClass, editSubject, lessonNo));
+        if(isProvider){
+            document.getElementById("submitAllBtn")?.addEventListener("click",()=>{ const texts = dayKeys.map(dk=>document.getElementById(`day_${dk}`).value); setAllDays(editClass, editSubject, lessonNo, texts, "pending", teacherName); showToast(`Lesson ${lessonNo} submitted (pending)`); renderDashboard(); });
+            document.getElementById("editBtn")?.addEventListener("click",()=>document.getElementById("submitAllBtn")?.click());
         }
-        if(isApprover) { 
-            document.getElementById("approveAllBtn")?.addEventListener("click", () => { 
-                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); 
-                approveAllDays(editClass, editSubject, lessonNo, texts, teacherName); 
-                showToast(`Lesson ${lessonNo} APPROVED`, "success"); 
-                renderDashboard(); 
-            }); 
-            document.getElementById("saveDraftBtn")?.addEventListener("click", () => { 
-                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); 
-                setAllDays(editClass, editSubject, lessonNo, texts, "pending", null); 
-                showToast("Draft saved", "info"); 
-                renderDashboard(); 
-            }); 
+        if(isApprover){
+            document.getElementById("approveAllBtn")?.addEventListener("click",()=>{ const texts = dayKeys.map(dk=>document.getElementById(`day_${dk}`).value); approveAllDays(editClass, editSubject, lessonNo, texts, teacherName); showToast(`Lesson ${lessonNo} APPROVED`); renderDashboard(); });
+            document.getElementById("saveDraftBtn")?.addEventListener("click",()=>{ const texts = dayKeys.map(dk=>document.getElementById(`day_${dk}`).value); setAllDays(editClass, editSubject, lessonNo, texts, "pending", null); showToast("Draft saved","info"); renderDashboard(); });
         }
-        if(isAdmin) { 
-            document.getElementById("adminSaveBtn")?.addEventListener("click", () => { 
-                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); 
-                for(let i=0; i<dayKeys.length; i++) { 
-                    const existing = getLesson(editClass, editSubject, lessonNo, dayKeys[i]); 
-                    setLesson(editClass, editSubject, lessonNo, dayKeys[i], texts[i], "approved", existing.submittedBy, teacherName); 
-                } 
-                showToast(`Admin saved Lesson ${lessonNo}`, "success"); 
-                renderDashboard(); 
-            }); 
-            document.getElementById("eraseClassBtn")?.addEventListener("click", () => { 
-                if(confirm(`Erase ALL data for class ${editClass}?`)) { 
-                    delete lessonData[editClass]; 
-                    saveData(); 
-                    showToast(`${editClass} erased`, "info"); 
-                    renderDashboard(); 
-                } 
-            }); 
-            document.getElementById("exportDocBtn")?.addEventListener("click", () => exportDocxLegal(editClass, lessonNo)); 
-            document.getElementById("applyMonitorFilter")?.addEventListener("click", () => { 
-                const filterLesson = parseInt(document.getElementById("monitorLessonFilter").value); 
-                document.getElementById("monitorTableContainer").innerHTML = generateAdminMonitorTable(editClass, filterLesson); 
-            }); 
+        if(isAdmin){
+            document.getElementById("adminSaveBtn")?.addEventListener("click",()=>{ const texts = dayKeys.map(dk=>document.getElementById(`day_${dk}`).value); dayKeys.forEach((dk,i)=>{ const ex = getLesson(editClass, editSubject, lessonNo, dk); setLesson(editClass, editSubject, lessonNo, dk, texts[i], "approved", ex.submittedBy, teacherName); }); showToast(`Admin saved Lesson ${lessonNo}`); renderDashboard(); });
+            document.getElementById("eraseClassBtn")?.addEventListener("click",()=>{ if(confirm(`Erase ALL data for ${editClass}?`)){ delete lessonData[editClass]; saveData(); showToast(`${editClass} erased`,"info"); renderDashboard(); } });
+            document.getElementById("exportDocBtn")?.addEventListener("click",()=>exportDocxLegal(editClass, lessonNo));
+            document.getElementById("applyMonitorFilter")?.addEventListener("click",()=>{ const l = parseInt(document.getElementById("monitorLessonFilter").value); document.getElementById("monitorTableContainer").innerHTML = generateAdminMonitorTable(editClass, l); });
         }
     }
-
+    
     function renderLogin() {
-        const appDiv = document.getElementById("app");
-        appDiv.innerHTML = `<div class="glass-container" style="max-width:600px; margin:40px auto;"><div class="header"><div class="institute-brand"><div class="logo-placeholder">${INSTITUTE.logoImageUrl ? `<img src="${INSTITUTE.logoImageUrl}">` : `<span>${INSTITUTE.logoText}</span>`}</div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)} | ☁️ Firebase Ready</div></div><div class="content"><div class="form-group"><label>👩‍🏫 Select Teacher</label><select id="teacherSelect">${teacherList.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div class="form-group"><label>🎭 Role</label><select id="roleSelect"><option value="admin">Admin</option><option value="provider">Teacher</option><option value="approver">Approver</option></select></div><div class="form-group"><label>🏫 Class</label><select id="classSelect">${classes.map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div><div class="form-group" id="subjectDiv" style="display:none;"><label>📖 Subject</label><select id="subjectSelect"></select></div><div class="form-group"><label>📋 Lesson Number (1-13)</label><select id="lessonNoSelect">${lessonNumbers.map(n => `<option value="${n}">Lesson ${n}</option>`).join('')}</select></div><div class="form-group" id="pwdDiv"><label>🔒 Admin Password</label><input type="password" id="password" placeholder="Enter password"></div><button class="btn btn-primary" style="width:100%;" id="loginBtn">Login</button><div style="margin-top:20px; background:#e8f5e9; padding:15px; border-radius:20px; font-size:13px;"><strong>✨ Features:</strong> Firebase Realtime Sync | Lesson 1-13 | View previous lessons | Full accountability<br>Admin password: <code>admin123</code></div></div></div>`;
-        const roleSel = document.getElementById("roleSelect");
-        const classSel = document.getElementById("classSelect");
-        const subjectDiv = document.getElementById("subjectDiv");
-        const subjectSel = document.getElementById("subjectSelect");
-        const pwdDiv = document.getElementById("pwdDiv");
-        function updateSubjects() { subjectSel.innerHTML = (subjectsByClass[classSel.value] || []).map(s => `<option value="${s}">${escapeHtml(s)}</option>`).join(''); }
-        roleSel.onchange = () => { const isAdmin = roleSel.value === "admin"; subjectDiv.style.display = isAdmin ? "none" : "block"; pwdDiv.style.display = isAdmin ? "block" : "none"; if(!isAdmin) updateSubjects(); };
-        classSel.onchange = () => { if(roleSel.value !== "admin") updateSubjects(); };
+        document.getElementById("app").innerHTML = `<div class="glass-container" style="max-width:580px; margin:20px auto;"><div class="header"><div class="institute-brand"><div class="logo-placeholder">${INSTITUTE.logoText}</div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div></div><div class="content"><div class="form-group"><label>👩‍🏫 Teacher</label><select id="teacherSelect">${teacherList.map(t=>`<option>${t}</option>`).join('')}</select></div><div class="form-group"><label>🎭 Role</label><select id="roleSelect"><option value="admin">Admin</option><option value="provider">Teacher</option><option value="approver">Approver</option></select></div><div class="form-group"><label>🏫 Class</label><select id="classSelect">${classes.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group" id="subjectDiv"><label>📖 Subject</label><select id="subjectSelect"></select></div><div class="form-group"><label>📋 Lesson</label><select id="lessonNoSelect">${lessonNumbers.map(n=>`<option value="${n}">Lesson ${n}</option>`).join('')}</select></div><div class="form-group" id="pwdDiv"><label>🔒 Admin Password</label><input type="password" id="password" placeholder="admin123"></div><button class="btn btn-primary" style="width:100%;" id="loginBtn">Login</button><div style="margin-top:20px;font-size:12px; background:#eef2f0; padding:12px; border-radius:20px;">Admin pass: admin123 | Responsive & auto-expand textareas</div></div></div>`;
+        const roleSel = document.getElementById("roleSelect"), classSel = document.getElementById("classSelect"), subjectDiv = document.getElementById("subjectDiv"), subjectSel = document.getElementById("subjectSelect"), pwdDiv = document.getElementById("pwdDiv");
+        function updateSubj() { subjectSel.innerHTML = (subjectsByClass[classSel.value]||[]).map(s=>`<option value="${s}">${escapeHtml(s)}</option>`).join(''); }
+        roleSel.onchange = () => { const admin = roleSel.value === "admin"; subjectDiv.style.display = admin ? "none" : "block"; pwdDiv.style.display = admin ? "block" : "none"; if(!admin) updateSubj(); };
+        classSel.onchange = () => { if(roleSel.value !== "admin") updateSubj(); };
         roleSel.dispatchEvent(new Event("change"));
         document.getElementById("loginBtn").onclick = async () => {
-            const teacher = document.getElementById("teacherSelect").value;
-            const role = roleSel.value;
-            const classVal = classSel.value;
-            const subject = role !== "admin" ? subjectSel.value : null;
-            const lessonNo = parseInt(document.getElementById("lessonNoSelect").value);
-            const pwd = document.getElementById("password").value;
-            if(role === "admin" && pwd !== "admin123") { showToast("Invalid admin password", "error"); return; }
-            if(role !== "admin" && !subject) { showToast("Select subject", "error"); return; }
+            const teacher = document.getElementById("teacherSelect").value, role = roleSel.value, classVal = classSel.value, subject = role!=="admin"?subjectSel.value:null, lessonNo = parseInt(document.getElementById("lessonNoSelect").value), pwd = document.getElementById("password").value;
+            if(role === "admin" && pwd !== "admin123") { showToast("Wrong admin password","error"); return; }
+            if(role !== "admin" && !subject) { showToast("Select subject","error"); return; }
             await loadDataFromFirebase();
             currentUser = { role, assignedClass: classVal, assignedSubject: subject, teacherName: teacher, editClass: classVal, editSubject: subject, currentLessonNo: lessonNo };
             renderDashboard();
         };
     }
-    
-    window.logout = () => { currentUser = null; historyMode = false; previousContext = null; renderLogin(); };
-    function getClassTheme(className) { const map = {"Pre-Play":"class-theme-preplay","Play":"class-theme-play","Nursery":"class-theme-nursery","One":"class-theme-one","Two":"class-theme-two","Three":"class-theme-three","Four":"class-theme-four","Five":"class-theme-five","Six":"class-theme-six","Seven":"class-theme-seven","Eight":"class-theme-eight","Nine":"class-theme-nine","Ten":"class-theme-ten"}; return map[className] || "class-default"; }
-    loadDataFromFirebase().then(() => renderLogin());
+    window.logout = () => { currentUser=null; historyMode=false; previousContext=null; renderLogin(); };
+    loadDataFromFirebase().then(()=>renderLogin());
 </script>
 </body>
 </html>
