@@ -1,27 +1,13 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>লেসন প্ল্যান প্ল্যাটফর্ম</title>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-    <link href="https://fonts.maateen.me/kalpurush/font.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Smart Lesson Flow | Institute Edition | Firebase Sync</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
-        :root {
-            --forest-green: #228B22;
-            --forest-green-dark: #1a6b1a;
-            --forest-green-light: #2da52d;
-            --white: #ffffff;
-            --light-gray: #f5f5f5;
-            --dark-gray: #333333;
-            --border-radius: 12px;
-            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            --gradient: linear-gradient(135deg, #228B22 0%, #32CD32 100%);
-            --royal-blue: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -29,1219 +15,549 @@
         }
 
         body {
-            background-color: var(--white);
-            color: var(--dark-gray);
-            line-height: 1.7;
+            font-family: 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
             min-height: 100vh;
-            font-family: 'Kalpurush', 'Times New Roman', serif;
-        }
-
-        .english-text {
-            font-family: 'Times New Roman', serif;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
             padding: 20px;
         }
 
-        header {
-            background: var(--white);
-            box-shadow: var(--shadow);
-            padding: 5px 0;
-            margin-bottom: 15px;
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        .glass-container {
+            max-width: 1400px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        .header-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            padding: 20px 28px;
             text-align: center;
-            gap: 10px;
+            color: white;
         }
-
-        .logo-container {
+        
+        .institute-brand {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 15px;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
         }
-
-        .logo {
-            width: 200%;
-            height: 200%;
-            max-width: 180px;
-            max-height: 180px;
-            background: var(--white);
+        
+        .logo-placeholder {
+            width: 70px;
+            height: 70px;
+            background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             overflow: hidden;
         }
-
-        .logo img {
+        
+        .logo-placeholder img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .institute-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header-sub {
+            font-size: 0.9rem;
+            opacity: 0.95;
+            margin-top: 5px;
         }
 
-        
-        .admin-access {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            margin-top: 10px;
-        }
+        .content { padding: 30px; }
 
         .btn {
-            padding: 12px 24px;
+            padding: 10px 24px;
             border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            background: var(--gradient);
-            color: var(--white);
-            font-family: 'Kalpurush', 'Times New Roman', serif;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(34, 139, 34, 0.3);
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(34, 139, 34, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(-1px);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .card {
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 30px;
-            margin-bottom: 25px;
-            border-left: 5px solid var(--forest-green);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: var(--forest-green);
-            font-size: 18px;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            transition: all 0.3s ease;
-            font-family: 'Kalpurush', 'Times New Roman', serif;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--forest-green);
-            box-shadow: 0 0 0 3px rgba(34, 139, 34, 0.1);
-        }
-
-        /* FIXED: Auto-expanding textarea */
-        textarea {
-            min-height: 150px;
-            resize: none;
-            overflow: hidden;
-            transition: height 0.2s ease;
-        }
-
-        .upload-area {
-            border: 3px dashed #ddd;
-            border-radius: var(--border-radius);
-            padding: 40px;
-            text-align: center;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: var(--light-gray);
-        }
-
-        .upload-area:hover {
-            border-color: var(--forest-green);
-            background-color: rgba(34, 139, 34, 0.05);
-            transform: scale(1.02);
-        }
-
-        .upload-area i {
-            font-size: 48px;
-            color: var(--forest-green);
-            margin-bottom: 15px;
-        }
-
-        .lesson-image {
-            max-width: 100%;
-            max-height: 300px;
-            margin-bottom: 15px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .confirmation-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 40px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            z-index: 1001;
-            border: 3px solid var(--forest-green);
-            animation: popIn 0.5s ease-out;
-        }
-
-        .warning-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 40px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            z-index: 1001;
-            border: 3px solid #dc3545;
-            animation: popIn 0.5s ease-out;
-        }
-
-        .error-message-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 40px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            z-index: 1001;
-            border: 3px solid #ffc107;
-            animation: popIn 0.5s ease-out;
-        }
-
-        .error-message-popup .warning-icon {
-            font-size: 60px;
-            color: #ffc107;
-            margin-bottom: 20px;
-        }
-
-        .warning-message .warning-icon {
-            font-size: 60px;
-            color: #dc3545;
-            margin-bottom: 20px;
-        }
-
-        @keyframes popIn {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-
-        .confirmation-message .tick {
-            font-size: 60px;
-            color: var(--forest-green);
-            margin-bottom: 20px;
-            animation: bounce 1s ease-in-out;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-            40% {transform: translateY(-10px);}
-            60% {transform: translateY(-5px);}
-        }
-
-        .confirmation-message h3 {
-            margin-bottom: 20px;
-            color: var(--forest-green);
-            font-size: 24px;
-        }
-
-        .warning-message h3 {
-            margin-bottom: 20px;
-            color: #dc3545;
-            font-size: 24px;
-        }
-
-        .error-message-popup h3 {
-            margin-bottom: 20px;
-            color: #856404;
-            font-size: 24px;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-
-        .filter-panel {
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 25px;
-            margin-bottom: 25px;
-            background: linear-gradient(to right, #f8fff8, #ffffff);
-            border: 1px solid #e8f5e8;
-        }
-
-        .filter-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .filter-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .lesson-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-        }
-
-        .lesson-card {
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 25px;
-            transition: all 0.3s ease;
-            border-top: 4px solid var(--forest-green);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .lesson-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--gradient);
-        }
-
-        .lesson-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-
-        .lesson-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 12px;
-            color: var(--forest-green);
-        }
-
-        .lesson-meta {
-            color: #666;
+            border-radius: 40px;
             font-size: 14px;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.02); }
+        .btn-primary { background: linear-gradient(135deg, #11998e, #0e6b5e); color: white; }
+        .btn-success { background: linear-gradient(135deg, #28a745, #1e7e34); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #ffc107, #e0a800); color: #2d2d2d; }
+        .btn-danger { background: linear-gradient(135deg, #dc3545, #bd2130); color: white; }
+        .btn-info { background: linear-gradient(135deg, #17a2b8, #117a8b); color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-purple { background: linear-gradient(135deg, #6f42c1, #5538a8); color: white; }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: #1a472a; font-size: 13px; letter-spacing: 0.5px; }
+        select, input, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        select:focus, input:focus, textarea:focus {
+            border-color: #38ef7d;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(56,239,125,0.2);
         }
 
-        /* FIXED: Text wrapping for displayed lesson content */
-        .lesson-content {
-            margin-bottom: 20px;
-            line-height: 1.8;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            white-space: pre-wrap;
-            word-break: break-word;
-            max-width: 100%;
-            overflow: hidden;
+        .lesson-panel {
+            border-radius: 28px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
+        
+        .class-theme-preplay { background: linear-gradient(135deg, #fff0f5, #ffe0f0); border: 1px solid #ffccdd; }
+        .class-theme-play { background: linear-gradient(135deg, #fff9e6, #fff3cc); border: 1px solid #ffe5b4; }
+        .class-theme-nursery { background: linear-gradient(135deg, #e6f3ff, #cce5ff); border: 1px solid #b8d9ff; }
+        .class-theme-one { background: linear-gradient(135deg, #f0e6ff, #e0ccff); border: 1px solid #d4b8ff; }
+        .class-theme-two { background: linear-gradient(135deg, #ffe6f0, #ffcce0); border: 1px solid #ffb3cc; }
+        .class-theme-three { background: linear-gradient(135deg, #e6ffe6, #ccffcc); border: 1px solid #b3ffb3; }
+        .class-theme-four { background: linear-gradient(135deg, #fff0e6, #ffe0cc); border: 1px solid #ffd1b3; }
+        .class-theme-five { background: linear-gradient(135deg, #e6ffff, #ccffff); border: 1px solid #b3ffff; }
+        .class-theme-six { background: linear-gradient(135deg, #ffe6e6, #ffcccc); border: 1px solid #ffb3b3; }
+        .class-theme-seven { background: linear-gradient(135deg, #e6e6ff, #ccccff); border: 1px solid #b3b3ff; }
+        .class-theme-eight { background: linear-gradient(135deg, #f0fff0, #e0ffe0); border: 1px solid #ccffcc; }
+        .class-theme-nine { background: linear-gradient(135deg, #ffe6cc, #ffd9b3); border: 1px solid #ffcc99; }
+        .class-theme-ten { background: linear-gradient(135deg, #e6ccff, #d9b3ff); border: 1px solid #cc99ff; }
+        .class-default { background: #fef9e3; border: 1px solid #e9e9c5; }
+        .history-view { background: #f0f4f8; border: 2px solid #6f42c1; }
 
-        .lesson-image-preview {
-            max-width: 100%;
-            border-radius: var(--border-radius);
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin: 20px 0;
         }
-
-        .admin-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn-danger {
-            background: linear-gradient(to bottom, #dc3545, #c82333);
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-        }
-
-        .btn-danger:hover {
-            background: linear-gradient(to bottom, #e04b59, #d92535);
-            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
-        }
-
-        .admin-login-form {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 35px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            z-index: 1001;
-            width: 90%;
-            max-width: 450px;
-            animation: popIn 0.4s ease-out;
-        }
-
-        .admin-login-form h3 {
-            margin-bottom: 25px;
-            color: var(--forest-green);
-            text-align: center;
-            font-size: 22px;
-        }
-
-        .admin-login-form .form-group {
-            margin-bottom: 20px;
-        }
-
-        .admin-login-form .actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 25px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--forest-green);
-            font-size: 18px;
-        }
-
-        .no-lesson-message {
-            color: #666;
-            text-align: center;
-            padding: 30px;
-            font-size: 16px;
-            background: #f8f9fa;
-            border-radius: var(--border-radius);
-            border: 2px solid #e9ecef;
-        }
-
-        .recent-lesson-badge {
-            background: var(--gradient);
-            color: white;
-            padding: 5px 12px;
+        .day-card {
+            background: white;
             border-radius: 20px;
-            font-size: 12px;
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            animation: pulse 2s infinite;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 6px solid #11998e;
         }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(34, 139, 34, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(34, 139, 34, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(34, 139, 34, 0); }
+        .day-title {
+            font-weight: bold;
+            color: #1a472a;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 5px;
         }
-
-        .section-title {
-            font-size: 28px;
-            color: var(--forest-green);
-            margin-bottom: 20px;
-            text-align: center;
-            position: relative;
-            padding-bottom: 15px;
+        .day-textarea {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: 13px;
+            resize: vertical;
         }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: var(--gradient);
-            border-radius: 3px;
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 8px;
         }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .lesson-list {
-                grid-template-columns: 1fr;
-            }
-
-            .filter-row {
-                flex-direction: column;
-            }
-
-            .admin-actions {
-                flex-direction: column;
-            }
-            
-            .card {
-                padding: 20px;
-            }
-            
-            .academy-name {
-                font-size: 20px;
-            }
+        .status-pending { background: #fee2e2; color: #b91c1c; }
+        .status-approved { background: #dcfce7; color: #15803d; }
+        .jump-bar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-bottom: 25px;
+            background: #eef2f0;
+            padding: 15px 20px;
+            border-radius: 28px;
         }
+        .jump-bar .form-group { margin-bottom: 0; flex: 1; min-width: 150px; }
+        .all-subjects-table { overflow-x: auto; margin-top: 20px; border-radius: 24px; background: white; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background: #1a472a; color: white; padding: 12px; text-align: center; }
+        td { border-bottom: 1px solid #e2e8f0; padding: 12px; vertical-align: middle; text-align: center; }
+        .status-cell { border-radius: 20px; background: #f1f5f9; display: inline-block; padding: 4px 12px; }
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: white; border-radius: 32px; max-width: 700px; width: 90%; padding: 30px; max-height: 85vh; overflow-y: auto; }
+        .toast { position: fixed; bottom: 30px; right: 30px; padding: 14px 24px; border-radius: 50px; color: white; font-weight: bold; z-index: 3000; animation: slideIn 0.2s ease; }
+        .toast-success { background: #11998e; }
+        .toast-error { background: #dc3545; }
+        .toast-info { background: #2c3e66; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); } }
+        @media print {
+            body { background: white; padding: 0; }
+            .glass-container { box-shadow: none; border-radius: 0; }
+            .btn, .jump-bar, .user-info, .toolbar, .modal, .toast { display: none; }
+        }
+        .user-info { background: #e6f7ec; padding: 12px 20px; border-radius: 40px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .submission-meta { font-size: 10px; color: #666; margin-top: 5px; padding-top: 5px; border-top: 1px solid #eee; }
+        .accountability-badge { background: #f0e6ff; padding: 2px 8px; border-radius: 12px; font-size: 10px; display: inline-block; margin-top: 5px; }
+        .history-note { background: #e9ecef; padding: 10px 15px; border-radius: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .lesson-badge { background: white; padding: 5px 15px; border-radius: 30px; display: inline-block; margin-bottom: 15px; font-weight: bold; color: #1a472a; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .admin-filter-bar { background: #fff; padding: 15px; border-radius: 20px; margin-bottom: 20px; display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
+        .firebase-status { background: #2c3e66; color: white; padding: 5px 12px; border-radius: 30px; font-size: 12px; display: inline-block; margin-left: 15px; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo-container">
-                    <div class="logo">
-                        <img src="logo.png" alt="Logo">
-                    </div>
-                    
-                </div>
-                <div class="admin-access">
-                    <button id="adminBtn" class="btn">অ্যাডমিন এক্সেস</button>
-                </div>
-            </div>
-        </div>
-    </header>
+<div id="app"></div>
 
-    <div class="container">
-        <!-- Lesson Plan Submission Form -->
-        <div id="lessonForm" class="card">
-            <h2 class="section-title">লেসন সাবমিশন সফটওয়্যার</h2>
-            <div class="form-group">
-                <label for="userName">আপনার নাম</label>
-                <input type="text" id="userName" placeholder="লিখুন">
-            </div>
-            <div class="form-group">
-                <label for="classSelect">শ্রেণি</label>
-                <select id="classSelect">
-                    <option value="">সিলেক্ট করুন</option>
-                    <!-- Options will be populated by JavaScript -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="subjectSelect">বিষয়</label>
-                <select id="subjectSelect">
-                    <option value="">সিলেক্ট করুন</option>
-                    <!-- Options will be populated dynamically based on class selection -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="lessonNo">লেসন নং</label>
-                <select id="lessonNo">
-                    <option value="">সিলেক্ট করুন</option>
-                    <!-- Options will be populated by JavaScript -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label>লেসন কন্টেন্ট</label>
-                <textarea id="lessonText" placeholder="লেসন প্ল্যানের বিস্তারিত লিখুন..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>অথবা লেসন প্ল্যানের ইমেজ আপলোড করুন</label>
-                <div class="upload-area" id="uploadArea">
-                    <i>📁</i>
-                    <p>আপলোড করতে ক্লিক করুন বা ফাইল ড্রাগ এন্ড ড্রপ করুন</p>
-                    <p>PNG, JPG, GIF - সর্বোচ্চ ১৫MB</p>
-                </div>
-                <input type="file" id="lessonImage" accept="image/*" style="display: none;">
-                <img id="imagePreview" class="lesson-image hidden" src="" alt="Preview">
-            </div>
-            <button id="submitLessonBtn" class="btn">সাবমিট করুন</button>
-        </div>
+<script>
+    // ==================== FIREBASE CONFIGURATION (REPLACE WITH YOURS) ====================
+    // IMPORTANT: Replace the below config object with your Firebase project credentials
+    // Go to Project Settings > General > Your apps > Firebase SDK snippet > Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyDzaLns7aRUMB_RjnS6iUKyxwHXfRqmxwg",
+        authDomain: "mcq-exam-generator-e10c7.firebaseapp.com",
+        databaseURL: "https://mcq-exam-generator-e10c7-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "mcq-exam-generator-e10c7",
+        storageBucket: "mcq-exam-generator-e10c7.firebasestorage.app",
+        messagingSenderId: "51613317429",
+        appId: "1:51613317429:web:3e92cc83224d18e320747c"
+    };
+    // =====================================================================================
 
-        <!-- Filter Panel -->
-        <div class="filter-panel">
-            <h2 class="section-title">লেসন ফিল্টার করুন</h2>
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="filterClass">শ্রেণি</label>
-                    <select id="filterClass">
-                        <option value="">শ্রেণি সিলেক্ট করুন</option>
-                        <!-- Options will be populated by JavaScript -->
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="filterSubject">বিষয়</label>
-                    <select id="filterSubject">
-                        <option value="">বিষয় সিলেক্ট করুন</option>
-                        <!-- Options will be populated dynamically based on class selection -->
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="filterLessonNo">লেসন নং</label>
-                    <select id="filterLessonNo">
-                        <option value="">লেসন নং সিলেক্ট করুন</option>
-                        <!-- Options will be populated by JavaScript -->
-                    </select>
-                </div>
-            </div>
-            <button id="applyFilterBtn" class="btn">ফিল্টার প্রয়োগ করুন</button>
-        </div>
-
-        <!-- Loading State -->
-        <div id="loadingState" class="loading hidden">
-            <p>লেসন প্ল্যান লোড হচ্ছে...</p>
-        </div>
-
-        <!-- Lesson Plans List -->
-        <div id="lessonsList" class="lesson-list">
-            <div class="no-lesson-message">
-                লেসন প্ল্যান দেখতে উপরের ফিল্টার ব্যবহার করুন
-            </div>
-        </div>
-    </div>
-
-    <!-- Confirmation Message -->
-    <div id="confirmationMessage" class="confirmation-message hidden">
-        <div class="tick">✓</div>
-        <h3 id="confirmationTitle">আপনার লেসন সাবমিট হয়েছে</h3>
-        <p id="confirmationText">জাঝাকাল্লাহু খাইরন</p>
-        <button id="confirmationOkBtn" class="btn">ঠিক আছে</button>
-    </div>
-
-    <!-- Warning Message -->
-    <div id="warningMessage" class="warning-message hidden">
-        <div class="warning-icon">⚠️</div>
-        <h3 id="warningTitle">কোনো লেসন পাওয়া যায়নি</h3>
-        <p id="warningText">উক্ত শ্রেণির লেসন এখনো সাবমিট করা হয়নি।</p>
-        <button id="warningOkBtn" class="btn">ঠিক আছে</button>
-    </div>
-
-    <!-- Error Message Popup -->
-    <div id="errorMessagePopup" class="error-message-popup hidden">
-        <div class="warning-icon">⚠️</div>
-        <h3 id="errorPopupTitle">ত্রুটি</h3>
-        <p id="errorPopupText"></p>
-        <button id="errorPopupOkBtn" class="btn">ঠিক আছে</button>
-    </div>
-
-    <!-- Admin Login Form -->
-    <div id="adminLoginForm" class="admin-login-form hidden">
-        <h3>অ্যাডমিন লগইন</h3>
-        <div class="form-group">
-            <label for="adminPassword">অ্যাডমিন পাসওয়ার্ড</label>
-            <input type="password" id="adminPassword" placeholder="পাসওয়ার্ড দিন">
-        </div>
-        <div class="actions">
-            <button id="cancelAdminLogin" class="btn btn-danger">বাতিল</button>
-            <button id="submitAdminLogin" class="btn">লগইন</button>
-        </div>
-    </div>
-
-    <div id="overlay" class="overlay hidden"></div>
-
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDzaLns7aRUMB_RjnS6iUKyxwHXfRqmxwg",
-            authDomain: "mcq-exam-generator-e10c7.firebaseapp.com",
-            databaseURL: "https://mcq-exam-generator-e10c7-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "mcq-exam-generator-e10c7",
-            storageBucket: "mcq-exam-generator-e10c7.firebasestorage.app",
-            messagingSenderId: "51613317429",
-            appId: "1:51613317429:web:3e92cc83224d18e320747c"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        // Firebase Database operations
-        const Database = {
-            async addLesson(lessonData) {
-                const lessonId = 'lesson_' + Date.now();
-                await database.ref('lessons/' + lessonId).set({
-                    ...lessonData,
-                    id: lessonId,
-                    timestamp: Date.now()
-                });
-                return lessonId;
-            },
-
-            async getLessons() {
-                try {
-                    const snapshot = await database.ref('lessons').once('value');
-                    return snapshot.val() || {};
-                } catch (error) {
-                    console.error('Error fetching lessons:', error);
-                    throw error;
-                }
-            },
-
-            async deleteLesson(lessonId) {
-                await database.ref('lessons/' + lessonId).remove();
-            },
-
-            async deleteLessonsByClass(classId) {
-                const snapshot = await database.ref('lessons').once('value');
-                const lessons = snapshot.val() || {};
-                
-                const deletePromises = [];
-                Object.keys(lessons).forEach(lessonId => {
-                    if (lessons[lessonId].classId === classId) {
-                        deletePromises.push(this.deleteLesson(lessonId));
-                    }
-                });
-                
-                await Promise.all(deletePromises);
-            },
-
-            // Listen for real-time updates
-            onLessonsUpdate(callback) {
-                database.ref('lessons').on('value', (snapshot) => {
-                    callback(snapshot.val() || {});
-                });
-            },
-
-            offLessonsUpdate() {
-                database.ref('lessons').off();
-            }
-        };
-
-        // Configuration - Easy to modify
-        const CONFIG = {
-            adminPassword: "admin123", // Change this password as needed
-            classes: [
-                { id: "class1", name: "প্লে", subjects: ["কুরআন মাজীদ", "বাংলা", "English", "গণিত"] },
-                { id: "class2", name: "নার্সারি", subjects: ["কুরআন মাজীদ", "বাংলা-সীরাত-সাধারণ জ্ঞান", "English", "গণিত", "স্পোকেন এরাবিক-ইসলামিক স্টাডিজ"] },
-                { id: "class3", name: "প্রথম", subjects: ["কুরআন মাজীদ", "বাংলা-সীরাত", "English", "গণিত", "স্পোকেন এরাবিক-সাধারণ জ্ঞান", "ইসলামিক স্টাডিজ"] },
-                { id: "class4", name: "দ্বিতীয়", subjects: ["বাংলা-সীরাত", "English", "গণিত", "সাধারণ জ্ঞান-কম্পিউটার", "কায়দা (ক)", "কায়দা (খ)", "আমপারা", "স্পোকেন এরাবিক", "ইসলামিক স্টাডিজ"] },
-                { id: "class5", name: "তৃতীয়", subjects: ["বাংলা-বাংলা ব্যাকরণ-সীরাত", "English", "গণিত", "বিজ্ঞান-বাওবি-কম্পিউটার", "ইসলামিক স্টাডিজ", "কায়দa", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
-                { id: "class6", name: "চতুর্থ", subjects: ["বাংলা-বাংলা ব্যাকরণ-সীরাত", "English", "গণিত", "বিজ্ঞান-বাওবি-কম্পিউটার", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
-                { id: "class7", name: "পঞ্চম", subjects: ["বাংলা-বাংলা ব্যাকরণ-সীরাত", "English", "গণিত", "বিজ্ঞান-বাওবি-কম্পিউটার", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
-                { id: "class8", name: "ষষ্ঠ", subjects: ["বাংলা-বাংলা ব্যাকরণ", "English", "English Grammar-Spoken English", "গণিত", "বিজ্ঞান", "বাওবি-ICT-সীরাত", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
-                { id: "class9", name: "সপ্তম", subjects: ["বাংলা-বাংলা ব্যাকরণ", "English", "English Grammar-Spoken English", "গণিত", "বিজ্ঞান", "বাওবি-ICT-সীরাত", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনار্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] },
-                { id: "class10", name: "অষ্টম", subjects: ["বাংলা-বাংলা ব্যাকরণ", "English", "English Grammar-Spoken English", "গণিত", "বিজ্ঞান", "বাওবি-ICT-সীরাত", "ইসলামিক স্টাডিজ", "কায়দা", "আমপারা", "নাজেরা বিগিনার্স", "নাজেরা ও হিফজ", "স্পোকেন এরাবিক (ক)", "স্পোকেন এরাবিক (খ)", "স্পোকেন এরাবিক (গ)"] }
-            ],
-            lessonNumbers: 12 // Number of lessons (1 to 12)
-        };
-
-        // DOM Elements
-        const lessonForm = document.getElementById('lessonForm');
-        const userName = document.getElementById('userName');
-        const lessonNo = document.getElementById('lessonNo');
-        const classSelect = document.getElementById('classSelect');
-        const subjectSelect = document.getElementById('subjectSelect');
-        const lessonText = document.getElementById('lessonText');
-        const uploadArea = document.getElementById('uploadArea');
-        const lessonImage = document.getElementById('lessonImage');
-        const imagePreview = document.getElementById('imagePreview');
-        const submitLessonBtn = document.getElementById('submitLessonBtn');
-        const filterLessonNo = document.getElementById('filterLessonNo');
-        const filterClass = document.getElementById('filterClass');
-        const filterSubject = document.getElementById('filterSubject');
-        const applyFilterBtn = document.getElementById('applyFilterBtn');
-        const lessonsList = document.getElementById('lessonsList');
-        const loadingState = document.getElementById('loadingState');
-        const adminBtn = document.getElementById('adminBtn');
-        const adminLoginForm = document.getElementById('adminLoginForm');
-        const adminPassword = document.getElementById('adminPassword');
-        const cancelAdminLogin = document.getElementById('cancelAdminLogin');
-        const submitAdminLogin = document.getElementById('submitAdminLogin');
-        const confirmationMessage = document.getElementById('confirmationMessage');
-        const confirmationTitle = document.getElementById('confirmationTitle');
-        const confirmationText = document.getElementById('confirmationText');
-        const confirmationOkBtn = document.getElementById('confirmationOkBtn');
-        const warningMessage = document.getElementById('warningMessage');
-        const warningTitle = document.getElementById('warningTitle');
-        const warningText = document.getElementById('warningText');
-        const warningOkBtn = document.getElementById('warningOkBtn');
-        const errorMessagePopup = document.getElementById('errorMessagePopup');
-        const errorPopupTitle = document.getElementById('errorPopupTitle');
-        const errorPopupText = document.getElementById('errorPopupText');
-        const errorPopupOkBtn = document.getElementById('errorPopupOkBtn');
-        const overlay = document.getElementById('overlay');
-
-        // State variables
-        let isAdmin = false;
-        let lessons = {};
-        let currentImageData = null;
-        let unsubscribeFromLessons = null;
-        let currentUserName = '';
-
-        // Initialize the application
-        function init() {
-            populateLessonNumbers();
-            populateClasses();
-            setupEventListeners();
-            loadLessons();
-            
-            // Set up real-time updates
-            unsubscribeFromLessons = Database.onLessonsUpdate((updatedLessons) => {
-                lessons = updatedLessons;
-                // Don't automatically display lessons after submission
-            });
+    // Initialize Firebase (only if not already initialized)
+    let db;
+    try {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
+        db = firebase.database();
+        console.log("Firebase Realtime DB initialized");
+    } catch (e) {
+        console.error("Firebase init error:", e);
+        alert("Firebase configuration error. Please check your credentials in the code.");
+    }
 
-        // Populate lesson number dropdowns
-        function populateLessonNumbers() {
-            for (let i = 1; i <= CONFIG.lessonNumbers; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = `লেসন ${i}`;
-                lessonNo.appendChild(option);
-                
-                const filterOption = option.cloneNode(true);
-                filterLessonNo.appendChild(filterOption);
-            }
-        }
+    // ============ INSTITUTE CONFIGURATION ============
+    const INSTITUTE = {
+        name: "AL-FALAH ACADEMY",
+        logoText: "📚",
+        logoImageUrl: "logo.png",
+        tagline: "Excellence in Education & Character Building"
+    };
+    // =================================================
+    
+    // Master Data
+    const classes = ["Pre-Play", "Play", "Nursery", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
+    
+    const subjectsByClass = {
+        "Pre-Play": ["Arbi", "Bangla", "English-Mathematics"],
+        "Play": ["Quran Majeed", "Bengali & General Knowledge", "English", "Mathematics"],
+        "Nursery": ["Quran Majeed", "Bengali & GK", "English", "Mathematics", "Spoken Arabic & Islamic Studies"],
+        "One": ["Bengali", "English", "Mathematics", "Islamic Studies", "Spoken Arabic & GK"],
+        "Two": ["Bengali", "English", "Mathematics", "GK & Computer", "Qaida Beginners", "Qaida Advanced", "Amma Para", "Spoken Arabic", "Islamic Studies"],
+        "Three": ["Bangla & Grammar", "English", "Mathematics", "Science & BGS & Computer", "Islamic Studies", "Qaida", "Amma Para", "Nazera Beginners", "Nazera Advanced", "Hifz (A)", "Spoken Arabic (Ka)", "Spoken Arabic (Kha)", "Spoken Arabic (Ga)"],
+        "Four": ["Bangla & Grammar", "English", "Mathematics", "Science & BGS & Computer", "Islamic Studies", "Qaida", "Amma Para", "Nazera Beginners", "Nazera Advanced", "Hifz (A)", "Spoken Arabic (Ka)", "Spoken Arabic (Kha)", "Spoken Arabic (Ga)"],
+        "Five": ["Bangla & Grammar", "English", "Mathematics", "Science & BGS & Computer", "Islamic Studies", "Qaida", "Amma Para", "Nazera Beginners", "Nazera Advanced", "Hifz (A)", "Spoken Arabic (Ka)", "Spoken Arabic (Kha)", "Spoken Arabic (Ga)"],
+        "Six": ["Bangla & Grammar", "English", "English Grammar", "Mathematics", "Science", "BGS & Computer", "Islamic Studies", "Qaida", "Amma Para", "Nazera Beginners", "Nazera Advanced", "Hifz (A)", "Spoken Arabic (Ka)", "Spoken Arabic (Kha)", "Spoken Arabic (Ga)"],
+        "Seven": ["Bangla & Grammar", "English", "English Grammar", "Mathematics", "Science", "BGS & Computer", "Islamic Studies", "Qaida", "Amma Para", "Nazera Beginners", "Nazera Advanced", "Hifz (A)", "Spoken Arabic (Ka)", "Spoken Arabic (Kha)", "Spoken Arabic (Ga)"],
+        "Eight": ["Bangla & Grammar", "English", "English Grammar", "Mathematics", "Science", "BGS & Computer", "Islamic Studies", "Qaida", "Amma Para", "Nazera Beginners", "Nazera Advanced", "Hifz (A)", "Spoken Arabic (Ka)", "Spoken Arabic (Kha)", "Spoken Arabic (Ga)"],
+        "Nine": ["Bangla & Grammar", "English", "English Grammar", "Mathematics", "Science", "BGS & Computer", "Islamic Studies", "Qaida", "Amma Para", "Nazera Beginners", "Nazera Advanced", "Hifz (A)", "Spoken Arabic (Ka)", "Spoken Arabic (Kha)", "Spoken Arabic (Ga)"],
+        "Ten": ["Bangla & Grammar", "English", "English Grammar", "Mathematics", "Science", "BGS & Computer", "Islamic Studies", "Qaida", "Amma Para", "Nazera Beginners", "Nazera Advanced", "Hifz (A)", "Spoken Arabic (Ka)", "Spoken Arabic (Kha)", "Spoken Arabic (Ga)"]
+    };
+    
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayKeys = ["mon", "tue", "wed", "thu", "fri", "sat"];
+    const lessonNumbers = Array.from({length: 13}, (_, i) => i + 1);
+    
+    const teacherList = [
+        "A M K Nomany Pervez",
+        "Ramjann Ali",
+        "Md. Mohiuddin Molla",
+        "Sraboni Ahmmed",
+        "Akhi Alom",
+        "Naznin Sultana",
+        "Fahmida Akter",
+        "Rikta Khanom"
+    ];
 
-        // Populate class dropdowns
-        function populateClasses() {
-            CONFIG.classes.forEach(cls => {
-                const option = document.createElement('option');
-                option.value = cls.id;
-                option.textContent = cls.name;
-                classSelect.appendChild(option);
-                
-                const filterOption = option.cloneNode(true);
-                filterClass.appendChild(filterOption);
-            });
-        }
+    let lessonData = {};      // local mirror
+    let currentUser = null;
+    let historyMode = false;
+    let previousContext = null;
 
-        // Update subjects based on selected class
-        function updateSubjects(classId, subjectSelectElement) {
-            // Clear existing options except the first one
-            while (subjectSelectElement.children.length > 1) {
-                subjectSelectElement.removeChild(subjectSelectElement.lastChild);
-            }
-            
-            if (classId) {
-                const selectedClass = CONFIG.classes.find(cls => cls.id === classId);
-                if (selectedClass) {
-                    selectedClass.subjects.forEach(subject => {
-                        const option = document.createElement('option');
-                        option.value = subject;
-                        option.textContent = subject;
-                        subjectSelectElement.appendChild(option);
-                    });
-                }
-            }
-        }
-
-        // Auto-resize textarea function
-        function autoResizeTextarea(textarea) {
-            // Reset height to auto to get the correct scrollHeight
-            textarea.style.height = 'auto';
-            // Set the height to scrollHeight to fit all content
-            textarea.style.height = textarea.scrollHeight + 'px';
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            // Class selection change
-            classSelect.addEventListener('change', function() {
-                updateSubjects(this.value, subjectSelect);
-            });
-            
-            filterClass.addEventListener('change', function() {
-                updateSubjects(this.value, filterSubject);
-            });
-            
-            // Upload area click
-            uploadArea.addEventListener('click', function() {
-                lessonImage.click();
-            });
-            
-            // File input change
-            lessonImage.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    // Check file size (15MB limit)
-                    if (file.size > 15 * 1024 * 1024) {
-                        showErrorPopup('ফাইলের আকার ১৫MB এর কম হতে হবে');
-                        return;
-                    }
-                    
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        currentImageData = e.target.result;
-                        imagePreview.src = currentImageData;
-                        imagePreview.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            // Auto-resize textarea on input
-            lessonText.addEventListener('input', function() {
-                autoResizeTextarea(this);
-            });
-            
-            // Initialize textarea height
-            autoResizeTextarea(lessonText);
-            
-            // Submit lesson
-            submitLessonBtn.addEventListener('click', submitLesson);
-            
-            // Apply filters
-            applyFilterBtn.addEventListener('click', applyFilters);
-            
-            // Admin button
-            adminBtn.addEventListener('click', showAdminLogin);
-            
-            // Admin login
-            cancelAdminLogin.addEventListener('click', hideAdminLogin);
-            submitAdminLogin.addEventListener('click', handleAdminLogin);
-            
-            // Confirmation
-            confirmationOkBtn.addEventListener('click', hideConfirmation);
-            
-            // Warning
-            warningOkBtn.addEventListener('click', hideWarning);
-            
-            // Error popup
-            errorPopupOkBtn.addEventListener('click', hideErrorPopup);
-        }
-
-        // Load lessons from Firebase
-        async function loadLessons() {
-            try {
-                showLoading();
-                lessons = await Database.getLessons();
-                hideLoading();
-            } catch (error) {
-                showErrorPopup('লেসন প্ল্যান লোড করতে সমস্যা হয়েছে। আপনার ইন্টারনেট সংযোগ চেক করুন।');
-                hideLoading();
-            }
-        }
-
-        // Submit lesson plan
-        async function submitLesson() {
-            const name = userName.value.trim();
-            const lessonNumber = lessonNo.value;
-            const classId = classSelect.value;
-            const subject = subjectSelect.value;
-            const text = lessonText.value.trim();
-            
-            if (!name || !lessonNumber || !classId || !subject || (!text && !currentImageData)) {
-                showErrorPopup('দয়া করে সব প্রয়োজনীয় ফিল্ড পূরণ করুন এবং হয় টেক্সট অথবা একটি ইমেজ প্রদান করুন।');
-                return;
-            }
-            
-            try {
-                submitLessonBtn.disabled = true;
-                submitLessonBtn.textContent = 'সাবমিট হচ্ছে...';
-                
-                currentUserName = name;
-                
-                const lesson = {
-                    userName: name,
-                    lessonNumber: parseInt(lessonNumber),
-                    classId: classId,
-                    className: CONFIG.classes.find(cls => cls.id === classId).name,
-                    subject: subject,
-                    text: text,
-                    imageData: currentImageData,
-                    timestamp: Date.now()
-                };
-                
-                await Database.addLesson(lesson);
-                
-                // Reset form
-                userName.value = '';
-                lessonNo.value = '';
-                classSelect.value = '';
-                subjectSelect.value = '';
-                lessonText.value = '';
-                lessonImage.value = '';
-                imagePreview.classList.add('hidden');
-                currentImageData = null;
-                
-                // Reset textarea height
-                autoResizeTextarea(lessonText);
-                
-                // Update subjects dropdown
-                updateSubjects('', subjectSelect);
-                
-                // Show confirmation
-                showConfirmation('লেসন সাবমিট হয়েছে', 'জাঝাকাল্লাহু খাইরন');
-                
-            } catch (error) {
-                showErrorPopup('লেসন প্ল্যান জমা দিতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
-            } finally {
-                submitLessonBtn.disabled = false;
-                submitLessonBtn.textContent = 'সাবমিট করুন';
-            }
-        }
-
-        // Apply filters
-        function applyFilters() {
-            const filterClassId = filterClass.value;
-            const filterSubjectValue = filterSubject.value;
-            const filterLessonNumber = filterLessonNo.value;
-            
-            // Check if at least class is selected
-            if (!filterClassId) {
-                showErrorPopup('লেসন দেখতে কমপক্ষে কোনো একটি শ্রেণি নির্বাচন করুন।');
-                return;
-            }
-            
-            // Apply filters
-            let filteredLessons = Object.values(lessons);
-            
-            // Filter by class
-            filteredLessons = filteredLessons.filter(lesson => 
-                lesson.classId === filterClassId
-            );
-            
-            // Filter by subject if selected
-            if (filterSubjectValue) {
-                filteredLessons = filteredLessons.filter(lesson => 
-                    lesson.subject === filterSubjectValue
-                );
-            }
-            
-            // Filter by lesson number if selected
-            if (filterLessonNumber) {
-                filteredLessons = filteredLessons.filter(lesson => 
-                    lesson.lessonNumber === parseInt(filterLessonNumber)
-                );
-            }
-            
-            // Sort by timestamp (newest first)
-            filteredLessons.sort((a, b) => b.timestamp - a.timestamp);
-            
-            // Display results
-            if (filteredLessons.length === 0) {
-                showWarning('কোনো লেসন পাওয়া যায়নি', 'উক্ত শ্রেণির লেসন এখনো সাবমিট করা হয়নি।');
-                lessonsList.innerHTML = '';
+    // Firebase sync: load data from RTDB
+    function loadDataFromFirebase() {
+        if (!db) return Promise.resolve();
+        return db.ref("lessonPlans").get().then(snapshot => {
+            if (snapshot.exists()) {
+                lessonData = snapshot.val();
             } else {
-                displayFilteredLessons(filteredLessons);
+                lessonData = {};
             }
-        }
-
-        // Display filtered lessons
-        function displayFilteredLessons(filteredLessons) {
-            lessonsList.innerHTML = '';
-            
-            filteredLessons.forEach(lesson => {
-                const lessonCard = createLessonCard(lesson);
-                lessonsList.appendChild(lessonCard);
-            });
-        }
-
-        // Create lesson card element
-        function createLessonCard(lesson) {
-            const lessonCard = document.createElement('div');
-            lessonCard.className = 'lesson-card';
-            
-            let contentHTML = '';
-            if (lesson.text) {
-                contentHTML = `<div class="lesson-content">${lesson.text}</div>`;
-            }
-            
-            if (lesson.imageData) {
-                contentHTML += `<img src="${lesson.imageData}" alt="Lesson plan image" class="lesson-image-preview">`;
-            }
-            
-            lessonCard.innerHTML = `
-                <div class="lesson-title">লেসন ${lesson.lessonNumber} - ${lesson.subject}</div>
-                <div class="lesson-meta">
-                    <strong>ক্লাস:</strong> ${lesson.className} | 
-                    <strong>জমা দিয়েছেন:</strong> ${lesson.userName} | 
-                    <strong>তারিখ:</strong> ${new Date(lesson.timestamp).toLocaleDateString('bn-BD')}
-                </div>
-                ${contentHTML}
-                ${isAdmin ? `
-                    <div class="admin-actions">
-                        <button class="btn btn-danger delete-lesson-btn" data-lesson-id="${lesson.id}">এই লেসন ডিলিট করুন</button>
-                        <button class="btn btn-danger delete-class-lessons-btn" data-class-id="${lesson.classId}">সব ${lesson.className} লেসন ডিলিট করুন</button>
-                    </div>
-                ` : ''}
-            `;
-            
-            // Add event listeners for admin buttons if admin is logged in
-            if (isAdmin) {
-                const deleteBtn = lessonCard.querySelector('.delete-lesson-btn');
-                const deleteClassBtn = lessonCard.querySelector('.delete-class-lessons-btn');
-                
-                if (deleteBtn) {
-                    deleteBtn.addEventListener('click', function() {
-                        const lessonId = this.getAttribute('data-lesson-id');
-                        deleteLesson(lessonId);
-                    });
-                }
-                
-                if (deleteClassBtn) {
-                    deleteClassBtn.addEventListener('click', function() {
-                        const classId = this.getAttribute('data-class-id');
-                        const className = CONFIG.classes.find(cls => cls.id === classId).name;
-                        deleteClassLessons(classId, className);
-                    });
-                }
-            }
-            
-            return lessonCard;
-        }
-
-        // Delete a specific lesson
-        async function deleteLesson(lessonId) {
-            if (confirm('আপনি কি নিশ্চিত যে আপনি এই লেসন প্ল্যানটি ডিলিট চান?')) {
-                try {
-                    await Database.deleteLesson(lessonId);
-                    showConfirmation('লেসন ডিলিট করা হয়েছে', 'লেসন প্ল্যানটি সফলভাবে ডিলিট করা হয়েছে।');
-                    // Refresh the current filter view
-                    applyFilters();
-                } catch (error) {
-                    showErrorPopup('লেসন ডিলিট করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
-                }
-            }
-        }
-
-        // Delete all lessons for a specific class
-        async function deleteClassLessons(classId, className) {
-            if (confirm(`আপনি কি নিশ্চিত যে আপনি ${className} এর সব লেসন প্ল্যান ডিলিট করতে চান? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।`)) {
-                try {
-                    await Database.deleteLessonsByClass(classId);
-                    showConfirmation('লেসন ডিলিট করা হয়েছে', `${className} এর সব লেসন প্ল্যান ডিলিট করা হয়েছে।`);
-                    // Refresh the current filter view
-                    applyFilters();
-                } catch (error) {
-                    showErrorPopup('ক্লাস লেসন মুছতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
-                }
-            }
-        }
-
-        // Admin login
-        function showAdminLogin() {
-            adminLoginForm.classList.remove('hidden');
-            overlay.classList.remove('hidden');
-        }
-
-        function hideAdminLogin() {
-            adminLoginForm.classList.add('hidden');
-            overlay.classList.add('hidden');
-            adminPassword.value = '';
-        }
-
-        function handleAdminLogin() {
-            if (adminPassword.value === CONFIG.adminPassword) {
-                isAdmin = true;
-                hideAdminLogin();
-                showConfirmation('অ্যাডমিন এক্সেস প্রদান করা হয়েছে', 'আপনার এখন প্রশাসনিক সুবিধা রয়েছে।');
-            } else {
-                showErrorPopup('ভুল পাসওয়ার্ড। দয়া করে আবার চেষ্টা করুন।');
-            }
-        }
-
-        // Confirmation message
-        function showConfirmation(title, text) {
-            confirmationTitle.textContent = title;
-            confirmationText.textContent = text;
-            confirmationMessage.classList.remove('hidden');
-            overlay.classList.remove('hidden');
-        }
-
-        function hideConfirmation() {
-            confirmationMessage.classList.add('hidden');
-            overlay.classList.add('hidden');
-        }
-
-        // Warning message
-        function showWarning(title, text) {
-            warningTitle.textContent = title;
-            warningText.textContent = text;
-            warningMessage.classList.remove('hidden');
-            overlay.classList.remove('hidden');
-        }
-
-        function hideWarning() {
-            warningMessage.classList.add('hidden');
-            overlay.classList.add('hidden');
-        }
-
-        // Error popup message
-        function showErrorPopup(message) {
-            errorPopupTitle.textContent = 'ত্রুটি';
-            errorPopupText.textContent = message;
-            errorMessagePopup.classList.remove('hidden');
-            overlay.classList.remove('hidden');
-        }
-
-        function hideErrorPopup() {
-            errorMessagePopup.classList.add('hidden');
-            overlay.classList.add('hidden');
-        }
-
-        // Loading state
-        function showLoading() {
-            loadingState.classList.remove('hidden');
-            lessonsList.classList.add('hidden');
-        }
-
-        function hideLoading() {
-            loadingState.classList.add('hidden');
-            lessonsList.classList.remove('hidden');
-        }
-
-        // Clean up when leaving the page
-        window.addEventListener('beforeunload', () => {
-            if (unsubscribeFromLessons) {
-                unsubscribeFromLessons();
-            }
+            saveDataToLocal(); // backup to localStorage
+            console.log("Data synced from Firebase");
+            return lessonData;
+        }).catch(err => {
+            console.error("Firebase read error:", err);
+            // fallback to localStorage
+            const local = localStorage.getItem("lessonPlan_FirebaseBackup");
+            if(local) lessonData = JSON.parse(local);
+            else lessonData = {};
+            return lessonData;
         });
+    }
 
-        // Initialize the application
-        init();
-    </script>
+    function saveDataToFirebase() {
+        if (!db) return;
+        db.ref("lessonPlans").set(lessonData).catch(err => console.error("Firebase write error:", err));
+        saveDataToLocal();
+    }
+    
+    function saveDataToLocal() {
+        localStorage.setItem("lessonPlan_FirebaseBackup", JSON.stringify(lessonData));
+    }
+
+    function saveData() {
+        saveDataToFirebase();
+    }
+
+    function getLesson(cls, subj, lessonNo, dayKey) {
+        return lessonData[cls]?.[subj]?.[lessonNo]?.[dayKey] || { text: "", status: "pending", submittedBy: null, approvedBy: null };
+    }
+    
+    function setLesson(cls, subj, lessonNo, dayKey, text, status = "pending", submittedBy = null, approvedBy = null) {
+        if(!lessonData[cls]) lessonData[cls] = {};
+        if(!lessonData[cls][subj]) lessonData[cls][subj] = {};
+        if(!lessonData[cls][subj][lessonNo]) lessonData[cls][subj][lessonNo] = {};
+        const existing = lessonData[cls][subj][lessonNo][dayKey] || {};
+        lessonData[cls][subj][lessonNo][dayKey] = { 
+            text, 
+            status, 
+            updatedAt: Date.now(),
+            submittedBy: submittedBy !== null ? submittedBy : existing.submittedBy,
+            approvedBy: approvedBy !== null ? approvedBy : existing.approvedBy
+        };
+        saveData();
+    }
+    
+    function setAllDays(cls, subj, lessonNo, textsArray, status = "pending", submittedBy = null) {
+        for(let i=0; i<dayKeys.length; i++) {
+            setLesson(cls, subj, lessonNo, dayKeys[i], textsArray[i] || "", status, submittedBy, null);
+        }
+    }
+    
+    function approveAllDays(cls, subj, lessonNo, textsArray, approverName) {
+        for(let i=0; i<dayKeys.length; i++) {
+            const existing = getLesson(cls, subj, lessonNo, dayKeys[i]);
+            setLesson(cls, subj, lessonNo, dayKeys[i], textsArray[i] || "", "approved", existing.submittedBy, approverName);
+        }
+    }
+    
+    function getCurrentLessonTexts(cls, subj, lessonNo) {
+        return dayKeys.map(dk => getLesson(cls, subj, lessonNo, dk).text);
+    }
+
+    function showToast(msg, type="success") {
+        const toast = document.createElement("div");
+        toast.className = `toast toast-${type}`;
+        toast.innerText = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2700);
+    }
+
+    function escapeHtml(str) { return (str || "").replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    function exportDocxLegal(className, lessonNo) {
+        const subjects = subjectsByClass[className] || [];
+        let htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>LessonPlan_${className}_Lesson${lessonNo}</title><style>
+            @page { size: Legal landscape; margin: 0.2in; }
+            body { font-family: 'Segoe UI', Arial, sans-serif; margin:0; padding:0; background: white; }
+            h1 { color: #1a472a; text-align: center; font-size: 18pt; }
+            .subtitle { text-align: center; color: #555; margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+            th, td { border: 1px solid #aaa; padding: 8px; vertical-align: top; width: 2in; }
+            th { background: #1a472a; color: white; }
+            td { word-wrap: break-word; }
+            .footer { text-align: center; font-size: 9pt; margin-top: 15px; }
+        </style></head><body><h1>${escapeHtml(INSTITUTE.name)}</h1>
+        <div class="subtitle">Lesson Plan - ${className} (Lesson ${lessonNo})</div>
+        <table><thead><tr><th style="width:1.8in;">Subject</th>${days.map(d=>`<th>${d}</th>`).join('')}</tr></thead><tbody>`;
+        for(let sub of subjects) {
+            htmlContent += `<tr><td><strong>${escapeHtml(sub)}</strong><tr>`;
+            for(let dk of dayKeys) {
+                const lesson = getLesson(className, sub, lessonNo, dk);
+                htmlContent += `<td>${(lesson.text || "").replace(/\n/g, '<br>')}`;
+                if(!lesson.text || lesson.text.trim() === "") htmlContent += `<span style="color:#ccc; font-style:italic;">—</span>`;
+                htmlContent += `</td>`;
+            }
+            htmlContent += `</tr>`;
+        }
+        htmlContent += `</tbody></table><div class="footer">Generated by Smart Lesson Flow System</div></body></html>`;
+        const blob = new Blob([htmlContent], { type: "application/msword" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `LessonPlan_${className}_Lesson${lessonNo}.doc`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        showToast(`DOCX exported: ${className} Lesson ${lessonNo}`, "success");
+    }
+
+    function exitHistoryMode() { historyMode = false; if(previousContext) { currentUser = previousContext; previousContext = null; } renderDashboard(); showToast("Returned to main dashboard", "info"); }
+    
+    function viewPreviousLesson(className, subject, currentLessonNo) {
+        if(!historyMode) { previousContext = JSON.parse(JSON.stringify(currentUser)); historyMode = true; }
+        showModal(`
+            <div class="modal-content">
+                <h3>📖 View Previous Lesson</h3>
+                <p><strong>Class:</strong> ${escapeHtml(className)}</p>
+                <p><strong>Subject:</strong> ${escapeHtml(subject)}</p>
+                <div class="form-group" style="margin-top:15px;">
+                    <label>Select Lesson Number (1-13)</label>
+                    <select id="prevLessonSelect">${lessonNumbers.map(n => `<option value="${n}" ${n == currentLessonNo ? 'selected' : ''}>Lesson ${n}</option>`).join('')}</select>
+                </div>
+                <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+                    <button class="btn btn-primary" id="viewPrevBtn">🔍 View Lesson</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                </div>
+            </div>
+        `);
+        document.getElementById("viewPrevBtn").onclick = () => {
+            const selectedLesson = parseInt(document.getElementById("prevLessonSelect").value);
+            closeModal();
+            showHistoryLesson(className, subject, selectedLesson);
+        };
+    }
+    
+    function showHistoryLesson(className, subject, lessonNo) {
+        const texts = getCurrentLessonTexts(className, subject, lessonNo);
+        let html = `<div class="glass-container"><div class="header"><div class="institute-brand"><div class="logo-placeholder">${INSTITUTE.logoImageUrl ? `<img src="${INSTITUTE.logoImageUrl}" alt="Logo">` : `<span style="font-size:40px;">${INSTITUTE.logoText}</span>`}</div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">📖 Lesson Plan Viewer</div></div><div class="content"><div class="history-note"><span>🔍 Viewing: <strong>${escapeHtml(className)} | ${escapeHtml(subject)} | Lesson ${lessonNo}</strong> (Read Only)</span><button class="btn btn-purple" onclick="exitHistoryMode()">← Go Back to Dashboard</button></div><div class="lesson-panel class-default"><h3>📜 Previous Lesson - ${escapeHtml(subject)} (Lesson ${lessonNo})</h3><div class="days-grid">`;
+        for(let idx=0; idx<dayKeys.length; idx++) {
+            const dayName = days[idx];
+            const textVal = texts[idx];
+            const lessonObj = getLesson(className, subject, lessonNo, dayKeys[idx]);
+            const status = lessonObj.status;
+            html += `<div class="day-card" style="background:#f8f9fa;"><div class="day-title">📅 ${dayName}</div><div class="day-textarea" style="background:#f1f3f5; cursor:default; min-height:100px;">${escapeHtml(textVal) || '<span style="color:#999;">No content</span>'}</div><div class="status-badge ${status === 'pending' ? 'status-pending' : 'status-approved'}">${status === 'pending' ? '🔴 Pending (at that time)' : '✅ Approved'}</div></div>`;
+        }
+        html += `</div></div></div></div>`;
+        document.getElementById("app").innerHTML = html;
+    }
+
+    function showModal(content) {
+        let modal = document.getElementById("globalModal");
+        if (!modal) { modal = document.createElement("div"); modal.id = "globalModal"; modal.className = "modal"; document.body.appendChild(modal); }
+        modal.innerHTML = content;
+        modal.style.display = "flex";
+    }
+    window.closeModal = function() { const modal = document.getElementById("globalModal"); if(modal) modal.style.display = "none"; };
+    window.exitHistoryMode = exitHistoryMode;
+    window.viewPreviousLesson = viewPreviousLesson;
+    
+    function generateAdminMonitorTable(className, targetLessonNo) {
+        const allSubs = subjectsByClass[className] || [];
+        let tableHtml = `<div class="all-subjects-table"><table><thead><tr><th>Subject</th><th>Status for Lesson ${targetLessonNo}</th><th>Submitted By</th><th>Approved By</th></tr></thead><tbody>`;
+        for(let sub of allSubs) {
+            let allApproved = true;
+            let hasAny = false;
+            let submittedByVal = null, approvedByVal = null;
+            for(let dk of dayKeys) {
+                const l = getLesson(className, sub, targetLessonNo, dk);
+                if(l.text && l.text.trim() !== "") hasAny = true;
+                if(l.status !== "approved") allApproved = false;
+                if(l.submittedBy) submittedByVal = l.submittedBy;
+                if(l.approvedBy) approvedByVal = l.approvedBy;
+            }
+            const statusText = hasAny ? (allApproved ? '✅ Approved' : '⏳ Pending') : '⚠️ No data';
+            const statusBg = hasAny ? (allApproved ? '#dcfce7' : '#fee2e2') : '#f1f5f9';
+            tableHtml += `<tr><td style="text-align:left;">${escapeHtml(sub)}</td><td><span style="background:${statusBg}; padding:4px 12px; border-radius:20px; display:inline-block;">${statusText}</span></td><td>${submittedByVal ? escapeHtml(submittedByVal) : '—'}</td><td>${approvedByVal ? escapeHtml(approvedByVal) : '—'}</td></tr>`;
+        }
+        tableHtml += `</tbody></table></div>`;
+        return tableHtml;
+    }
+
+    async function renderDashboard() {
+        if(!currentUser || historyMode) return;
+        const { role, assignedClass, assignedSubject, teacherName, currentLessonNo } = currentUser;
+        const isAdmin = (role === "admin"), isProvider = (role === "provider"), isApprover = (role === "approver");
+        if(!currentUser.editClass) currentUser.editClass = assignedClass;
+        if(!currentUser.editSubject) currentUser.editSubject = assignedSubject;
+        const editClass = currentUser.editClass || classes[0];
+        const editSubject = currentUser.editSubject || (subjectsByClass[editClass]?.[0] || "");
+        const lessonNo = currentLessonNo || 1;
+        const availableSubjects = subjectsByClass[editClass] || [];
+        const themeClass = getClassTheme(editClass);
+        const currentTexts = getCurrentLessonTexts(editClass, editSubject, lessonNo);
+        
+        let html = `<div class="glass-container"><div class="header"><div class="institute-brand"><div class="logo-placeholder">${INSTITUTE.logoImageUrl ? `<img src="${INSTITUTE.logoImageUrl}">` : `<span>${INSTITUTE.logoText}</span>`}</div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)} | 🔥 Firebase Realtime Sync</div></div><div class="content"><div class="user-info"><div>👋 Welcome <strong>${escapeHtml(teacherName)}</strong> (${role}) | ${editClass} | ${editSubject} | <span class="lesson-badge" style="background:#11998e; color:white;">Lesson ${lessonNo}</span></div><button class="btn btn-danger" onclick="logout()">Logout</button></div><div class="jump-bar"><div class="form-group"><label>📌 Jump to Class</label><select id="jumpClassSelect">${classes.map(c => `<option value="${c}" ${c===editClass ? 'selected' : ''}>${c}</option>`).join('')}</select></div><div class="form-group"><label>📖 Jump to Subject</label><select id="jumpSubjectSelect">${availableSubjects.map(s => `<option value="${s}" ${s===editSubject ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('')}</select></div><div><button class="btn btn-primary" id="jumpBtn">🚀 Load</button></div><div><button class="btn btn-purple" id="viewPrevLessonBtn">🔍 View Previous Lesson</button></div></div><div class="lesson-panel ${themeClass}"><h3>✏️ Lesson ${lessonNo} — ${escapeHtml(editSubject)} (${editClass})</h3><div class="days-grid">`;
+        for(let idx=0; idx<dayKeys.length; idx++) {
+            const dayName = days[idx];
+            const lessonObj = getLesson(editClass, editSubject, lessonNo, dayKeys[idx]);
+            const textVal = lessonObj.text;
+            const status = lessonObj.status;
+            const cardStyle = (status === "pending") ? "border-left-color:#dc2626; background:#fff5f5;" : "border-left-color:#2b9348; background:#f0faf0;";
+            html += `<div class="day-card" style="${cardStyle}"><div class="day-title">📅 ${dayName}</div><textarea class="day-textarea" id="day_${dayKeys[idx]}" rows="3" placeholder="Write lesson plan...">${escapeHtml(textVal)}</textarea><div class="status-badge ${status === 'pending' ? 'status-pending' : 'status-approved'}">${status === 'pending' ? '🔴 Pending' : '✅ Approved'}</div>`;
+            if(isAdmin || isApprover) { if(lessonObj.submittedBy) html += `<div class="submission-meta"><span class="accountability-badge">📝 by: ${escapeHtml(lessonObj.submittedBy)}</span>${lessonObj.approvedBy ? ` <span class="accountability-badge">✓ by: ${escapeHtml(lessonObj.approvedBy)}</span>` : ''}</div>`; }
+            html += `</div>`;
+        }
+        html += `</div>`;
+        if(isProvider) html += `<div style="display:flex; gap:15px; margin-top:20px;"><button class="btn btn-success" id="submitAllBtn">💾 Submit Lesson ${lessonNo}</button><button class="btn btn-info" id="editBtn">✏️ Edit / Update</button></div>`;
+        else if(isApprover) html += `<div style="display:flex; gap:15px; margin-top:20px;"><button class="btn btn-warning" id="approveAllBtn">✅ Approve Lesson ${lessonNo}</button><button class="btn btn-primary" id="saveDraftBtn">📝 Save Draft</button></div>`;
+        else if(isAdmin) html += `<div style="display:flex; gap:15px; margin-top:20px;"><button class="btn btn-success" id="adminSaveBtn">💾 Admin Save (Auto-approved)</button><button class="btn btn-danger" id="eraseClassBtn">🗑️ Erase Class Data</button><button class="btn btn-info" id="exportDocBtn">📄 Export DOCX</button></div>`;
+        html += `</div>`;
+        if(isAdmin) {
+            html += `<div style="margin-top:35px;"><h4>📋 Admin Monitor — ${editClass}</h4><div class="admin-filter-bar"><div class="form-group" style="margin-bottom:0;"><label>Filter by Lesson:</label><select id="monitorLessonFilter" style="width:150px;">${lessonNumbers.map(n => `<option value="${n}" ${n == lessonNo ? 'selected' : ''}>Lesson ${n}</option>`).join('')}</select></div><button class="btn btn-primary" id="applyMonitorFilter">Apply Filter</button><span style="font-size:12px; color:#666; margin-left:auto;">✅ Live from Firebase</span></div><div id="monitorTableContainer">${generateAdminMonitorTable(editClass, lessonNo)}</div></div>`;
+        }
+        html += `</div></div>`;
+        document.getElementById("app").innerHTML = html;
+        
+        document.getElementById("jumpClassSelect")?.addEventListener("change", () => { const newClass = document.getElementById("jumpClassSelect").value; const subs = subjectsByClass[newClass] || []; const subSelect = document.getElementById("jumpSubjectSelect"); subSelect.innerHTML = subs.map(s => `<option value="${s}">${escapeHtml(s)}</option>`).join(''); });
+        document.getElementById("jumpBtn")?.addEventListener("click", () => { currentUser.editClass = document.getElementById("jumpClassSelect").value; currentUser.editSubject = document.getElementById("jumpSubjectSelect").value; renderDashboard(); showToast(`Switched to ${currentUser.editClass} - ${currentUser.editSubject}`, "success"); });
+        document.getElementById("viewPrevLessonBtn")?.addEventListener("click", () => viewPreviousLesson(editClass, editSubject, lessonNo));
+        if(isProvider) { document.getElementById("submitAllBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); setAllDays(editClass, editSubject, lessonNo, texts, "pending", teacherName); showToast(`Lesson ${lessonNo} submitted (pending)`, "success"); renderDashboard(); }); document.getElementById("editBtn")?.addEventListener("click", () => document.getElementById("submitAllBtn")?.click()); }
+        if(isApprover) { document.getElementById("approveAllBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); approveAllDays(editClass, editSubject, lessonNo, texts, teacherName); showToast(`Lesson ${lessonNo} APPROVED`, "success"); renderDashboard(); }); document.getElementById("saveDraftBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); setAllDays(editClass, editSubject, lessonNo, texts, "pending", null); showToast("Draft saved", "info"); renderDashboard(); }); }
+        if(isAdmin) { document.getElementById("adminSaveBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); for(let i=0; i<dayKeys.length; i++) { const existing = getLesson(editClass, editSubject, lessonNo, dayKeys[i]); setLesson(editClass, editSubject, lessonNo, dayKeys[i], texts[i], "approved", existing.submittedBy, teacherName); } showToast(`Admin saved Lesson ${lessonNo}`, "success"); renderDashboard(); }); document.getElementById("eraseClassBtn")?.addEventListener("click", () => { if(confirm(`Erase ALL data for class ${editClass}?`)) { delete lessonData[editClass]; saveData(); showToast(`${editClass} erased`, "info"); renderDashboard(); } }); document.getElementById("exportDocBtn")?.addEventListener("click", () => exportDocxLegal(editClass, lessonNo)); document.getElementById("applyMonitorFilter")?.addEventListener("click", () => { const filterLesson = parseInt(document.getElementById("monitorLessonFilter").value); document.getElementById("monitorTableContainer").innerHTML = generateAdminMonitorTable(editClass, filterLesson); }); }
+    }
+
+    function renderLogin() {
+        const appDiv = document.getElementById("app");
+        appDiv.innerHTML = `<div class="glass-container" style="max-width:600px; margin:40px auto;"><div class="header"><div class="institute-brand"><div class="logo-placeholder">${INSTITUTE.logoImageUrl ? `<img src="${INSTITUTE.logoImageUrl}">` : `<span>${INSTITUTE.logoText}</span>`}</div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)} | ☁️ Firebase Ready</div></div><div class="content"><div class="form-group"><label>👩‍🏫 Select Teacher</label><select id="teacherSelect">${teacherList.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div class="form-group"><label>🎭 Role</label><select id="roleSelect"><option value="admin">Admin</option><option value="provider">Teacher</option><option value="approver">Approver</option></select></div><div class="form-group"><label>🏫 Class</label><select id="classSelect">${classes.map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div><div class="form-group" id="subjectDiv" style="display:none;"><label>📖 Subject</label><select id="subjectSelect"></select></div><div class="form-group"><label>📋 Lesson Number (1-13)</label><select id="lessonNoSelect">${lessonNumbers.map(n => `<option value="${n}">Lesson ${n}</option>`).join('')}</select></div><div class="form-group" id="pwdDiv"><label>🔒 Admin Password</label><input type="password" id="password" placeholder="Enter password"></div><button class="btn btn-primary" style="width:100%;" id="loginBtn">Login</button><div style="margin-top:20px; background:#e8f5e9; padding:15px; border-radius:20px; font-size:13px;"><strong>✨ Features:</strong> Firebase Realtime Sync | Lesson 1-13 | View previous lessons | Full accountability<br>Admin password: <code>admin123</code></div></div></div>`;
+        const roleSel = document.getElementById("roleSelect");
+        const classSel = document.getElementById("classSelect");
+        const subjectDiv = document.getElementById("subjectDiv");
+        const subjectSel = document.getElementById("subjectSelect");
+        const pwdDiv = document.getElementById("pwdDiv");
+        function updateSubjects() { subjectSel.innerHTML = (subjectsByClass[classSel.value] || []).map(s => `<option value="${s}">${escapeHtml(s)}</option>`).join(''); }
+        roleSel.onchange = () => { const isAdmin = roleSel.value === "admin"; subjectDiv.style.display = isAdmin ? "none" : "block"; pwdDiv.style.display = isAdmin ? "block" : "none"; if(!isAdmin) updateSubjects(); };
+        classSel.onchange = () => { if(roleSel.value !== "admin") updateSubjects(); };
+        roleSel.dispatchEvent(new Event("change"));
+        document.getElementById("loginBtn").onclick = async () => {
+            const teacher = document.getElementById("teacherSelect").value;
+            const role = roleSel.value;
+            const classVal = classSel.value;
+            const subject = role !== "admin" ? subjectSel.value : null;
+            const lessonNo = parseInt(document.getElementById("lessonNoSelect").value);
+            const pwd = document.getElementById("password").value;
+            if(role === "admin" && pwd !== "admin123") { showToast("Invalid admin password", "error"); return; }
+            if(role !== "admin" && !subject) { showToast("Select subject", "error"); return; }
+            await loadDataFromFirebase();
+            currentUser = { role, assignedClass: classVal, assignedSubject: subject, teacherName: teacher, editClass: classVal, editSubject: subject, currentLessonNo: lessonNo };
+            renderDashboard();
+        };
+    }
+    
+    window.logout = () => { currentUser = null; historyMode = false; previousContext = null; renderLogin(); };
+    function getClassTheme(className) { const map = {"Pre-Play":"class-theme-preplay","Play":"class-theme-play","Nursery":"class-theme-nursery","One":"class-theme-one","Two":"class-theme-two","Three":"class-theme-three","Four":"class-theme-four","Five":"class-theme-five","Six":"class-theme-six","Seven":"class-theme-seven","Eight":"class-theme-eight","Nine":"class-theme-nine","Ten":"class-theme-ten"}; return map[className] || "class-default"; }
+    loadDataFromFirebase().then(() => renderLogin());
+</script>
 </body>
 </html>
