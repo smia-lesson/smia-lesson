@@ -215,15 +215,14 @@
         .lesson-badge { background: white; padding: 5px 15px; border-radius: 30px; display: inline-block; margin-bottom: 15px; font-weight: bold; color: #1a472a; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .admin-filter-bar { background: #fff; padding: 15px; border-radius: 20px; margin-bottom: 20px; display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
         .firebase-status { background: #2c3e66; color: white; padding: 5px 12px; border-radius: 30px; font-size: 12px; display: inline-block; margin-left: 15px; }
+        .loading { opacity: 0.6; pointer-events: none; }
     </style>
 </head>
 <body>
 <div id="app"></div>
 
 <script>
-    // ==================== FIREBASE CONFIGURATION (REPLACE WITH YOURS) ====================
-    // IMPORTANT: Replace the below config object with your Firebase project credentials
-    // Go to Project Settings > General > Your apps > Firebase SDK snippet > Config
+    // ==================== FIREBASE CONFIGURATION ====================
     const firebaseConfig = {
         apiKey: "AIzaSyDzaLns7aRUMB_RjnS6iUKyxwHXfRqmxwg",
         authDomain: "mcq-exam-generator-e10c7.firebaseapp.com",
@@ -233,18 +232,18 @@
         messagingSenderId: "51613317429",
         appId: "1:51613317429:web:3e92cc83224d18e320747c"
     };
-    // =====================================================================================
+    // =================================================================
 
-    // Initialize Firebase (only if not already initialized)
+    // Initialize Firebase
     let db;
     try {
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         db = firebase.database();
-        console.log("Firebase Realtime DB initialized");
+        console.log("✅ Firebase Realtime DB initialized");
     } catch (e) {
-        console.error("Firebase init error:", e);
+        console.error("❌ Firebase init error:", e);
         alert("Firebase configuration error. Please check your credentials in the code.");
     }
 
@@ -291,26 +290,26 @@
         "Rikta Khanom"
     ];
 
-    let lessonData = {};      // local mirror
+    let lessonData = {};
     let currentUser = null;
     let historyMode = false;
     let previousContext = null;
 
-    // Firebase sync: load data from RTDB
+    // Firebase sync functions
     function loadDataFromFirebase() {
         if (!db) return Promise.resolve();
         return db.ref("lessonPlans").get().then(snapshot => {
             if (snapshot.exists()) {
                 lessonData = snapshot.val();
+                console.log("✅ Data loaded from Firebase");
             } else {
                 lessonData = {};
+                console.log("📭 No existing data in Firebase");
             }
-            saveDataToLocal(); // backup to localStorage
-            console.log("Data synced from Firebase");
+            saveDataToLocal();
             return lessonData;
         }).catch(err => {
-            console.error("Firebase read error:", err);
-            // fallback to localStorage
+            console.error("❌ Firebase read error:", err);
             const local = localStorage.getItem("lessonPlan_FirebaseBackup");
             if(local) lessonData = JSON.parse(local);
             else lessonData = {};
@@ -319,9 +318,21 @@
     }
 
     function saveDataToFirebase() {
-        if (!db) return;
-        db.ref("lessonPlans").set(lessonData).catch(err => console.error("Firebase write error:", err));
-        saveDataToLocal();
+        if (!db) {
+            console.warn("No Firebase connection");
+            return Promise.reject("No Firebase connection");
+        }
+        console.log("💾 Saving to Firebase...", lessonData);
+        return db.ref("lessonPlans").set(lessonData)
+            .then(() => {
+                console.log("✅ Firebase save successful");
+                saveDataToLocal();
+            })
+            .catch(err => {
+                console.error("❌ Firebase write error:", err);
+                showToast("Firebase Error: " + err.message, "error");
+                throw err;
+            });
     }
     
     function saveDataToLocal() {
@@ -329,7 +340,7 @@
     }
 
     function saveData() {
-        saveDataToFirebase();
+        return saveDataToFirebase();
     }
 
     function getLesson(cls, subj, lessonNo, dayKey) {
@@ -348,20 +359,24 @@
             submittedBy: submittedBy !== null ? submittedBy : existing.submittedBy,
             approvedBy: approvedBy !== null ? approvedBy : existing.approvedBy
         };
-        saveData();
+        return saveData();
     }
     
     function setAllDays(cls, subj, lessonNo, textsArray, status = "pending", submittedBy = null) {
+        const promises = [];
         for(let i=0; i<dayKeys.length; i++) {
-            setLesson(cls, subj, lessonNo, dayKeys[i], textsArray[i] || "", status, submittedBy, null);
+            promises.push(setLesson(cls, subj, lessonNo, dayKeys[i], textsArray[i] || "", status, submittedBy, null));
         }
+        return Promise.all(promises);
     }
     
     function approveAllDays(cls, subj, lessonNo, textsArray, approverName) {
+        const promises = [];
         for(let i=0; i<dayKeys.length; i++) {
             const existing = getLesson(cls, subj, lessonNo, dayKeys[i]);
-            setLesson(cls, subj, lessonNo, dayKeys[i], textsArray[i] || "", "approved", existing.submittedBy, approverName);
+            promises.push(setLesson(cls, subj, lessonNo, dayKeys[i], textsArray[i] || "", "approved", existing.submittedBy, approverName));
         }
+        return Promise.all(promises);
     }
     
     function getCurrentLessonTexts(cls, subj, lessonNo) {
@@ -373,7 +388,7 @@
         toast.className = `toast toast-${type}`;
         toast.innerText = msg;
         document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2700);
+        setTimeout(() => toast.remove(), 3000);
     }
 
     function escapeHtml(str) { return (str || "").replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
@@ -394,7 +409,7 @@
         <div class="subtitle">Lesson Plan - ${className} (Lesson ${lessonNo})</div>
         <table><thead><tr><th style="width:1.8in;">Subject</th>${days.map(d=>`<th>${d}</th>`).join('')}</tr></thead><tbody>`;
         for(let sub of subjects) {
-            htmlContent += `<tr><td><strong>${escapeHtml(sub)}</strong><tr>`;
+            htmlContent += `<tr><td><strong>${escapeHtml(sub)}</strong></td>`;
             for(let dk of dayKeys) {
                 const lesson = getLesson(className, sub, lessonNo, dk);
                 htmlContent += `<td>${(lesson.text || "").replace(/\n/g, '<br>')}`;
@@ -496,7 +511,6 @@
         const lessonNo = currentLessonNo || 1;
         const availableSubjects = subjectsByClass[editClass] || [];
         const themeClass = getClassTheme(editClass);
-        const currentTexts = getCurrentLessonTexts(editClass, editSubject, lessonNo);
         
         let html = `<div class="glass-container"><div class="header"><div class="institute-brand"><div class="logo-placeholder">${INSTITUTE.logoImageUrl ? `<img src="${INSTITUTE.logoImageUrl}">` : `<span>${INSTITUTE.logoText}</span>`}</div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)} | 🔥 Firebase Realtime Sync</div></div><div class="content"><div class="user-info"><div>👋 Welcome <strong>${escapeHtml(teacherName)}</strong> (${role}) | ${editClass} | ${editSubject} | <span class="lesson-badge" style="background:#11998e; color:white;">Lesson ${lessonNo}</span></div><button class="btn btn-danger" onclick="logout()">Logout</button></div><div class="jump-bar"><div class="form-group"><label>📌 Jump to Class</label><select id="jumpClassSelect">${classes.map(c => `<option value="${c}" ${c===editClass ? 'selected' : ''}>${c}</option>`).join('')}</select></div><div class="form-group"><label>📖 Jump to Subject</label><select id="jumpSubjectSelect">${availableSubjects.map(s => `<option value="${s}" ${s===editSubject ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('')}</select></div><div><button class="btn btn-primary" id="jumpBtn">🚀 Load</button></div><div><button class="btn btn-purple" id="viewPrevLessonBtn">🔍 View Previous Lesson</button></div></div><div class="lesson-panel ${themeClass}"><h3>✏️ Lesson ${lessonNo} — ${escapeHtml(editSubject)} (${editClass})</h3><div class="days-grid">`;
         for(let idx=0; idx<dayKeys.length; idx++) {
@@ -523,9 +537,89 @@
         document.getElementById("jumpClassSelect")?.addEventListener("change", () => { const newClass = document.getElementById("jumpClassSelect").value; const subs = subjectsByClass[newClass] || []; const subSelect = document.getElementById("jumpSubjectSelect"); subSelect.innerHTML = subs.map(s => `<option value="${s}">${escapeHtml(s)}</option>`).join(''); });
         document.getElementById("jumpBtn")?.addEventListener("click", () => { currentUser.editClass = document.getElementById("jumpClassSelect").value; currentUser.editSubject = document.getElementById("jumpSubjectSelect").value; renderDashboard(); showToast(`Switched to ${currentUser.editClass} - ${currentUser.editSubject}`, "success"); });
         document.getElementById("viewPrevLessonBtn")?.addEventListener("click", () => viewPreviousLesson(editClass, editSubject, lessonNo));
-        if(isProvider) { document.getElementById("submitAllBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); setAllDays(editClass, editSubject, lessonNo, texts, "pending", teacherName); showToast(`Lesson ${lessonNo} submitted (pending)`, "success"); renderDashboard(); }); document.getElementById("editBtn")?.addEventListener("click", () => document.getElementById("submitAllBtn")?.click()); }
-        if(isApprover) { document.getElementById("approveAllBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); approveAllDays(editClass, editSubject, lessonNo, texts, teacherName); showToast(`Lesson ${lessonNo} APPROVED`, "success"); renderDashboard(); }); document.getElementById("saveDraftBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); setAllDays(editClass, editSubject, lessonNo, texts, "pending", null); showToast("Draft saved", "info"); renderDashboard(); }); }
-        if(isAdmin) { document.getElementById("adminSaveBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); for(let i=0; i<dayKeys.length; i++) { const existing = getLesson(editClass, editSubject, lessonNo, dayKeys[i]); setLesson(editClass, editSubject, lessonNo, dayKeys[i], texts[i], "approved", existing.submittedBy, teacherName); } showToast(`Admin saved Lesson ${lessonNo}`, "success"); renderDashboard(); }); document.getElementById("eraseClassBtn")?.addEventListener("click", () => { if(confirm(`Erase ALL data for class ${editClass}?`)) { delete lessonData[editClass]; saveData(); showToast(`${editClass} erased`, "info"); renderDashboard(); } }); document.getElementById("exportDocBtn")?.addEventListener("click", () => exportDocxLegal(editClass, lessonNo)); document.getElementById("applyMonitorFilter")?.addEventListener("click", () => { const filterLesson = parseInt(document.getElementById("monitorLessonFilter").value); document.getElementById("monitorTableContainer").innerHTML = generateAdminMonitorTable(editClass, filterLesson); }); }
+        
+        if(isProvider) { 
+            document.getElementById("submitAllBtn")?.addEventListener("click", async () => {
+                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value);
+                const btn = document.getElementById("submitAllBtn");
+                btn.textContent = "⏳ Saving...";
+                btn.disabled = true;
+                try {
+                    await setAllDays(editClass, editSubject, lessonNo, texts, "pending", teacherName);
+                    showToast(`✅ Lesson ${lessonNo} submitted successfully!`, "success");
+                    await loadDataFromFirebase(); // Reload from Firebase
+                    renderDashboard();
+                } catch (error) {
+                    showToast(`❌ Error: ${error.message}`, "error");
+                    btn.textContent = "💾 Submit Lesson";
+                    btn.disabled = false;
+                }
+            });
+            document.getElementById("editBtn")?.addEventListener("click", () => document.getElementById("submitAllBtn")?.click());
+        }
+        
+        if(isApprover) { 
+            document.getElementById("approveAllBtn")?.addEventListener("click", async () => {
+                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value);
+                const btn = document.getElementById("approveAllBtn");
+                btn.textContent = "⏳ Approving...";
+                btn.disabled = true;
+                try {
+                    await approveAllDays(editClass, editSubject, lessonNo, texts, teacherName);
+                    showToast(`✅ Lesson ${lessonNo} APPROVED!`, "success");
+                    await loadDataFromFirebase();
+                    renderDashboard();
+                } catch (error) {
+                    showToast(`❌ Error: ${error.message}`, "error");
+                    btn.textContent = "✅ Approve Lesson";
+                    btn.disabled = false;
+                }
+            });
+            document.getElementById("saveDraftBtn")?.addEventListener("click", async () => {
+                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value);
+                try {
+                    await setAllDays(editClass, editSubject, lessonNo, texts, "pending", null);
+                    showToast("📝 Draft saved!", "info");
+                } catch (error) {
+                    showToast(`❌ Error: ${error.message}`, "error");
+                }
+            });
+        }
+        
+        if(isAdmin) { 
+            document.getElementById("adminSaveBtn")?.addEventListener("click", async () => {
+                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value);
+                const btn = document.getElementById("adminSaveBtn");
+                btn.textContent = "⏳ Saving...";
+                btn.disabled = true;
+                try {
+                    for(let i=0; i<dayKeys.length; i++) {
+                        const existing = getLesson(editClass, editSubject, lessonNo, dayKeys[i]);
+                        await setLesson(editClass, editSubject, lessonNo, dayKeys[i], texts[i], "approved", existing.submittedBy, teacherName);
+                    }
+                    showToast(`✅ Admin saved Lesson ${lessonNo}`, "success");
+                    await loadDataFromFirebase();
+                    renderDashboard();
+                } catch (error) {
+                    showToast(`❌ Error: ${error.message}`, "error");
+                    btn.textContent = "💾 Admin Save";
+                    btn.disabled = false;
+                }
+            });
+            document.getElementById("eraseClassBtn")?.addEventListener("click", async () => {
+                if(confirm(`⚠️ Erase ALL data for class ${editClass}? This cannot be undone!`)) {
+                    delete lessonData[editClass];
+                    await saveData();
+                    showToast(`${editClass} erased`, "info");
+                    renderDashboard();
+                }
+            });
+            document.getElementById("exportDocBtn")?.addEventListener("click", () => exportDocxLegal(editClass, lessonNo));
+            document.getElementById("applyMonitorFilter")?.addEventListener("click", () => { 
+                const filterLesson = parseInt(document.getElementById("monitorLessonFilter").value);
+                document.getElementById("monitorTableContainer").innerHTML = generateAdminMonitorTable(editClass, filterLesson);
+            });
+        }
     }
 
     function renderLogin() {
@@ -557,6 +651,8 @@
     
     window.logout = () => { currentUser = null; historyMode = false; previousContext = null; renderLogin(); };
     function getClassTheme(className) { const map = {"Pre-Play":"class-theme-preplay","Play":"class-theme-play","Nursery":"class-theme-nursery","One":"class-theme-one","Two":"class-theme-two","Three":"class-theme-three","Four":"class-theme-four","Five":"class-theme-five","Six":"class-theme-six","Seven":"class-theme-seven","Eight":"class-theme-eight","Nine":"class-theme-nine","Ten":"class-theme-ten"}; return map[className] || "class-default"; }
+    
+    // Initialize
     loadDataFromFirebase().then(() => renderLogin());
 </script>
 </body>
