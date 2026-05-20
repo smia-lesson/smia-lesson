@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Smart Lesson Flow | Institute Edition | With Timestamps</title>
+    <title>Smart Lesson Flow | Institute Edition | Fixed UI</title>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -22,7 +22,6 @@
             padding: 12px;
         }
 
-        /* Responsive container */
         .glass-container {
             max-width: 1600px;
             margin: 0 auto;
@@ -32,7 +31,6 @@
             box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.2s;
         }
 
         .header {
@@ -74,7 +72,6 @@
         .institute-name {
             font-size: 1.5rem;
             font-weight: bold;
-            letter-spacing: 0px;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
             word-break: break-word;
         }
@@ -86,10 +83,9 @@
         }
 
         .content { 
-            padding: 20px; 
+            padding: 24px; 
         }
 
-        /* buttons */
         .btn {
             padding: 10px 18px;
             border: none;
@@ -117,7 +113,6 @@
         .btn-secondary { background: #6c757d; color: white; }
         .btn-purple { background: linear-gradient(135deg, #6f42c1, #5538a8); color: white; }
 
-        /* form elements */
         .form-group { margin-bottom: 18px; }
         label { display: block; margin-bottom: 5px; font-weight: 600; color: #1a472a; font-size: 0.8rem; letter-spacing: 0.3px; }
         select, input, textarea {
@@ -125,7 +120,7 @@
             padding: 12px 14px;
             border: 2px solid #e2e8f0;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-family: inherit;
             transition: 0.2s;
             background: white;
@@ -136,32 +131,40 @@
             box-shadow: 0 0 0 3px rgba(56,239,125,0.2);
         }
 
-        /* AUTO-EXPAND TEXTAREA - CORE FIX */
+        /* CRITICAL FIX: Textarea proper display on PC */
         .auto-expand-textarea {
-            width: 100%;
-            min-height: 85px;
-            max-height: 280px;
-            overflow-y: auto;
-            resize: vertical;
-            line-height: 1.5;
-            padding: 12px;
-            font-size: 0.9rem;
-            border-radius: 18px;
-            transition: all 0.1s ease;
+            width: 100% !important;
+            min-height: 100px !important;
+            max-height: 300px !important;
+            height: auto !important;
+            overflow-y: auto !important;
+            resize: vertical !important;
+            line-height: 1.5 !important;
+            padding: 14px !important;
+            font-size: 0.95rem !important;
+            font-family: inherit !important;
+            border-radius: 18px !important;
+            background: #fefefe !important;
+            border: 2px solid #e2e8f0 !important;
+            display: block !important;
+            box-sizing: border-box !important;
         }
-        /* for better touch */
-        textarea:focus {
-            outline: none;
+        
+        .auto-expand-textarea:focus {
+            border-color: #38ef7d !important;
+            outline: none !important;
+            background: white !important;
         }
 
         .lesson-panel {
             border-radius: 28px;
-            padding: 20px;
+            padding: 24px;
             margin-bottom: 25px;
+            background: white;
             box-shadow: 0 8px 18px rgba(0,0,0,0.05);
         }
         
-        /* class themes (kept original but responsive) */
+        /* Class themes */
         .class-theme-preplay { background: linear-gradient(135deg, #fff0f5, #ffe0f0); }
         .class-theme-play { background: linear-gradient(135deg, #fff9e6, #fff3cc); }
         .class-theme-nursery { background: linear-gradient(135deg, #e6f3ff, #cce5ff); }
@@ -177,11 +180,11 @@
         .class-theme-ten { background: linear-gradient(135deg, #e6ccff, #d9b3ff); }
         .class-default { background: #fef9e3; }
 
-        /* Responsive days grid - mobile first */
+        /* Days grid - fully responsive */
         .days-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
+            gap: 24px;
             margin: 20px 0;
         }
         @media (min-width: 640px) {
@@ -197,8 +200,8 @@
         .day-card {
             background: white;
             border-radius: 24px;
-            padding: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 18px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             border-left: 6px solid #11998e;
             transition: all 0.2s;
             display: flex;
@@ -207,10 +210,10 @@
         .day-title {
             font-weight: 700;
             color: #1a472a;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             font-size: 1.1rem;
             border-bottom: 2px solid #eef2e0;
-            padding-bottom: 6px;
+            padding-bottom: 8px;
         }
         .status-badge {
             display: inline-block;
@@ -218,13 +221,12 @@
             border-radius: 50px;
             font-size: 0.7rem;
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 12px;
             align-self: flex-start;
         }
         .status-pending { background: #fee2e2; color: #b91c1c; }
         .status-approved { background: #dcfce7; color: #15803d; }
         
-        /* Jump bar responsive */
         .jump-bar {
             display: flex;
             gap: 12px;
@@ -241,7 +243,6 @@
             min-width: 140px;
         }
         
-        /* user info bar */
         .user-info {
             background: #e6f7ec;
             padding: 12px 18px;
@@ -258,7 +259,6 @@
             word-break: break-word;
         }
         
-        /* admin table scroll */
         .all-subjects-table {
             overflow-x: auto;
             margin-top: 20px;
@@ -270,7 +270,7 @@
             width: 100%; 
             border-collapse: collapse; 
             font-size: 0.75rem;
-            min-width: 650px;
+            min-width: 700px;
         }
         th { background: #1a472a; color: white; padding: 12px 8px; text-align: center; font-size: 0.75rem; }
         td { border-bottom: 1px solid #e2e8f0; padding: 10px 8px; vertical-align: middle; text-align: center; }
@@ -325,11 +325,6 @@
             to { opacity: 1; bottom: 20px; }
         }
         
-        @media print {
-            body { background: white; padding: 0; }
-            .btn, .jump-bar, .user-info, .toolbar, .modal, .toast { display: none; }
-        }
-        
         .admin-filter-bar {
             background: #fff;
             padding: 15px;
@@ -346,6 +341,9 @@
             margin-top: 10px;
             border-top: 1px solid #e9e9e9;
             padding-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
         }
         .accountability-badge {
             background: #f0e6ff;
@@ -353,7 +351,6 @@
             border-radius: 20px;
             font-size: 0.7rem;
             display: inline-block;
-            margin-right: 6px;
         }
         .flex-buttons {
             display: flex;
@@ -361,7 +358,6 @@
             gap: 12px;
             margin-top: 20px;
         }
-        button:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
         .lesson-badge {
             background: white;
             padding: 4px 14px;
@@ -373,6 +369,11 @@
             font-family: monospace;
             font-size: 0.7rem;
             color: #2c3e50;
+        }
+        
+        @media print {
+            body { background: white; padding: 0; }
+            .btn, .jump-bar, .user-info, .toolbar, .modal, .toast { display: none; }
         }
     </style>
 </head>
@@ -433,7 +434,6 @@
     let previousContext = null;
 
     // ========== Firebase helpers ==========
-    function cleanObject(obj) { if (!obj) return null; const cleaned = {}; for(let k in obj) if(obj[k] !== undefined) cleaned[k] = cleanObject(obj[k]); return cleaned; }
     function loadDataFromFirebase() {
         if (!db) return Promise.resolve();
         return db.ref("lessonPlans").get().then(snapshot => {
@@ -449,7 +449,6 @@
     function saveDataToFirebase() { if(db) db.ref("lessonPlans").set(JSON.parse(JSON.stringify(lessonData))).catch(e=>console.warn); localStorage.setItem("lessonPlan_FirebaseBackup", JSON.stringify(lessonData)); }
     function saveData() { saveDataToFirebase(); }
     
-    // Helper to format timestamp
     function formatTimestamp(timestampMs) {
         if(!timestampMs) return "—";
         const date = new Date(timestampMs);
@@ -503,9 +502,9 @@
             }
             const timeStr = latestTimestamp ? new Date(latestTimestamp).toLocaleString() : "—";
             htmlContent += `<tr><td><strong>${escapeHtml(sub)}</strong></td>`;
-            for(let dk of dayKeys) { const txt = getLesson(className, sub, lessonNo, dk).text || ""; htmlContent += `<td>${escapeHtml(txt).replace(/\n/g,'<br>') || '—'}</td>`; }
+            for(let dk of dayKeys) { const txt = getLesson(className, sub, lessonNo, dk).text || ""; htmlContent += `<td style="white-space:pre-wrap;">${escapeHtml(txt).replace(/\n/g,'<br>') || '—'}</td>`; }
             htmlContent += `<td style="font-size:0.7rem;">${timeStr}</td>`;
-            htmlContent += `</table>`;
+            htmlContent += `</tr>`;
         }
         htmlContent += `</tbody></table></body></html>`;
         const blob = new Blob([htmlContent], { type: "application/msword" });
@@ -513,23 +512,26 @@
         showToast(`DOCX exported: ${className} L${lessonNo}`);
     }
     
-    // Textarea auto-expand helper
+    // FIXED: Proper auto-expand with reliable height adjustment
     function attachAutoExpand(textarea) {
         if(!textarea) return;
         const adjustHeight = () => {
             textarea.style.height = 'auto';
-            let newHeight = Math.min(textarea.scrollHeight, 280);
+            let scrollHeight = textarea.scrollHeight;
+            let maxHeight = 300;
+            let newHeight = Math.min(scrollHeight, maxHeight);
             textarea.style.height = newHeight + 'px';
+            textarea.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
         };
         textarea.addEventListener('input', adjustHeight);
-        adjustHeight();
+        // Initial adjust after DOM ready
+        setTimeout(adjustHeight, 10);
     }
     
     function bindAutoExpandToAll() {
         document.querySelectorAll('.auto-expand-textarea').forEach(ta => attachAutoExpand(ta));
     }
     
-    // modal handling
     function showModal(content) { let modal = document.getElementById("globalModal"); if (!modal) { modal = document.createElement("div"); modal.id = "globalModal"; modal.className = "modal"; document.body.appendChild(modal); } modal.innerHTML = content; modal.style.display = "flex"; }
     window.closeModal = function() { const modal = document.getElementById("globalModal"); if(modal) modal.style.display = "none"; };
     window.exitHistoryMode = function() { historyMode=false; previousContext=null; renderDashboard(); showToast("Back to dashboard","info"); };
@@ -537,20 +539,18 @@
         document.getElementById("viewPrevBtn").onclick = () => { const selected = parseInt(document.getElementById("prevLessonSelect").value); closeModal(); showHistoryLesson(className, subject, selected); }; }
     
     function showHistoryLesson(className, subject, lessonNo) {
-        const texts = getCurrentLessonTexts(className, subject, lessonNo);
         let html = `<div class="glass-container"><div class="header"><div class="institute-brand"><div class="logo-placeholder"><img src="${INSTITUTE.logoImageUrl}" alt="Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='${INSTITUTE.logoText}'"></div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)}</div></div><div class="content"><div class="history-note" style="background:#e9ecef; padding:12px; border-radius:20px; display:flex; justify-content:space-between; flex-wrap:wrap;"><span>🔍 Viewing: ${escapeHtml(className)} | ${escapeHtml(subject)} | Lesson ${lessonNo}</span><button class="btn btn-purple" onclick="exitHistoryMode()">← Back</button></div><div class="lesson-panel class-default"><h3>📜 ${escapeHtml(subject)} (Lesson ${lessonNo})</h3><div class="days-grid">`;
         for(let i=0;i<dayKeys.length;i++) {
             const obj = getLesson(className, subject, lessonNo, dayKeys[i]);
-            html += `<div class="day-card"><div class="day-title">${days[i]}</div><div style="background:#f1f3f5; border-radius:16px; padding:12px; min-height:90px; font-size:0.9rem;">${escapeHtml(obj.text) || '<span style="color:#aaa;">— No content —</span>'}</div><div class="status-badge ${obj.status==='pending'?'status-pending':'status-approved'}">${obj.status==='pending'?'Pending':'Approved'}</div></div>`;
+            html += `<div class="day-card"><div class="day-title">${days[i]}</div><div style="background:#f1f3f5; border-radius:16px; padding:12px; min-height:90px; font-size:0.9rem; white-space:pre-wrap;">${escapeHtml(obj.text) || '<span style="color:#aaa;">— No content —</span>'}</div><div class="status-badge ${obj.status==='pending'?'status-pending':'status-approved'}">${obj.status==='pending'?'Pending':'Approved'}</div></div>`;
         }
         html += `</div></div></div></div>`;
         document.getElementById("app").innerHTML = html;
     }
     
-    // ENHANCED ADMIN MONITOR WITH LAST UPDATE TIME PER SUBJECT
     function generateAdminMonitorTable(className, targetLessonNo) {
         const subs = subjectsByClass[className] || [];
-        let table = `<div class="all-subjects-table"><table><thead><tr><th>Subject</th><th>Status L${targetLessonNo}</th><th>Submitted By</th><th>Approved By</th><th>🕒 Last Update Time</th></tr></thead><tbody>`;
+        let table = `<div class="all-subjects-table"><table><thead><tr><th>Subject</th><th>Status L${targetLessonNo}</th><th>Submitted By</th><th>Approved By</th><th>🕒 Last Update</th></tr></thead><tbody>`;
         for(let sub of subs) {
             let allApproved=true, hasAny=false, subBy=null, appBy=null, latestTimestamp = 0;
             for(let dk of dayKeys) {
@@ -564,15 +564,9 @@
             const statusText = hasAny ? (allApproved ? '✅ Approved' : '⏳ Pending') : '⚠️ No data';
             const bg = hasAny ? (allApproved ? '#dcfce7' : '#fee2e2') : '#f1f5f9';
             const timeDisplay = latestTimestamp ? formatTimestamp(latestTimestamp) : '—';
-            table += `<tr>
-                        <td style="text-align:left; font-weight:500;">${escapeHtml(sub)}</td>
-                        <td><span style="background:${bg}; padding:4px 12px; border-radius:20px;">${statusText}</span></td>
-                        <td>${escapeHtml(subBy || '—')}</td>
-                        <td>${escapeHtml(appBy || '—')}</td>
-                        <td><span class="timestamp-text">${timeDisplay}</span></td>
-                      </tr>`;
+            table += `<tr><td style="text-align:left; font-weight:500;">${escapeHtml(sub)}</td><td><span style="background:${bg}; padding:4px 12px; border-radius:20px;">${statusText}</span></td><td>${escapeHtml(subBy || '—')}</td><td>${escapeHtml(appBy || '—')}</td><td><span class="timestamp-text">${timeDisplay}</span></td></tr>`;
         }
-        table += `</tbody></table></div>`;
+        table += `</tbody>}</div>`;
         return table;
     }
     
@@ -586,7 +580,6 @@
         const editSubject = currentUser.editSubject || (subjectsByClass[editClass]?.[0] || "");
         const lessonNo = currentLessonNo || 1;
         const availableSubjects = subjectsByClass[editClass] || [];
-        const currentTexts = getCurrentLessonTexts(editClass, editSubject, lessonNo);
         const theme = `class-${editClass.toLowerCase().replace(/[^a-z]/g,'')}`;
         
         let html = `<div class="glass-container"><div class="header"><div class="institute-brand"><div class="logo-placeholder"><img src="${INSTITUTE.logoImageUrl}" alt="Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='${INSTITUTE.logoText}'"></div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)}</div></div><div class="content"><div class="user-info"><div class="user-info-text">👋 <strong>${escapeHtml(teacherName)}</strong> (${role}) | ${editClass} | ${editSubject} | <span class="lesson-badge" style="background:#11998e; color:white;">Lesson ${lessonNo}</span></div><button class="btn btn-danger" onclick="logout()">Logout</button></div><div class="jump-bar"><div class="form-group"><label>📌 Class</label><select id="jumpClassSelect">${classes.map(c=>`<option value="${c}" ${c===editClass?'selected':''}>${c}</option>`).join('')}</select></div><div class="form-group"><label>📖 Subject</label><select id="jumpSubjectSelect">${availableSubjects.map(s=>`<option value="${s}" ${s===editSubject?'selected':''}>${escapeHtml(s)}</option>`).join('')}</select></div><button class="btn btn-primary" id="jumpBtn">Load</button><button class="btn btn-purple" id="viewPrevLessonBtn">🔍 History</button></div><div class="lesson-panel ${theme}"><h3>✏️ Lesson ${lessonNo} — ${escapeHtml(editSubject)}</h3><div class="days-grid" id="daysGridContainer">`;
@@ -594,10 +587,14 @@
         for(let i=0;i<dayKeys.length;i++) {
             const obj = getLesson(editClass, editSubject, lessonNo, dayKeys[i]);
             const cardStyle = obj.status === "pending" ? "border-left-color:#dc2626; background:#fff9f9;" : "border-left-color:#2b9348; background:#f6fff6;";
-            html += `<div class="day-card" style="${cardStyle}"><div class="day-title">📅 ${days[i]}</div><textarea class="auto-expand-textarea" id="day_${dayKeys[i]}" rows="2" placeholder="Write detailed lesson plan ...">${escapeHtml(obj.text)}</textarea><div class="status-badge ${obj.status === 'pending' ? 'status-pending' : 'status-approved'}">${obj.status === 'pending' ? '🔴 Pending' : '✅ Approved'}</div>`;
-            if((isAdmin || isApprover) && (obj.submittedBy || obj.approvedBy)) html += `<div class="submission-meta">${obj.submittedBy?`<span class="accountability-badge">📝 ${escapeHtml(obj.submittedBy)}</span>`:''}${obj.approvedBy?`<span class="accountability-badge">✓ ${escapeHtml(obj.approvedBy)}</span>`:''}`;
-            if(obj.updatedAt) html += `<span class="accountability-badge">🕒 ${formatTimestamp(obj.updatedAt)}</span>`;
-            html += `</div>`;
+            html += `<div class="day-card" style="${cardStyle}"><div class="day-title">📅 ${days[i]}</div><textarea class="auto-expand-textarea" id="day_${dayKeys[i]}" placeholder="Write detailed lesson plan ..." style="width:100%;">${escapeHtml(obj.text)}</textarea><div class="status-badge ${obj.status === 'pending' ? 'status-pending' : 'status-approved'}">${obj.status === 'pending' ? '🔴 Pending' : '✅ Approved'}</div>`;
+            if((isAdmin || isApprover) && (obj.submittedBy || obj.approvedBy || obj.updatedAt)) {
+                html += `<div class="submission-meta">`;
+                if(obj.submittedBy) html += `<span class="accountability-badge">📝 ${escapeHtml(obj.submittedBy)}</span>`;
+                if(obj.approvedBy) html += `<span class="accountability-badge">✓ ${escapeHtml(obj.approvedBy)}</span>`;
+                if(obj.updatedAt) html += `<span class="accountability-badge">🕒 ${formatTimestamp(obj.updatedAt)}</span>`;
+                html += `</div>`;
+            }
             html += `</div>`;
         }
         html += `</div><div class="flex-buttons">`;
@@ -609,7 +606,8 @@
         html += `</div></div>`;
         document.getElementById("app").innerHTML = html;
         
-        bindAutoExpandToAll();
+        // Force bind after DOM is ready
+        setTimeout(() => bindAutoExpandToAll(), 50);
         
         document.getElementById("jumpClassSelect")?.addEventListener("change", (e) => { const newC = e.target.value; const subs = subjectsByClass[newC]||[]; const subSel = document.getElementById("jumpSubjectSelect"); subSel.innerHTML = subs.map(s=>`<option value="${s}">${escapeHtml(s)}</option>`).join(''); });
         document.getElementById("jumpBtn")?.addEventListener("click", ()=>{ currentUser.editClass = document.getElementById("jumpClassSelect").value; currentUser.editSubject = document.getElementById("jumpSubjectSelect").value; renderDashboard(); showToast(`Switched to ${currentUser.editClass}`); });
@@ -631,7 +629,7 @@
     }
     
     function renderLogin() {
-        document.getElementById("app").innerHTML = `<div class="glass-container" style="max-width:580px; margin:20px auto;"><div class="header"><div class="institute-brand"><div class="logo-placeholder"><img src="${INSTITUTE.logoImageUrl}" alt="Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='${INSTITUTE.logoText}'"></div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)}</div></div><div class="content"><div class="form-group"><label>👩‍🏫 Teacher</label><select id="teacherSelect">${teacherList.map(t=>`<option>${t}</option>`).join('')}</select></div><div class="form-group"><label>🎭 Role</label><select id="roleSelect"><option value="admin">Admin</option><option value="provider">Teacher</option><option value="approver">Approver</option></select></div><div class="form-group"><label>🏫 Class</label><select id="classSelect">${classes.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group" id="subjectDiv"><label>📖 Subject</label><select id="subjectSelect"></select></div><div class="form-group"><label>📋 Lesson</label><select id="lessonNoSelect">${lessonNumbers.map(n=>`<option value="${n}">Lesson ${n}</option>`).join('')}</select></div><div class="form-group" id="pwdDiv"><label>🔒 Admin Password</label><input type="password" id="password" placeholder="admin123"></div><button class="btn btn-primary" style="width:100%;" id="loginBtn">Login</button><div style="margin-top:20px;font-size:12px; background:#eef2f0; padding:12px; border-radius:20px;">Admin pass: admin123 | Responsive & auto-expand | ✅ Last Update Time in Monitor</div></div></div>`;
+        document.getElementById("app").innerHTML = `<div class="glass-container" style="max-width:580px; margin:20px auto;"><div class="header"><div class="institute-brand"><div class="logo-placeholder"><img src="${INSTITUTE.logoImageUrl}" alt="Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='${INSTITUTE.logoText}'"></div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)}</div></div><div class="content"><div class="form-group"><label>👩‍🏫 Teacher</label><select id="teacherSelect">${teacherList.map(t=>`<option>${t}</option>`).join('')}</select></div><div class="form-group"><label>🎭 Role</label><select id="roleSelect"><option value="admin">Admin</option><option value="provider">Teacher</option><option value="approver">Approver</option></select></div><div class="form-group"><label>🏫 Class</label><select id="classSelect">${classes.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group" id="subjectDiv"><label>📖 Subject</label><select id="subjectSelect"></select></div><div class="form-group"><label>📋 Lesson</label><select id="lessonNoSelect">${lessonNumbers.map(n=>`<option value="${n}">Lesson ${n}</option>`).join('')}</select></div><div class="form-group" id="pwdDiv"><label>🔒 Admin Password</label><input type="password" id="password" placeholder="admin123"></div><button class="btn btn-primary" style="width:100%;" id="loginBtn">Login</button><div style="margin-top:20px;font-size:12px; background:#eef2f0; padding:12px; border-radius:20px;">✅ PC Fixed: Textareas now display properly with auto-expand + Timestamps</div></div></div>`;
         const roleSel = document.getElementById("roleSelect"), classSel = document.getElementById("classSelect"), subjectDiv = document.getElementById("subjectDiv"), subjectSel = document.getElementById("subjectSelect"), pwdDiv = document.getElementById("pwdDiv");
         function updateSubj() { subjectSel.innerHTML = (subjectsByClass[classSel.value]||[]).map(s=>`<option value="${s}">${escapeHtml(s)}</option>`).join(''); }
         roleSel.onchange = () => { const admin = roleSel.value === "admin"; subjectDiv.style.display = admin ? "none" : "block"; pwdDiv.style.display = admin ? "block" : "none"; if(!admin) updateSubj(); };
