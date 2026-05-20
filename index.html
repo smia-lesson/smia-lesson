@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Smart Lesson Flow | Institute Edition | Responsive</title>
+    <title>Smart Lesson Flow | Institute Edition | With Timestamps</title>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -270,7 +270,7 @@
             width: 100%; 
             border-collapse: collapse; 
             font-size: 0.75rem;
-            min-width: 500px;
+            min-width: 650px;
         }
         th { background: #1a472a; color: white; padding: 12px 8px; text-align: center; font-size: 0.75rem; }
         td { border-bottom: 1px solid #e2e8f0; padding: 10px 8px; vertical-align: middle; text-align: center; }
@@ -369,6 +369,11 @@
             font-weight: bold;
             font-size: 0.75rem;
         }
+        .timestamp-text {
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: #2c3e50;
+        }
     </style>
 </head>
 <body>
@@ -444,28 +449,63 @@
     function saveDataToFirebase() { if(db) db.ref("lessonPlans").set(JSON.parse(JSON.stringify(lessonData))).catch(e=>console.warn); localStorage.setItem("lessonPlan_FirebaseBackup", JSON.stringify(lessonData)); }
     function saveData() { saveDataToFirebase(); }
     
-    function getLesson(cls, subj, lessonNo, dayKey) { return lessonData[cls]?.[subj]?.[lessonNo]?.[dayKey] || { text: "", status: "pending", submittedBy: null, approvedBy: null }; }
+    // Helper to format timestamp
+    function formatTimestamp(timestampMs) {
+        if(!timestampMs) return "—";
+        const date = new Date(timestampMs);
+        return date.toLocaleString(undefined, { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true });
+    }
+
+    function getLesson(cls, subj, lessonNo, dayKey) { 
+        const entry = lessonData[cls]?.[subj]?.[lessonNo]?.[dayKey] || { text: "", status: "pending", submittedBy: null, approvedBy: null, updatedAt: null };
+        return entry;
+    }
+    
     function setLesson(cls, subj, lessonNo, dayKey, text, status = "pending", submittedBy = null, approvedBy = null) {
         if(!lessonData[cls]) lessonData[cls] = {};
         if(!lessonData[cls][subj]) lessonData[cls][subj] = {};
         if(!lessonData[cls][subj][lessonNo]) lessonData[cls][subj][lessonNo] = {};
         const existing = lessonData[cls][subj][lessonNo][dayKey] || {};
-        lessonData[cls][subj][lessonNo][dayKey] = { text: text || "", status, updatedAt: Date.now(), submittedBy: (submittedBy !== undefined) ? submittedBy : existing.submittedBy, approvedBy: (approvedBy !== undefined) ? approvedBy : existing.approvedBy };
+        const now = Date.now();
+        lessonData[cls][subj][lessonNo][dayKey] = { 
+            text: text || "", 
+            status, 
+            updatedAt: now,
+            submittedBy: (submittedBy !== undefined) ? submittedBy : existing.submittedBy,
+            approvedBy: (approvedBy !== undefined) ? approvedBy : existing.approvedBy
+        };
         saveData();
     }
-    function setAllDays(cls, subj, lessonNo, textsArray, status = "pending", submittedBy = null) { dayKeys.forEach((dk,i)=> setLesson(cls, subj, lessonNo, dk, textsArray[i] || "", status, submittedBy, null)); }
-    function approveAllDays(cls, subj, lessonNo, textsArray, approverName) { dayKeys.forEach((dk,i)=> { const ex = getLesson(cls, subj, lessonNo, dk); setLesson(cls, subj, lessonNo, dk, textsArray[i] || "", "approved", ex.submittedBy, approverName); }); }
+    
+    function setAllDays(cls, subj, lessonNo, textsArray, status = "pending", submittedBy = null) { 
+        dayKeys.forEach((dk,i)=> setLesson(cls, subj, lessonNo, dk, textsArray[i] || "", status, submittedBy, null)); 
+    }
+    
+    function approveAllDays(cls, subj, lessonNo, textsArray, approverName) { 
+        dayKeys.forEach((dk,i)=> { 
+            const ex = getLesson(cls, subj, lessonNo, dk); 
+            setLesson(cls, subj, lessonNo, dk, textsArray[i] || "", "approved", ex.submittedBy, approverName); 
+        }); 
+    }
+    
     function getCurrentLessonTexts(cls, subj, lessonNo) { return dayKeys.map(dk => getLesson(cls, subj, lessonNo, dk).text); }
     function showToast(msg, type="success") { const toast = document.createElement("div"); toast.className = `toast toast-${type}`; toast.innerText = msg; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2600); }
     function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
     
     function exportDocxLegal(className, lessonNo) {
         const subjects = subjectsByClass[className] || [];
-        let htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>LessonPlan_${className}_Lesson${lessonNo}</title><style>@page { size: Legal landscape; margin: 0.2in; } body { font-family: 'Segoe UI', Arial, sans-serif; } table { width:100%; border-collapse:collapse; } th,td { border:1px solid #aaa; padding:8px; } th { background:#1a472a; color:white; }</style></head><body><h1>${escapeHtml(INSTITUTE.name)}</h1><h3>${className} - Lesson ${lessonNo}</h3><table><thead><tr><th>Subject</th>${days.map(d=>`<th>${d}</th>`).join('')}</tr></thead><tbody>`;
+        let htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>LessonPlan_${className}_Lesson${lessonNo}</title><style>@page { size: Legal landscape; margin: 0.2in; } body { font-family: 'Segoe UI', Arial, sans-serif; } table { width:100%; border-collapse:collapse; } th,td { border:1px solid #aaa; padding:8px; } th { background:#1a472a; color:white; }</style></head><body><h1>${escapeHtml(INSTITUTE.name)}</h1><h3>${className} - Lesson ${lessonNo}</h3><table><thead><tr><th>Subject</th>${days.map(d=>`<th>${d}</th>`).join('')}</th><th>Last Update</th></tr></thead><tbody>`;
         for(let sub of subjects) {
+            let latestTimestamp = 0;
+            for(let dk of dayKeys) {
+                const entry = getLesson(className, sub, lessonNo, dk);
+                if(entry.updatedAt && entry.updatedAt > latestTimestamp) latestTimestamp = entry.updatedAt;
+            }
+            const timeStr = latestTimestamp ? new Date(latestTimestamp).toLocaleString() : "—";
             htmlContent += `<tr><td><strong>${escapeHtml(sub)}</strong></td>`;
             for(let dk of dayKeys) { const txt = getLesson(className, sub, lessonNo, dk).text || ""; htmlContent += `<td>${escapeHtml(txt).replace(/\n/g,'<br>') || '—'}</td>`; }
-            htmlContent += `</tr>`;
+            htmlContent += `<td style="font-size:0.7rem;">${timeStr}</td>`;
+            htmlContent += `</table>`;
         }
         htmlContent += `</tbody></table></body></html>`;
         const blob = new Blob([htmlContent], { type: "application/msword" });
@@ -473,7 +513,7 @@
         showToast(`DOCX exported: ${className} L${lessonNo}`);
     }
     
-    // Textarea auto-expand helper (attach event to dynamically created elements)
+    // Textarea auto-expand helper
     function attachAutoExpand(textarea) {
         if(!textarea) return;
         const adjustHeight = () => {
@@ -485,7 +525,6 @@
         adjustHeight();
     }
     
-    // Helper to bind all textareas in current container
     function bindAutoExpandToAll() {
         document.querySelectorAll('.auto-expand-textarea').forEach(ta => attachAutoExpand(ta));
     }
@@ -508,21 +547,30 @@
         document.getElementById("app").innerHTML = html;
     }
     
+    // ENHANCED ADMIN MONITOR WITH LAST UPDATE TIME PER SUBJECT
     function generateAdminMonitorTable(className, targetLessonNo) {
         const subs = subjectsByClass[className] || [];
-        let table = `<div class="all-subjects-table"><table><thead><tr><th>Subject</th><th>Status L${targetLessonNo}</th><th>Submitted By</th><th>Approved By</th></tr></thead><tbody>`;
+        let table = `<div class="all-subjects-table"><table><thead><tr><th>Subject</th><th>Status L${targetLessonNo}</th><th>Submitted By</th><th>Approved By</th><th>🕒 Last Update Time</th></tr></thead><tbody>`;
         for(let sub of subs) {
-            let allApproved=true, hasAny=false, subBy=null, appBy=null;
+            let allApproved=true, hasAny=false, subBy=null, appBy=null, latestTimestamp = 0;
             for(let dk of dayKeys) {
                 const l = getLesson(className, sub, targetLessonNo, dk);
                 if(l.text && l.text.trim()) hasAny=true;
                 if(l.status !== "approved") allApproved=false;
                 if(l.submittedBy) subBy = l.submittedBy;
                 if(l.approvedBy) appBy = l.approvedBy;
+                if(l.updatedAt && l.updatedAt > latestTimestamp) latestTimestamp = l.updatedAt;
             }
             const statusText = hasAny ? (allApproved ? '✅ Approved' : '⏳ Pending') : '⚠️ No data';
             const bg = hasAny ? (allApproved ? '#dcfce7' : '#fee2e2') : '#f1f5f9';
-            table += `<tr><td style="text-align:left;">${escapeHtml(sub)}</td><td><span style="background:${bg}; padding:4px 12px; border-radius:20px;">${statusText}</span></td><td>${subBy || '—'}</td><td>${appBy || '—'}</td></tr>`;
+            const timeDisplay = latestTimestamp ? formatTimestamp(latestTimestamp) : '—';
+            table += `<tr>
+                        <td style="text-align:left; font-weight:500;">${escapeHtml(sub)}</td>
+                        <td><span style="background:${bg}; padding:4px 12px; border-radius:20px;">${statusText}</span></td>
+                        <td>${escapeHtml(subBy || '—')}</td>
+                        <td>${escapeHtml(appBy || '—')}</td>
+                        <td><span class="timestamp-text">${timeDisplay}</span></td>
+                      </tr>`;
         }
         table += `</tbody></table></div>`;
         return table;
@@ -547,7 +595,9 @@
             const obj = getLesson(editClass, editSubject, lessonNo, dayKeys[i]);
             const cardStyle = obj.status === "pending" ? "border-left-color:#dc2626; background:#fff9f9;" : "border-left-color:#2b9348; background:#f6fff6;";
             html += `<div class="day-card" style="${cardStyle}"><div class="day-title">📅 ${days[i]}</div><textarea class="auto-expand-textarea" id="day_${dayKeys[i]}" rows="2" placeholder="Write detailed lesson plan ...">${escapeHtml(obj.text)}</textarea><div class="status-badge ${obj.status === 'pending' ? 'status-pending' : 'status-approved'}">${obj.status === 'pending' ? '🔴 Pending' : '✅ Approved'}</div>`;
-            if((isAdmin || isApprover) && (obj.submittedBy || obj.approvedBy)) html += `<div class="submission-meta">${obj.submittedBy?`<span class="accountability-badge">📝 ${escapeHtml(obj.submittedBy)}</span>`:''}${obj.approvedBy?`<span class="accountability-badge">✓ ${escapeHtml(obj.approvedBy)}</span>`:''}</div>`;
+            if((isAdmin || isApprover) && (obj.submittedBy || obj.approvedBy)) html += `<div class="submission-meta">${obj.submittedBy?`<span class="accountability-badge">📝 ${escapeHtml(obj.submittedBy)}</span>`:''}${obj.approvedBy?`<span class="accountability-badge">✓ ${escapeHtml(obj.approvedBy)}</span>`:''}`;
+            if(obj.updatedAt) html += `<span class="accountability-badge">🕒 ${formatTimestamp(obj.updatedAt)}</span>`;
+            html += `</div>`;
             html += `</div>`;
         }
         html += `</div><div class="flex-buttons">`;
@@ -559,10 +609,8 @@
         html += `</div></div>`;
         document.getElementById("app").innerHTML = html;
         
-        // Auto-expand all textareas after render
         bindAutoExpandToAll();
         
-        // event handlers
         document.getElementById("jumpClassSelect")?.addEventListener("change", (e) => { const newC = e.target.value; const subs = subjectsByClass[newC]||[]; const subSel = document.getElementById("jumpSubjectSelect"); subSel.innerHTML = subs.map(s=>`<option value="${s}">${escapeHtml(s)}</option>`).join(''); });
         document.getElementById("jumpBtn")?.addEventListener("click", ()=>{ currentUser.editClass = document.getElementById("jumpClassSelect").value; currentUser.editSubject = document.getElementById("jumpSubjectSelect").value; renderDashboard(); showToast(`Switched to ${currentUser.editClass}`); });
         document.getElementById("viewPrevLessonBtn")?.addEventListener("click",()=>viewPreviousLesson(editClass, editSubject, lessonNo));
@@ -583,7 +631,7 @@
     }
     
     function renderLogin() {
-        document.getElementById("app").innerHTML = `<div class="glass-container" style="max-width:580px; margin:20px auto;"><div class="header"><div class="institute-brand"><div class="logo-placeholder"><img src="${INSTITUTE.logoImageUrl}" alt="Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='${INSTITUTE.logoText}'"></div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)}</div></div><div class="content"><div class="form-group"><label>👩‍🏫 Teacher</label><select id="teacherSelect">${teacherList.map(t=>`<option>${t}</option>`).join('')}</select></div><div class="form-group"><label>🎭 Role</label><select id="roleSelect"><option value="admin">Admin</option><option value="provider">Teacher</option><option value="approver">Approver</option></select></div><div class="form-group"><label>🏫 Class</label><select id="classSelect">${classes.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group" id="subjectDiv"><label>📖 Subject</label><select id="subjectSelect"></select></div><div class="form-group"><label>📋 Lesson</label><select id="lessonNoSelect">${lessonNumbers.map(n=>`<option value="${n}">Lesson ${n}</option>`).join('')}</select></div><div class="form-group" id="pwdDiv"><label>🔒 Admin Password</label><input type="password" id="password" placeholder="admin123"></div><button class="btn btn-primary" style="width:100%;" id="loginBtn">Login</button><div style="margin-top:20px;font-size:12px; background:#eef2f0; padding:12px; border-radius:20px;">Admin pass: admin123 | Responsive & auto-expand textareas</div></div></div>`;
+        document.getElementById("app").innerHTML = `<div class="glass-container" style="max-width:580px; margin:20px auto;"><div class="header"><div class="institute-brand"><div class="logo-placeholder"><img src="${INSTITUTE.logoImageUrl}" alt="Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='${INSTITUTE.logoText}'"></div><div class="institute-name">${escapeHtml(INSTITUTE.name)}</div></div><div class="header-sub">${escapeHtml(INSTITUTE.tagline)}</div></div><div class="content"><div class="form-group"><label>👩‍🏫 Teacher</label><select id="teacherSelect">${teacherList.map(t=>`<option>${t}</option>`).join('')}</select></div><div class="form-group"><label>🎭 Role</label><select id="roleSelect"><option value="admin">Admin</option><option value="provider">Teacher</option><option value="approver">Approver</option></select></div><div class="form-group"><label>🏫 Class</label><select id="classSelect">${classes.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group" id="subjectDiv"><label>📖 Subject</label><select id="subjectSelect"></select></div><div class="form-group"><label>📋 Lesson</label><select id="lessonNoSelect">${lessonNumbers.map(n=>`<option value="${n}">Lesson ${n}</option>`).join('')}</select></div><div class="form-group" id="pwdDiv"><label>🔒 Admin Password</label><input type="password" id="password" placeholder="admin123"></div><button class="btn btn-primary" style="width:100%;" id="loginBtn">Login</button><div style="margin-top:20px;font-size:12px; background:#eef2f0; padding:12px; border-radius:20px;">Admin pass: admin123 | Responsive & auto-expand | ✅ Last Update Time in Monitor</div></div></div>`;
         const roleSel = document.getElementById("roleSelect"), classSel = document.getElementById("classSelect"), subjectDiv = document.getElementById("subjectDiv"), subjectSel = document.getElementById("subjectSelect"), pwdDiv = document.getElementById("pwdDiv");
         function updateSubj() { subjectSel.innerHTML = (subjectsByClass[classSel.value]||[]).map(s=>`<option value="${s}">${escapeHtml(s)}</option>`).join(''); }
         roleSel.onchange = () => { const admin = roleSel.value === "admin"; subjectDiv.style.display = admin ? "none" : "block"; pwdDiv.style.display = admin ? "block" : "none"; if(!admin) updateSubj(); };
