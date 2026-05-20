@@ -221,9 +221,7 @@
 <div id="app"></div>
 
 <script>
-    // ==================== FIREBASE CONFIGURATION (REPLACE WITH YOURS) ====================
-    // IMPORTANT: Replace the below config object with your Firebase project credentials
-    // Go to Project Settings > General > Your apps > Firebase SDK snippet > Config
+    // ==================== FIREBASE CONFIGURATION ====================
     const firebaseConfig = {
         apiKey: "AIzaSyAx4Y74j_LOm5gIVFsTIG9SS2M-kaMbvu4",
         authDomain: "smia-lesson.firebaseapp.com",
@@ -233,9 +231,9 @@
         messagingSenderId: "161332389077",
         appId: "1:161332389077:web:5a02045bcdb218d3c66e5c"
     };
-    // =====================================================================================
+    // =================================================================
 
-    // Initialize Firebase (only if not already initialized)
+    // Initialize Firebase
     let db;
     try {
         if (!firebase.apps.length) {
@@ -291,26 +289,41 @@
         "Rikta Khanom"
     ];
 
-    let lessonData = {};      // local mirror
+    let lessonData = {};
     let currentUser = null;
     let historyMode = false;
     let previousContext = null;
 
-    // Firebase sync: load data from RTDB
+    // Helper function to clean undefined values
+    function cleanObject(obj) {
+        if (obj === undefined) return null;
+        if (obj === null) return null;
+        if (typeof obj === 'object') {
+            const cleaned = {};
+            for (let key in obj) {
+                if (obj[key] !== undefined) {
+                    cleaned[key] = cleanObject(obj[key]);
+                }
+            }
+            return cleaned;
+        }
+        return obj;
+    }
+
+    // Firebase sync
     function loadDataFromFirebase() {
         if (!db) return Promise.resolve();
         return db.ref("lessonPlans").get().then(snapshot => {
             if (snapshot.exists()) {
-                lessonData = snapshot.val();
+                lessonData = snapshot.val() || {};
             } else {
                 lessonData = {};
             }
-            saveDataToLocal(); // backup to localStorage
+            saveDataToLocal();
             console.log("Data synced from Firebase");
             return lessonData;
         }).catch(err => {
             console.error("Firebase read error:", err);
-            // fallback to localStorage
             const local = localStorage.getItem("lessonPlan_FirebaseBackup");
             if(local) lessonData = JSON.parse(local);
             else lessonData = {};
@@ -320,7 +333,9 @@
 
     function saveDataToFirebase() {
         if (!db) return;
-        db.ref("lessonPlans").set(lessonData).catch(err => console.error("Firebase write error:", err));
+        // Clean undefined values before saving
+        const cleanedData = JSON.parse(JSON.stringify(lessonData));
+        db.ref("lessonPlans").set(cleanedData).catch(err => console.error("Firebase write error:", err));
         saveDataToLocal();
     }
     
@@ -340,14 +355,19 @@
         if(!lessonData[cls]) lessonData[cls] = {};
         if(!lessonData[cls][subj]) lessonData[cls][subj] = {};
         if(!lessonData[cls][subj][lessonNo]) lessonData[cls][subj][lessonNo] = {};
+        
         const existing = lessonData[cls][subj][lessonNo][dayKey] || {};
-        lessonData[cls][subj][lessonNo][dayKey] = { 
-            text, 
-            status, 
+        
+        // Ensure we never set undefined values
+        const newData = { 
+            text: text || "", 
+            status: status || "pending", 
             updatedAt: Date.now(),
-            submittedBy: submittedBy !== null ? submittedBy : existing.submittedBy,
-            approvedBy: approvedBy !== null ? approvedBy : existing.approvedBy
+            submittedBy: (submittedBy !== null && submittedBy !== undefined) ? submittedBy : (existing.submittedBy || null),
+            approvedBy: (approvedBy !== null && approvedBy !== undefined) ? approvedBy : (existing.approvedBy || null)
         };
+        
+        lessonData[cls][subj][lessonNo][dayKey] = newData;
         saveData();
     }
     
@@ -376,7 +396,15 @@
         setTimeout(() => toast.remove(), 2700);
     }
 
-    function escapeHtml(str) { return (str || "").replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    function escapeHtml(str) { 
+        if (!str) return '';
+        return String(str).replace(/[&<>]/g, function(m){ 
+            if(m==='&') return '&amp;'; 
+            if(m==='<') return '&lt;'; 
+            if(m==='>') return '&gt;'; 
+            return m;
+        }); 
+    }
 
     function exportDocxLegal(className, lessonNo) {
         const subjects = subjectsByClass[className] || [];
@@ -394,7 +422,7 @@
         <div class="subtitle">Lesson Plan - ${className} (Lesson ${lessonNo})</div>
         <table><thead><tr><th style="width:1.8in;">Subject</th>${days.map(d=>`<th>${d}</th>`).join('')}</tr></thead><tbody>`;
         for(let sub of subjects) {
-            htmlContent += `<tr><td><strong>${escapeHtml(sub)}</strong><tr>`;
+            htmlContent += `<tr><td><strong>${escapeHtml(sub)}</strong></td>`;
             for(let dk of dayKeys) {
                 const lesson = getLesson(className, sub, lessonNo, dk);
                 htmlContent += `<td>${(lesson.text || "").replace(/\n/g, '<br>')}`;
@@ -523,9 +551,53 @@
         document.getElementById("jumpClassSelect")?.addEventListener("change", () => { const newClass = document.getElementById("jumpClassSelect").value; const subs = subjectsByClass[newClass] || []; const subSelect = document.getElementById("jumpSubjectSelect"); subSelect.innerHTML = subs.map(s => `<option value="${s}">${escapeHtml(s)}</option>`).join(''); });
         document.getElementById("jumpBtn")?.addEventListener("click", () => { currentUser.editClass = document.getElementById("jumpClassSelect").value; currentUser.editSubject = document.getElementById("jumpSubjectSelect").value; renderDashboard(); showToast(`Switched to ${currentUser.editClass} - ${currentUser.editSubject}`, "success"); });
         document.getElementById("viewPrevLessonBtn")?.addEventListener("click", () => viewPreviousLesson(editClass, editSubject, lessonNo));
-        if(isProvider) { document.getElementById("submitAllBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); setAllDays(editClass, editSubject, lessonNo, texts, "pending", teacherName); showToast(`Lesson ${lessonNo} submitted (pending)`, "success"); renderDashboard(); }); document.getElementById("editBtn")?.addEventListener("click", () => document.getElementById("submitAllBtn")?.click()); }
-        if(isApprover) { document.getElementById("approveAllBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); approveAllDays(editClass, editSubject, lessonNo, texts, teacherName); showToast(`Lesson ${lessonNo} APPROVED`, "success"); renderDashboard(); }); document.getElementById("saveDraftBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); setAllDays(editClass, editSubject, lessonNo, texts, "pending", null); showToast("Draft saved", "info"); renderDashboard(); }); }
-        if(isAdmin) { document.getElementById("adminSaveBtn")?.addEventListener("click", () => { const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); for(let i=0; i<dayKeys.length; i++) { const existing = getLesson(editClass, editSubject, lessonNo, dayKeys[i]); setLesson(editClass, editSubject, lessonNo, dayKeys[i], texts[i], "approved", existing.submittedBy, teacherName); } showToast(`Admin saved Lesson ${lessonNo}`, "success"); renderDashboard(); }); document.getElementById("eraseClassBtn")?.addEventListener("click", () => { if(confirm(`Erase ALL data for class ${editClass}?`)) { delete lessonData[editClass]; saveData(); showToast(`${editClass} erased`, "info"); renderDashboard(); } }); document.getElementById("exportDocBtn")?.addEventListener("click", () => exportDocxLegal(editClass, lessonNo)); document.getElementById("applyMonitorFilter")?.addEventListener("click", () => { const filterLesson = parseInt(document.getElementById("monitorLessonFilter").value); document.getElementById("monitorTableContainer").innerHTML = generateAdminMonitorTable(editClass, filterLesson); }); }
+        if(isProvider) { 
+            document.getElementById("submitAllBtn")?.addEventListener("click", () => { 
+                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); 
+                setAllDays(editClass, editSubject, lessonNo, texts, "pending", teacherName); 
+                showToast(`Lesson ${lessonNo} submitted (pending)`, "success"); 
+                renderDashboard(); 
+            }); 
+            document.getElementById("editBtn")?.addEventListener("click", () => document.getElementById("submitAllBtn")?.click()); 
+        }
+        if(isApprover) { 
+            document.getElementById("approveAllBtn")?.addEventListener("click", () => { 
+                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); 
+                approveAllDays(editClass, editSubject, lessonNo, texts, teacherName); 
+                showToast(`Lesson ${lessonNo} APPROVED`, "success"); 
+                renderDashboard(); 
+            }); 
+            document.getElementById("saveDraftBtn")?.addEventListener("click", () => { 
+                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); 
+                setAllDays(editClass, editSubject, lessonNo, texts, "pending", null); 
+                showToast("Draft saved", "info"); 
+                renderDashboard(); 
+            }); 
+        }
+        if(isAdmin) { 
+            document.getElementById("adminSaveBtn")?.addEventListener("click", () => { 
+                const texts = dayKeys.map(dk => document.getElementById(`day_${dk}`).value); 
+                for(let i=0; i<dayKeys.length; i++) { 
+                    const existing = getLesson(editClass, editSubject, lessonNo, dayKeys[i]); 
+                    setLesson(editClass, editSubject, lessonNo, dayKeys[i], texts[i], "approved", existing.submittedBy, teacherName); 
+                } 
+                showToast(`Admin saved Lesson ${lessonNo}`, "success"); 
+                renderDashboard(); 
+            }); 
+            document.getElementById("eraseClassBtn")?.addEventListener("click", () => { 
+                if(confirm(`Erase ALL data for class ${editClass}?`)) { 
+                    delete lessonData[editClass]; 
+                    saveData(); 
+                    showToast(`${editClass} erased`, "info"); 
+                    renderDashboard(); 
+                } 
+            }); 
+            document.getElementById("exportDocBtn")?.addEventListener("click", () => exportDocxLegal(editClass, lessonNo)); 
+            document.getElementById("applyMonitorFilter")?.addEventListener("click", () => { 
+                const filterLesson = parseInt(document.getElementById("monitorLessonFilter").value); 
+                document.getElementById("monitorTableContainer").innerHTML = generateAdminMonitorTable(editClass, filterLesson); 
+            }); 
+        }
     }
 
     function renderLogin() {
